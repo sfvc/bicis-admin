@@ -4,8 +4,8 @@ import { Tooltip } from 'react-tooltip'
 import { Pen, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Pagination from "Common/Components/Catalog/Hubs/Pagination";
-import { startLoadingHubs } from "slices/app/catalog/hubs/thunks";
+import Pagination from "Common/Components/Pagination";
+import { startLoadingHubs, startPaginateHubs } from "slices/app/catalog/hubs/thunks";
 import { setActiveHub } from "slices/app/catalog/hubs/reducer";
 import NoResults from "Common/NoResults";
 
@@ -118,7 +118,12 @@ const HubsTable = () => {
 
                     <NoResults data={hubs}/>
 
-                    { paginate && <Pagination data={paginate} /> }
+                    { paginate && (
+                        <Pagination
+                            data={paginate}
+                            onPageChange={(page) => dispatch( startPaginateHubs(page) )}
+                        />
+                    )}
                 </div>
             </div>
         </React.Fragment>

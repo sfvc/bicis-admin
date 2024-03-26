@@ -1,8 +1,6 @@
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
 import { initialPosition, iconMarker } from "Common/Components/Map";
-import estaciones from 'helpers/FakeApi/estaciones';
 import MapComponent from '../Map/MapComponent';
-
 
 const HubsMap = () => {
     return (
@@ -13,15 +11,15 @@ const HubsMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                {
-                    estaciones.map((hub) => (
+                {/* {
+                    data.length > 0 && data.map((hub) => (
                         <Marker position={hub.ubicacion} icon={iconMarker}>
                             <Popup>
                                 {hub.nombre} <br /> {hub.direccion}
                             </Popup>
                         </Marker>
                     ))
-                }
+                } */}
                 
             </MapContainer>
         </MapComponent>

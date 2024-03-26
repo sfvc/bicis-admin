@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from 'react-tooltip'
 import { useFormik } from "formik";
-import { CheckCircle, Search } from "lucide-react";
+import { CheckCircle, } from "lucide-react";
 import TableContainer from "Common/TableContainer";
-import PigBadge from "../../Label/PigBadge";
-import Modal from "Common/Components/Modal";
+import PigBadge from "../../Ui/Label/PigBadge";
+import Modal from "Common/Components/Ui/Modal";
 import { getAllHubs } from "helpers/api_select";
 import * as Yup from "yup";
 import { setActiveTravel } from "slices/app/travel/reducer";

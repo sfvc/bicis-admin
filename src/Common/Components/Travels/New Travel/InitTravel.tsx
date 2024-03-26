@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getAllHubs, getAllUnits } from "helpers/api_select";
-import Modal from "Common/Components/Modal";
+import Modal from "Common/Components/Ui/Modal";
 import { startSavingTravel } from "slices/app/travel/thunks";
 import { useNavigate } from "react-router-dom";
 

@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
-import { Eye, Pen, Search, Trash } from "lucide-react";
-import PigBadge from "Common/Components/Label/PigBadge";
+import { Eye, Pen, Search } from "lucide-react";
+import PigBadge from "Common/Components/Ui/Label/PigBadge";
 import { useDispatch, useSelector } from "react-redux";
-import { startLoadingUnits, startSavingUnit, startUpdateUnit } from "slices/app/catalog/units/thunks";
-import Modal from "Common/Components/Modal";
+import { startLoadingUnits, startPaginateUnits, startSavingUnit, startUpdateUnit } from "slices/app/catalog/units/thunks";
+import Modal from "Common/Components/Ui/Modal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { setActiveUnit, resetActiveUnit, handleSearchUnit } from "slices/app/catalog/units/reducer";
 import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
-import Pagination from "./Pagination";
+import Pagination from "Common/Components/Pagination";
 
 export const tiposBicicleta = ['ELECTRICA', 'MECANICA']
 export const estadosBicicleta = ['ACTIVO', 'INACTIVO']
@@ -175,7 +175,12 @@ const UnitsTable = () => {
 
                     <NoResults data={units}/>
 
-                    { paginate && <Pagination data={paginate} /> }
+                    { paginate && (
+                        <Pagination
+                            data={paginate}
+                            onPageChange={(page) => dispatch( startPaginateUnits(page) )}
+                        />
+                    )}
 
                 </div>
             </div>

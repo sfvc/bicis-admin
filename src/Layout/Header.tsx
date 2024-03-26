@@ -12,7 +12,7 @@ import NotificationDropdown from 'Common/NotificationDropdown';
 import { Dropdown } from 'Common/Components/Dropdown';
 import { changeLeftsidebarSizeType } from 'slices/thunk';
 
-const Header = ({ handleToggleDrawer, handleDrawer }: any) => {
+const Header = () => {
 
     const dispatch = useDispatch<any>();
 
@@ -129,7 +129,7 @@ const Header = ({ handleToggleDrawer, handleDrawer }: any) => {
                                 <LightDark />
 
                                 {/* NotificationDropdown */}
-                                {/* <NotificationDropdown /> */}
+                                <NotificationDropdown />
 
                                 {/* Profile */}
                                 <Dropdown className="relative flex items-center h-header">

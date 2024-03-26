@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TableContainer from "Common/TableContainer";
-import PigBadge from "../Label/PigBadge";
+import PigBadge from "../Ui/Label/PigBadge";
 import { Tooltip } from 'react-tooltip'
 import { BadgeCheck, Bike, Eye, MapPin, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,13 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setActiveUser } from "slices/app/user/reducer";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Modal from "../Modal";
+import Modal from "../Ui/Modal";
 import avatar1 from "assets/images/users/avatar-1.png";
 import { getAllHubs, getAllUnits } from "helpers/api_select";
 import { startSavingTravel } from "slices/app/travel/thunks";
-import { startLoadingUsers } from "slices/app/user/thunks";
+import { startLoadingUsers, startPaginateUsers } from "slices/app/user/thunks";
 import NoResults from "Common/NoResults";
-import Pagination from "./Pagination";
+import Pagination from "../Pagination";
 
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
@@ -191,7 +191,12 @@ const UserTable = () => {
                     <NoResults data={users}/>
                     
 
-                    { paginate && <Pagination data={paginate}/>}
+                    { paginate && (
+                        <Pagination
+                            data={paginate}
+                            onPageChange={(page) => dispatch( startPaginateUsers(page) )}
+                        />
+                    )}
                 </div>
             </div>
 

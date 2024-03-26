@@ -1,9 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
-import CustomSelect from "Common/Components/Select/CustomSelect";
-import { hubsData } from "Common/data";
 import { useNavigate } from "react-router-dom";
+import CustomSelect from "Common/Components/Ui/Select/CustomSelect";
 
 interface FormData {
     user_id: number | null,
@@ -16,6 +15,8 @@ const initialValues: FormData = {
     hub_origen: '',
     hub_destino: ''
 };
+
+const data: any = []
 
 const StartTravel = () => {
     const { activeUser } = useSelector( (state: any) => state.User)
@@ -57,11 +58,11 @@ const StartTravel = () => {
                                 </label>
                                 <Field id="hub_origen" name="hub_origen" as="select" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
                                     <option value='' hidden>Seleccionar una estación</option>
-                                    {
-                                        hubsData.map((hub) => (
+                                    {/* {
+                                        data.length > 0 && data.map((hub) => (
                                             <option key={hub.id} value={hub.id}>{hub.nombre}</option>
                                         ))
-                                    }
+                                    } */}
                                 </Field>
                             </div>
 
@@ -71,11 +72,11 @@ const StartTravel = () => {
                                 </label>
                                 <Field id="hub_destino" name="hub_destino" as="select" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
                                     <option value='' hidden>Seleccionar una estación</option>
-                                    {
-                                        hubsData.map((hub) => (
+                                    {/* {
+                                        data.length > 0 && data.map((hub) => (
                                             <option key={hub.id} value={hub.id}>{hub.nombre}</option>
                                         ))
-                                    }
+                                    } */}
                                 </Field>
                             </div>
 

@@ -6,7 +6,6 @@ import NonAuthLayout from "Layout/NonLayout"
 import AuthProtected from './AuthProtected';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkAuthToken } from 'slices/thunk';
-import Login from 'pages/Authentication/Login';
 
 const RouteIndex = () => {
   const { status } = useSelector((state: any) => state.Login)

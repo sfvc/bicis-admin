@@ -5,13 +5,13 @@ import { Pen, Search, Trash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Modal from "Common/Components/Modal";
-import { startLoadingAdmins, startSavingAdmin, startUpdateAdmin } from "slices/app/catalog/admins/thunks";
-import PigBadge from "Common/Components/Label/PigBadge";
-import { handleAdmins, handleSearchAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
+import Modal from "Common/Components/Ui/Modal";
+import { startLoadingAdmins, startPaginateAdmins, startSavingAdmin, startUpdateAdmin } from "slices/app/catalog/admins/thunks";
+import PigBadge from "Common/Components/Ui/Label/PigBadge";
+import { handleSearchAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
 import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
-import Pagination from "./Pagination";
+import Pagination from "Common/Components/Pagination";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -203,7 +203,12 @@ const AdminsTable = () => {
 
                     <NoResults data={admins}/>
 
-                    { paginate && <Pagination data={paginate} /> }
+                    { paginate && (
+                        <Pagination
+                            data={paginate}
+                            onPageChange={(page) => dispatch( startPaginateAdmins(page) )}
+                        />
+                    )}
                 </div>
             </div>
 

@@ -1,11 +1,12 @@
 import React from "react";
 import TableContainer from "Common/TableContainer";
-import PigBadge from "../Label/PigBadge";
+import PigBadge from "../Ui/Label/PigBadge";
 import { Tooltip } from 'react-tooltip'
 import { Eye, Search } from "lucide-react";
-import { unitsData } from "Common/data/table";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
+
+const data: any = []
 
 const UnitsTable = () => {
 
@@ -94,7 +95,7 @@ const UnitsTable = () => {
                     <TableContainer
                         isPagination={true}
                         columns={(columns || [])}
-                        data={(unitsData || [])}
+                        data={(data || [])}
                         customPageSize={7}
                         divclassName="overflow-x-auto"
                         tableclassName="w-full whitespace-nowrap"

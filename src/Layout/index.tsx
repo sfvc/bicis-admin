@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from './VerticalLayout/Sidebar';
 import Header from './Header';
 import Footer from './Footer';
@@ -21,15 +21,7 @@ import {
 const Layout = ({ children }: any) => {
   document.title = "Vamos en Bici";
 
-  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch<any>();
-
-  const handleToggleDrawer = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const [show, setShow] = React.useState<boolean>(false);
-  const handleDrawer = () => setShow(!show);
 
   const selectLayoutState = (state: any) => state.Layout;
   const selectLayoutProperties = createSelector(
@@ -112,7 +104,7 @@ const Layout = ({ children }: any) => {
       <div className="group-data-[sidebar-size=sm]:min-h-sm group-data-[sidebar-size=sm]:relative">
         <ToastContainer closeButton={true} limit={1} />
         <Sidebar layoutType={layoutType} layoutSidebarSizeType={layoutSidebarSizeType} />
-        <Header handleToggleDrawer={handleToggleDrawer} handleDrawer={handleDrawer} />
+        <Header />
         <div className='relative min-h-screen group-data-[sidebar-size=sm]:min-h-sm'>
           <div className="group-data-[sidebar-size=lg]:ltr:md:ml-vertical-menu group-data-[sidebar-size=lg]:rtl:md:mr-vertical-menu group-data-[sidebar-size=md]:ltr:ml-vertical-menu-md group-data-[sidebar-size=md]:rtl:mr-vertical-menu-md group-data-[sidebar-size=sm]:ltr:ml-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:mr-vertical-menu-sm pt-[calc(theme('spacing.header')_*_1)] pb-[calc(theme('spacing.header')_*_0.8)] px-4 group-data-[navbar=bordered]:pt-[calc(theme('spacing.header')_*_1.3)] group-data-[navbar=hidden]:pt-0 group-data-[layout=horizontal]:mx-auto group-data-[layout=horizontal]:max-w-screen-2xl group-data-[layout=horizontal]:px-0 group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:ltr:md:ml-auto group-data-[layout=horizontal]:group-data-[sidebar-size=lg]:rtl:md:mr-auto group-data-[layout=horizontal]:md:pt-[calc(theme('spacing.header')_*_1.8)] group-data-[layout=horizontal]:px-3 group-data-[layout=horizontal]:group-data-[navbar=hidden]:pt-[calc(theme('spacing.header')_*_0.9)]">
             <div className='container-fluid group-data-[content=boxed]:max-w-boxed mx-auto'>

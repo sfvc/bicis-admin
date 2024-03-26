@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "./Components/Modal";
+import Modal from "./Components/Ui/Modal";
 
 // Icons
 import { X } from 'lucide-react';
