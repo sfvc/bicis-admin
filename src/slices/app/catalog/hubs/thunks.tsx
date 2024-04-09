@@ -27,6 +27,7 @@ export const startPaginateHubs = (page: number): ThunkAction<void, RootState, un
 
 export const startSavingHub = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
     try {
+        return console.log(data)
         const response = await api.create('/estacion', data)
         toast.success("Estación creada con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {

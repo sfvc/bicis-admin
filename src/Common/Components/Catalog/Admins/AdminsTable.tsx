@@ -99,7 +99,7 @@ const AdminsTable = () => {
                             <Pen className="inline-block size-5 text-slate-500 dark:text-zink-200"></Pen>
                         </button>
 
-                        <button className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="c">
+                        <button className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
                             <Tooltip id="default" place="top" content="Editar" />
                             <Trash className="inline-block size-5 text-slate-500 dark:text-zink-200"></Trash>
                         </button>

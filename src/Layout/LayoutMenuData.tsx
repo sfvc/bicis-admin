@@ -25,7 +25,7 @@ const menuData: any = [
             },
         ]
     },
-    /* {
+    {
         id: "hubs",
         label: 'Hubs',
         link: "/#",
@@ -66,7 +66,7 @@ const menuData: any = [
                 parentId: "usuarios"
             },
         ]
-    }, */
+    },
     {
         id: "catalogos",
         label: 'Catálogos',
@@ -79,7 +79,7 @@ const menuData: any = [
                 link: '/catalogo/administradores',
                 parentId: "catalogos"
             },
-            /* {
+            {
                 id: 'tipodespot',
                 label: 'Tipo de Spot',
                 link: '#',
@@ -90,26 +90,26 @@ const menuData: any = [
                 label: 'Tipos de Penalidad',
                 link: '#',
                 parentId: "catalogos"
-            }, */
+            },
             {
                 id: 'hubs',
                 label: 'Hubs',
                 link: '/catalogo/estaciones',
                 parentId: "catalogos"
             },
-            /* {
+            {
                 id: 'locks',
                 label: 'Locks',
                 link: '#',
                 parentId: "catalogos"
-            }, */
+            },
             {
                 id: 'unidades',
                 label: 'Unidades',
                 link: '/catalogo/unidades',
                 parentId: "catalogos"
             },
-            /* {
+            {
                 id: 'razonesparataller',
                 label: 'Razones para Taller',
                 link: '#',
@@ -126,7 +126,7 @@ const menuData: any = [
                 label: 'Preguntas Frecuentes',
                 link: '#',
                 parentId: "catalogos"
-            } */
+            }
         ]
     },
 ];

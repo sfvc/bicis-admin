@@ -1,11 +1,15 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Field, Form, Formik } from 'formik';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import { LatLngExpression, Marker as TypeMarker } from 'leaflet';
-import { initialPosition, markerDefault } from 'Common/Components/Map';
-import { startSavingHub, startUpdateHub } from 'slices/app/catalog/hubs/thunks';
 import { useNavigate } from 'react-router-dom';
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, Polygon  } from 'react-leaflet';
+import { LatLngExpression, Marker as TypeMarker } from 'leaflet';
+import { EditControl } from 'react-leaflet-draw';
+import { Field, Formik, Form } from 'formik';
+import { Pen } from 'lucide-react';
+import { startSavingHub, startUpdateHub } from 'slices/app/catalog/hubs/thunks';
+import { initialPosition, markerDefault } from 'Common/Components/Map';
+import 'leaflet-draw/dist/leaflet.draw.css';
+import { Tooltip } from 'react-tooltip';
 
 interface FormData {
     nombre: string,
@@ -21,11 +25,50 @@ const initialValues: FormData = {
     capacidadMecanica: null
 };
 
+const initialPolygon = [
+    {
+        lat: -28.472444960005284,
+        lng: -65.78540325164796
+    },
+    {
+        lat: -28.473425794601898,
+        lng: -65.78274250030519
+    },
+    {
+        lat: -28.47059643928235,
+        lng: -65.78098297119142
+    },
+    {
+        lat: -28.467691555660018,
+        lng: -65.78278541564943
+    },
+    {
+        lat: -28.467729281933185,
+        lng: -65.78750610351564
+    },
+    {
+        lat: -28.470860515651488,
+        lng: -65.78845024108888
+    }
+]
+
 const NewHub = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const dispatch = useDispatch<any>()
     const { activeHub } = useSelector(( state: any ) => state.HubCatalog)
     const [position, setPosition] = useState<LatLngExpression>(activeHub?.ubicacion || initialPosition)
+    const [polygon, setPolygon] = useState<LatLngExpression[]>(activeHub?.perimetro || [])
+    const featureGroupRef = useRef<any>(null); // Ref para acceder al grupo de características del polígono
+
+    const onCreated = (e: any) => {
+		let layer = e.layer;
+		// console.log("Geojson", layer.toGeoJSON());
+        setPolygon(layer.getLatLngs()[0]) // Retorna un array de poligonos. Solo tomo el primero
+	};
+
+    const handleEdit = () => {
+        setPolygon([])
+    }
 
     function DraggableMarker () {
         const [draggable, setDraggable] = useState<boolean>(false)
@@ -70,9 +113,9 @@ const NewHub = () => {
 
     function handleSubmit (values: FormData) {
         if(activeHub) {
-            dispatch( startUpdateHub({...values, ubicacion: position}, activeHub.id) )
+            dispatch( startUpdateHub({...values, ubicacion: position, perimetro: polygon}, activeHub.id) )
         } else {
-            dispatch( startSavingHub({...values, ubicacion: position}) )
+            dispatch( startSavingHub({...values, ubicacion: position, perimetro: polygon}) )
         }
 
         navigate('/catalogo/estaciones')
@@ -89,6 +132,38 @@ const NewHub = () => {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
+
+                    {/* Grupo de características del polígono */}
+                    <FeatureGroup ref={featureGroupRef}>
+                        {/* Control de edición del polígono */}
+                        <EditControl
+                            position="topright"
+                            onCreated={onCreated}
+                            draw={{
+                                rectangle: false, // Deshabilitar dibujar rectángulos
+                                circle: false, // Deshabilitar dibujar círculos
+                                marker: false, // Deshabilitar dibujar marcadores
+                                circlemarker: false,
+                                polyline: false
+                            }}
+                        />
+                    </FeatureGroup>
+
+                    <Polygon pathOptions={{ fillColor: 'blue' }} positions={polygon} />
+                    
+                    <div className='relative'>
+                        <button
+                            type="button" 
+                            onClick={handleEdit}
+                            style={{ zIndex: 9999 }}
+                            className="py-1.5 px-1 border-2 shadow-sm rounded-md absolute top-2.5 right-14 flex items-center text-white bg-custom-500 hover:bg-custom-600"
+                            data-tooltip-id="default" 
+                            data-tooltip-content="Editar"
+                        >
+                            <Tooltip id="default" place="top" content="Editar" />
+                            <Pen className='h-5'></Pen>
+                        </button>
+                    </div>
 
                     <DraggableMarker />
                 </MapContainer>
@@ -140,7 +215,7 @@ const NewHub = () => {
                 </Formik>
             </div>
         </React.Fragment>
-    )
-}
+    );
+};
 
 export default NewHub;
