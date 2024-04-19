@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from 'react-tooltip'
 import { useFormik } from "formik";
-import { CheckCircle, } from "lucide-react";
+import { CheckCircle, Eye, } from "lucide-react";
 import TableContainer from "Common/TableContainer";
 import PigBadge from "../../Ui/Label/PigBadge";
 import Modal from "Common/Components/Ui/Modal";
@@ -12,6 +12,7 @@ import { setActiveTravel } from "slices/app/travel/reducer";
 import { startCloseTravel, startLoadingTravels } from "slices/app/travel/thunks";
 import NoResults from "Common/NoResults";
 import Pagination from "./Pagination";
+import { useNavigate } from "react-router-dom";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -22,6 +23,7 @@ interface FormData {
 const TravelsTable = () => {
     const { travels, paginate, activeTravel } = useSelector( (state: any) => state.Travel );
     const dispatch = useDispatch<any>();
+    const navigate = useNavigate();
 
     const columns: column[] = React.useMemo(
         () => [
@@ -109,7 +111,7 @@ const TravelsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
-                    <div className="flex flex-wrap justify-start gap-2">
+                    <div className="flex flex-wrap justify-start gap-1">
                         {
                             (props.row.original.estado === 'EN_VIAJE') && (
                                 <button onClick={() => onCloseTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Finalizar">
@@ -118,6 +120,11 @@ const TravelsTable = () => {
                                 </button>
                             )
                         }
+
+                        <button onClick={() => navigate(`/detalle-viaje/${props.row.original.id}`)} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
+                            <Tooltip id="default" place="top" content="Ver Viaje" />
+                            <Eye className="inline-block text-blue-500 dark:text-blue-200"></Eye>
+                        </button>
                     </div>
                 ),
             },

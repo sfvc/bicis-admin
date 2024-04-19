@@ -4,7 +4,7 @@ import Hubs from "pages/Hubs";
 import Units from "pages/Units";
 import Travels from "pages/Travels";
 import NewTravel from "pages/Travels/NewTravel";
-import StartTravel from "pages/Travels/StartTravel";
+import TravelDetail from "pages/Travels/TravelDetail";
 
 import CatalogHubs from "pages/Catalog/Hubs";
 import NewHub from "pages/Catalog/Hubs/NewHub";
@@ -24,7 +24,7 @@ const authProtectedRoutes: Array<RouteObject> = [
   // Viajes
   { path: "/viajes", component: Travels },
   { path: "/nuevo-viaje", component: NewTravel },
-  { path: "/iniciar-viaje", component: StartTravel },
+  { path: "/detalle-viaje/:id", component: TravelDetail },
 
   // Usuarios
   { path: "/usuarios", component: Users },
