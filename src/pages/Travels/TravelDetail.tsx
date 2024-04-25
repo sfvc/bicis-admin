@@ -1,6 +1,7 @@
 import React from "react";
 import TravelInfo from "Common/Components/Travels/DetailTravel/TravelInfo";
 import DetailMap from "Common/Components/Travels/DetailTravel/DetailMap";
+import TravelHistory from "Common/Components/Travels/DetailTravel/TravelHistory";
 
 const TravelDetail = () => {
   console.log('detalle') //TODO: Eliminar
@@ -8,9 +9,9 @@ const TravelDetail = () => {
   return (
     <React.Fragment>
         <div className="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
-            {/* TODO: Agregar componentes de la vista */}
             <TravelInfo />
             <DetailMap />
+            <TravelHistory />
         </div>
     </React.Fragment>
   )
