@@ -30,7 +30,7 @@ const UnitsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
             },
-            {
+            /* {
                 header: 'Condición',
                 accessorKey: 'condicion',
                 enableColumnFilter: false,
@@ -38,7 +38,7 @@ const UnitsTable = () => {
                 cell: (props: any) => (
                     <PigBadge color={ props.getValue() === 'Activa' ? 'green' : 'red' } label={props.getValue()} />
                 ),
-            },
+            }, */
             {
                 header: 'Dirección',
                 accessorKey: 'direccion',

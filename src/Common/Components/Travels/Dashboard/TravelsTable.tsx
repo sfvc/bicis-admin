@@ -13,6 +13,7 @@ import { startCloseTravel, startLoadingTravels } from "slices/app/travel/thunks"
 import NoResults from "Common/NoResults";
 import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
+import Cronometro from "Common/Components/Cronometro";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -68,6 +69,9 @@ const TravelsTable = () => {
                 accessorKey: 'fecha_inicio',
                 enableColumnFilter: false,
                 enableSorting: true,
+                cell: (props: any) => (
+                    <span>{new Date(props.getValue()).toLocaleString()}</span>
+                ),
             },
             {
                 header: 'Destino',
@@ -93,7 +97,7 @@ const TravelsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
-                    <span>{props.getValue() || '-'}</span>
+                    <Cronometro fechaInicio={props.row.original.fecha_inicio} />
                 ),
             },
             {

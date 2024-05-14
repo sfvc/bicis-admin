@@ -15,7 +15,7 @@ export const loginUser = (
     history: any
 ): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
     try {
-        const response = await api.create('http://localhost:1000/api/v1/login', user)
+        const response = await api.create('/login', user)
         if (response) {
             dispatch(loginSuccess(response));
             history("/");
@@ -36,17 +36,20 @@ export const logoutUser = () => async (dispatch: Dispatch) => {
 
 export const checkAuthToken = () => async (dispatch: Dispatch<any>) => {
     try {
-        localStorage.removeItem("authUser");
-        dispatch(logoutSuccess());
+        const authUser = localStorage.getItem("authUser");
 
-        // const authUser = localStorage.getItem("authUser");
-        // if (!authUser) return dispatch(logoutUser());
+        if (!authUser) {
+            localStorage.removeItem("authUser");
+            dispatch(logoutSuccess());
+            return null
+        }
 
-        // const { token } = JSON.parse(authUser);
-        // setAuthorization(token);
+        const {token} = JSON.parse(authUser)
+        setAuthorization(token)
 
-        // const data = await api.get('http://localhost:1000/api/v1/profile', {})
-        // dispatch(loginSuccess(data));
+        const response: any = await api.get('/profile', null)
+        dispatch(loginSuccess(response));
+
     } catch (error) {
         dispatch(loginError(error));
     }

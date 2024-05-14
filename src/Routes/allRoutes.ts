@@ -52,7 +52,7 @@ const publicRoutes = [
 
   // authentication
   { path: "/login", component: Login },
-  { path: "/logout", component: Logout },
+  { path: "/logout", component: Logout }
 
 ]
 

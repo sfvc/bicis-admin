@@ -31,11 +31,11 @@ export const ModalContextProvider: React.FC<ModalContextProviderProps> = ({ show
     setIsModal(!isModal);
   };
 
-  const bodyElement = document.body;
+  /* const bodyElement = document.body;
 
   React.useEffect(() => {
     bodyElement.classList.toggle('overflow-hidden');
-  }, [isModal, show, bodyElement])
+  }, [isModal, show, bodyElement]) */
 
   return (
     <ModalContext.Provider value={{ isModal, setIsModal, handleModalToggle, show, onHide }}>

@@ -3,6 +3,7 @@ import { LatLngExpression } from "leaflet";
 import markerIcon from 'assets/leaflet/images/marker-icon.png';
 import customMarker from 'assets/leaflet/images/custom-marker.png'; // TODO: Eliminar al finalizar
 import hub from 'assets/leaflet/images/hub-marker.png';
+import bike from 'assets/leaflet/images/bike-marker.png';
 
 export const initialPosition: LatLngExpression = [-28.4696, -65.7856]; 
 
@@ -24,4 +25,9 @@ export const hubMarker = new L.Icon({
     popupAnchor: [0, -32], // ajusta la posición del popup
 });
 
-
+export const bikeMarker = new L.Icon({
+    iconUrl: bike,
+    iconSize: [26, 26], // ajusta el tamaño de acuerdo a la imagen
+    iconAnchor: [0, 0], // ajusta la posición del anclaje
+    popupAnchor: [0, -32], // ajusta la posición del popup
+});
