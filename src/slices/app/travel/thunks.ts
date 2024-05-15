@@ -29,6 +29,7 @@ export const startPaginateTravels = (page: number): ThunkAction<void, RootState,
 export const startSavingTravel = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
     try {
         const response = await api.create('/viaje', data)
+        startLoadingTravels() // TODO: Corregir esta llamada al metodo
         toast.success("Viaje creado con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         toast.error("Error al crear el viaje", { autoClose: 3000, theme: "colored", icon: true });

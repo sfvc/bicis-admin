@@ -10,11 +10,17 @@ import userProfile from "assets/images/users/user-profile.png";
 import LightDark from 'Common/LightDark';
 import NotificationDropdown from 'Common/NotificationDropdown';
 import { Dropdown } from 'Common/Components/Dropdown';
-import { changeLeftsidebarSizeType } from 'slices/thunk';
+import { changeLeftsidebarSizeType, logoutUser } from 'slices/thunk';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
 
     const dispatch = useDispatch<any>();
+    const { user } = useSelector((state: any) => state.Login);
+
+    const onLogout = () => {
+        dispatch(logoutUser())
+    }
 
     // react-redux
     const selectLayoutState = (state: any) => state.Layout;
@@ -108,8 +114,6 @@ const Header = () => {
         };
     }, [layoutType, dispatch]);
 
-    const { user } = useSelector((state: any) => state.Login);
-
     return (
         <React.Fragment>
             <header id="page-topbar" className="ltr:md:left-vertical-menu rtl:md:right-vertical-menu group-data-[sidebar-size=md]:ltr:md:left-vertical-menu-md group-data-[sidebar-size=md]:rtl:md:right-vertical-menu-md group-data-[sidebar-size=sm]:ltr:md:left-vertical-menu-sm group-data-[sidebar-size=sm]:rtl:md:right-vertical-menu-sm group-data-[layout=horizontal]:ltr:left-0 group-data-[layout=horizontal]:rtl:right-0 fixed right-0 z-[1000] left-0 print:hidden group-data-[navbar=bordered]:m-4 group-data-[navbar=bordered]:[&.is-sticky]:mt-0 transition-all ease-linear duration-300 group-data-[navbar=hidden]:hidden group-data-[navbar=scroll]:absolute group/topbar group-data-[layout=horizontal]:z-[1004]">
@@ -153,10 +157,10 @@ const Header = () => {
                                         </a>
                                         <ul>
                                             <li>
-                                                <a className="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" href={process.env.PUBLIC_URL + "/user-profile"}><User2 className="inline-block size-4 ltr:mr-2 rtl:ml-2"></User2> Perfil</a>
+                                                <Link className="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" to="#"><User2 className="inline-block size-4 ltr:mr-2 rtl:ml-2"></User2> Perfil</Link>
                                             </li>
                                             <li className="pt-2 mt-2 border-t border-slate-200 dark:border-zink-500">
-                                                <a className="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" href={process.env.PUBLIC_URL + "/logout"}><LogOut className="inline-block size-4 ltr:mr-2 rtl:ml-2"></LogOut> Cerrar Sesión</a>
+                                                <button className="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" onClick={onLogout}><LogOut className="inline-block size-4 ltr:mr-2 rtl:ml-2"></LogOut> Cerrar Sesión</button>
                                             </li>
                                         </ul>
                                     </Dropdown.Content>

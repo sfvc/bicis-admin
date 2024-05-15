@@ -10,7 +10,6 @@ axios.interceptors.response.use(
     if (response.headers && response.headers.authorization) {
       const token = response.headers.authorization.split(" ")[1]; // ['Bearer', 'token']
       localStorage.setItem("authUser", JSON.stringify({ token }));
-      console.log(token)
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
     }
     return response.data ? response.data : response;
