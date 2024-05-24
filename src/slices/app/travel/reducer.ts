@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Travel {
     id: number,
-    fecha_inicio: string, 
+    fecha_inicio: string,
+    fecha_finalizacion: string,  
     estado: string,
     bicicleta: any,
-    persona: any,
+    duracion: string,
     estacion_inicio: any,
     estacion_final: any,
-    usuario_creacion: any,
-    usuario_final: any
+    usuario: any,
 }
 
 interface TravelState {

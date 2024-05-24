@@ -15,7 +15,7 @@ export const loginUser = (
     history: any
 ): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
     try {
-        const response = await api.create('/login', user)
+        const response = await api.create('/auth/administrador/login', user)
         if (response) {
             dispatch(loginSuccess(response));
             history("/");
@@ -47,7 +47,7 @@ export const checkAuthToken = () => async (dispatch: Dispatch<any>) => {
         const {token} = JSON.parse(authUser)
         setAuthorization(token)
 
-        const response: any = await api.get('/profile', null)
+        const response: any = await api.get('/auth/administrador/profile', null)
         dispatch(loginSuccess(response));
 
     } catch (error) {

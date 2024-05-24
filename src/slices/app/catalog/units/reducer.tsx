@@ -2,9 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Unit {
     id: number,
+    imei: string,
     patente: string,
-    tipo: string,
-    estado : string,
+    tipo_de_unidad: string,
+    estado: string,
+    condicion: string,
     created_at: string,
     updated_at: string
 }

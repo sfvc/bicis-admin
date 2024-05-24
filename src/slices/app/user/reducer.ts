@@ -2,18 +2,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Usuario {
     id: number,
-    dni: number,
+    documento_numero: string,
     nombre: string,
     apellido: string,
     genero: string,
     email : string,
-    telefono: string,
-    documentos_y_acciones: {
-        documento_frontal: string,
-        documento_dorso: string,
-        foto_de_rostro: string,
-    },
-    activo: boolean
+    numero_celular: string,
+    fecha_nacimiento: string,
+    foto: string,
+    documento_frontal: string,
+    documento_dorsal: string,
+    is_active: boolean
+    en_viaje: boolean,
+    estado_documentacion: string,
+    created_at: string,
+    updated_at: string,
 }
 
 interface UserState {
@@ -54,7 +57,7 @@ const userSlice = createSlice({
         setStatusUser(state: UserState) {
             if (!state.activeUser) return;
 
-            state.activeUser.activo = !state.activeUser.activo
+            state.activeUser.is_active = !state.activeUser.is_active
 
             state.users.map((user) => {
                 if (user.id === state.activeUser?.id) return state.activeUser;

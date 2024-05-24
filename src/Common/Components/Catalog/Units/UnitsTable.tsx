@@ -80,7 +80,13 @@ const UnitsTable = () => {
             },
             {
                 header: 'Tipo',
-                accessorKey: 'tipo',
+                accessorKey: 'tipo_de_unidad',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'IMEI',
+                accessorKey: 'imei',
                 enableColumnFilter: false,
                 enableSorting: true,
             },
@@ -90,6 +96,13 @@ const UnitsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (<PigBadge color="slate" label={props.getValue()} />)
+            },
+            {
+                header: 'Condicion',
+                accessorKey: 'condicion',
+                enableColumnFilter: false,
+                enableSorting: true,
+                cell: (props: any) => (<PigBadge color="custom" label={props.getValue()} />)
             },
             {
                 header: 'Acciones',

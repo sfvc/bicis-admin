@@ -8,7 +8,8 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 axios.interceptors.response.use(
   function (response) {
     if (response.headers && response.headers.authorization) {
-      const token = response.headers.authorization.split(" ")[1]; // ['Bearer', 'token']
+      // const token = response.headers.authorization.split(" ")[1]; // ['Bearer', 'token']
+      const token = response.headers.authorization
       localStorage.setItem("authUser", JSON.stringify({ token }));
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
     }

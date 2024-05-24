@@ -36,7 +36,7 @@ const TravelsTable = () => {
             },
             {
                 header: 'Usuario',
-                accessorKey: 'persona',
+                accessorKey: 'usuario',
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
@@ -70,7 +70,13 @@ const TravelsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
-                    <span>{new Date(props.getValue()).toLocaleString()}</span>
+                    <span>
+                        {
+                            props.getValue() 
+                                ? new Date(props.getValue()).toLocaleString()
+                                : '-'
+                        }
+                    </span>
                 ),
             },
             {
@@ -88,7 +94,13 @@ const TravelsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
-                    <span>{props.getValue() || '-'}</span>
+                    <span>
+                        {
+                            props.getValue() 
+                                ? new Date(props.getValue()).toLocaleString()
+                                : '-'
+                        }
+                    </span>
                 ),
             },
             {
@@ -97,7 +109,13 @@ const TravelsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
-                    <Cronometro fechaInicio={props.row.original.fecha_inicio} />
+                    <>
+                        {
+                            props.getValue()
+                                ? <span>{ props.getValue() }</span>
+                                : <Cronometro fechaInicio={props.row.original.fecha_inicio} />
+                        }
+                    </>
                 ),
             },
             {

@@ -9,7 +9,7 @@ const api = new APIClient();
 
 export const startLoadingHubs = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
     try {
-        const response: any = await api.get('/estacion', null)
+        const response: any = await api.get('/admin/estacion', null)
         dispatch(handleHubs(response)); 
     } catch (error) {
         console.log(error);
@@ -18,7 +18,7 @@ export const startLoadingHubs = (): ThunkAction<void, RootState, unknown, Action
 
 export const startPaginateHubs = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
     try {
-        const response: any = await api.get('/estacion', { page });
+        const response: any = await api.get('/admin/estacion', { page });
         dispatch(handleHubs(response)); 
     } catch (error) {
         console.log(error);
@@ -27,8 +27,7 @@ export const startPaginateHubs = (page: number): ThunkAction<void, RootState, un
 
 export const startSavingHub = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
     try {
-        return console.log(data)
-        const response = await api.create('/estacion', data)
+        const response: any = await api.create('/estacion', data)
         toast.success("Estación creada con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         console.log(error);

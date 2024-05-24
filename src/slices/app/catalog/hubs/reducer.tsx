@@ -5,8 +5,9 @@ interface Hub {
     nombre: string,
     ubicacion: object,
     direccion : string,
-    capacidadElectrica: number,
-    capacidadMecanica: number,
+    capacidad_electrica: number,
+    capacidad_mecanica: number,
+    cantidad_bicicletas:number,
     created_at: string,
     updated_at: string
 }

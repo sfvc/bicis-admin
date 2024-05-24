@@ -58,13 +58,13 @@ const UserTable = () => {
             },
             {
                 header: 'DNI',
-                accessorKey: 'dni',
+                accessorKey: 'documento_numero',
                 enableColumnFilter: false,
                 enableSorting: true,
             },
             {
                 header: 'Activo',
-                accessorKey: 'activo',
+                accessorKey: 'is_active',
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (

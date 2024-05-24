@@ -10,7 +10,7 @@ const api = new APIClient();
 
 export const startLoadingTravels = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
     try {
-        const response: any = await api.get('/viaje', null)
+        const response: any = await api.get('/admin/viaje', null)
         dispatch( handleTravels(response) ); 
     } catch (error) {
         console.log(error);
@@ -19,7 +19,7 @@ export const startLoadingTravels = (): ThunkAction<void, RootState, unknown, Act
 
 export const startPaginateTravels = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
     try {
-        const response: any = await api.get('/viaje', {page})
+        const response: any = await api.get('/admin/viaje', {page})
         dispatch( handleTravels(response) ); 
     } catch (error) {
         console.log(error);
@@ -49,7 +49,7 @@ export const startCloseTravel = (data: any, id: number): ThunkAction<void, RootS
 
 export const startFilterTravels = (data: any): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
     try {
-        const response: any = await api.create('/viaje/filtro', data)
+        const response: any = await api.create('/admin/viaje/filtro', data)
         dispatch( handleTravels(response) ); 
     } catch (error) {
         console.log(error);

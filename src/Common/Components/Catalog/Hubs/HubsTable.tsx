@@ -38,13 +38,19 @@ const HubsTable = () => {
             },
             {
                 header: 'Capacidad Mecanicas',
-                accessorKey: 'capacidadMecanica',
+                accessorKey: 'capacidad_mecanica',
                 enableColumnFilter: false,
                 enableSorting: true,
             },
             {
                 header: 'Capacidad Electricas',
-                accessorKey: 'capacidadElectrica',
+                accessorKey: 'capacidad_electrica',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Cantidad de Bicicletas',
+                accessorKey: 'cantidad_bicicletas',
                 enableColumnFilter: false,
                 enableSorting: true,
             },

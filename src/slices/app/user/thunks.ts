@@ -10,7 +10,7 @@ const api = new APIClient();
 
 export const startLoadingUsers = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
     try {
-        const response: any = await api.get('/persona', null)
+        const response: any = await api.get('/admin/usuario', null)
         dispatch( handleUsers(response) ); 
     } catch (error) {
         console.log(error);
@@ -19,7 +19,7 @@ export const startLoadingUsers = (): ThunkAction<void, RootState, unknown, Actio
 
 export const startPaginateUsers = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
     try {
-        const response: any = await api.get('/persona', {page})
+        const response: any = await api.get('/admin/usuario', {page})
         dispatch( handleUsers(response) ); 
     } catch (error) {
         console.log(error);
