@@ -11,7 +11,6 @@ const TravelsMap = () => {
     function handleTravels () {
         setTimeout(() => {
             const data = simulateTravel(index)
-            // console.log(data)
             setTravels(data)
             if(data) setIndex(index + 1)
         }, 4000)

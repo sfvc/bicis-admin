@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getAllHubs, getAllUnits } from "helpers/api_select";
 import Modal from "Common/Components/Ui/Modal";
 import { startSavingTravel } from "slices/app/travel/thunks";
-import { useNavigate } from "react-router-dom";
 
 interface FormData {
     estacion_inicio_id: string,
@@ -147,7 +147,7 @@ const InitTravel = () => {
                                     name="bicicleta_id"
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                     onChange={(e) => handleNumericChange("bicicleta_id", e.target.value)}
-                                        value={formik.values.bicicleta_id || ""}
+                                    value={formik.values.bicicleta_id || ""}
                                 >
                                     <option value="">Seleccionar una bicicleta</option>
                                     {

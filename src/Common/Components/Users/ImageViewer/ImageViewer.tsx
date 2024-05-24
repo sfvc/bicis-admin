@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import "./styles.css"
 
-const ImageViewer = ({ src, alt, caption, label }: any) => {
+const ImageViewer = ({ src, alt, caption }: any) => {
     const [isOpen, setIsOpen] = useState <Boolean>(false)
     const showModal = () => setIsOpen(true)
 
     return (
       <React.Fragment>
         <div className="flex flex-col flex-grow">
-          <label htmlFor="inputValue" className="inline-block mb-2 text-base font-bold">{label}</label>
+          <label htmlFor="inputValue" className="inline-block mb-2 text-base font-medium">{caption}</label>
           <button 
           type="button" 
           onClick={showModal}
