@@ -5,11 +5,7 @@ import { useFormik } from "formik";
 import ImageViewer from "./ImageViewer/ImageViewer";
 import * as Yup from "yup";
 import Modal from "../Ui/Modal";
-import Tab from "../Ui/Tab/Tab";
-import { Nav } from "../Ui/Tab/Nav";
-import UploadFile from "./UploadFile/UploadFile";
-import { PenIcon } from "lucide-react";
-import { startUpdateUser } from "slices/app/user/thunks";
+import axios from "axios";
 
 interface Option { label: string; value: string; isDisabled?: boolean };
 
@@ -17,12 +13,6 @@ const GeneroOptions: Option[] = [
     { label: "Masculino", value: "M" },
     { label: "Femenino", value: "F" },
     { label: "Sin Especificar", value: "Sin Especificar" },
-];
-
-const EstadoOptions: Option[] = [
-    { label: "Pendiente de Revisión por Monitoreo", value: "PENDIENTE_MONITOREO" },
-    { label: "Pendiente de Revisión por el Usuario", value: "PENDIENTE_USUARIO" },
-    { label: "Documentacion Aprobada", value: "APROBADO" },
 ];
 
 interface FormData {
@@ -33,7 +23,6 @@ interface FormData {
     email: string;
     numero_celular: string;
     comentario: string;
-    estado_documentacion: string;
     documento_frontal: string | null;
     documento_dorsal: string | null;
     foto: string | null;
@@ -47,7 +36,6 @@ const initialValues: FormData = {
     genero: "",
     email: "",
     numero_celular: "",
-    estado_documentacion:"",
     comentario: "",
     documento_frontal: null,
     documento_dorsal: null,
@@ -59,6 +47,9 @@ const PersonalInfo = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<any>();
     const { activeUser } = useSelector( (state: any) => state.User );
+
+    const [file, setFile] = useState<any>(null);
+    const [message, setMessage] = useState('');
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
@@ -75,7 +66,6 @@ const PersonalInfo = () => {
             genero: Yup.string().required("El genero es requerido"),
             email: Yup.string().required("El email es requerido"),
             numero_celular: Yup.string().required("El telefono es requerido"),
-            estado_documentacion: Yup.string().required("El estado es requerido"),
             comentario: Yup.string().nullable(),
             documento_frontal: Yup.string().nullable(),
             documento_dorsal: Yup.string().nullable(),
@@ -84,9 +74,10 @@ const PersonalInfo = () => {
         }),
 
         onSubmit: (values: any) => {
-            dispatch( startUpdateUser(activeUser.id, values) )
-            toggle();
-            navigate('/usuarios')
+            console.log(values)
+            // dispatch( startUpdateUser(data) )
+            // toggle();
+            // navigate('/usuarios')
         },
     });
 
@@ -99,7 +90,42 @@ const PersonalInfo = () => {
         }
     }, [show, formik]);
 
+    const handleChangeDoc = async (e: any) => {
+        const fieldName = e.target.name
+
+        if (e.target.files && e.target.files.length > 0) {
+            setFile(e.target.files[0]);
+        } else {
+            setFile(null);
+            return null
+        }
+
+        const formData = new FormData();
+        formData.append('file', e.target.files[0]);
+
+        try {
+            const authUser = localStorage.getItem("authUser");
+            if(!authUser) return null
+            const {token} = JSON.parse(authUser)
+
+            const response: any = await axios.post('http://localhost:1000/api/v1/upload', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`,
+                }
+            });
+            console.log(response)
+
+            // Agrego la nueva url al formulario de edicion de datos
+            handleInputChange(fieldName, response.url)
+            setMessage('Archivo subido exitosamente');
+        } catch (error) {
+            setMessage('Error al subir el archivo');
+        }
+    };
+
     const handleInputChange = (fieldName: string, value: string) => {
+        console.log(fieldName, value)
         formik.setFieldValue(fieldName, value);
     };
    
@@ -242,14 +268,16 @@ const PersonalInfo = () => {
                                 </button>
                             </div>
                         </form>
+                    {/* </Formik> */}
                 </div>
 
                 {/* Imagenes de usuario  */}
                 <div className="card p-5">
                     <h6 className="mb-1 text-15">Acciones y Documentación</h6>
-                    <div className="grid items-end grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3 mt-5">
+                    <div className="flex flex-col xl:flex-row justify-between my-4 gap-x-4">
                         <ImageViewer
                             key='Frente-Documento'
+                            // src="https://images.unsplash.com/photo-1682687220640-9d3b11ca30e5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                             src={activeUser.documento_frontal}
                             alt="snow"
                             caption="Frente de Documento"
@@ -257,6 +285,7 @@ const PersonalInfo = () => {
 
                         <ImageViewer
                             key="Dorso-Documento"
+                            // src="https://images.unsplash.com/photo-1707343844436-37580f155ed2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                             src={activeUser.documento_dorsal}
                             alt="snow"
                             caption="Dorso de Documento"
@@ -264,57 +293,24 @@ const PersonalInfo = () => {
 
                         <ImageViewer
                             key="Foto-Rostro"
+                            // src="https://images.unsplash.com/photo-1707727726616-2db19ad7e6b1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                             src={activeUser.foto}
                             alt="snow"
                             caption="Foto de Rostro"
                         />
-
-                        {
-                            activeUser.documentacion_menor && 
-                            (<ImageViewer
-                                key="Documentacion-Menor"
-                                src={activeUser.documentacion_menor}
-                                alt="snow"
-                                caption="Documentacion de Menor"
-                            />)
-                        }
-
+                    </div>
+                    <div className="grid items-end grid-cols-1 gap-5 xl:grid-cols-2 mt-5">
                         <div>
-                            <button 
-                            type="button" 
-                            onClick={toggle} 
-                            className="w-full mt-2 bg-white border-dashed text-custom-500 btn border-custom-500 hover:text-custom-500 hover:bg-custom-50 hover:border-custom-600 focus:text-custom-600 focus:bg-custom-50 focus:border-custom-600 active:text-custom-600 active:bg-custom-50 active:border-custom-600 dark:bg-zink-700 dark:ring-custom-400/20 dark:hover:bg-custom-800/20 dark:focus:bg-custom-800/20 dark:active:bg-custom-800/20"
-                            >
-                                <PenIcon className="mr-1 inline-block size-3 text-custom-500 fill-sky-100 dark:fill-custom-500/20"></PenIcon>
-                                Editar Documentación
-                            </button>
+                            <label htmlFor="Documentación de Menor" className="inline-block mb-2 text-base font-medium">
+                                Documentación de Menor
+                            </label>
+                            <input type="file" className="cursor-pointer form-file form-file-sm border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" />
+                        </div>
+                        <div>
+                            <button type="button" onClick={toggle} className="bg-white border-dashed text-custom-500 btn border-custom-500 hover:text-custom-500 hover:bg-custom-50 hover:border-custom-600 focus:text-custom-600 focus:bg-custom-50 focus:border-custom-600 active:text-custom-600 active:bg-custom-50 active:border-custom-600 dark:bg-zink-700 dark:ring-custom-400/20 dark:hover:bg-custom-800/20 dark:focus:bg-custom-800/20 dark:active:bg-custom-800/20">Editar Documentación</button>
                         </div>
                     </div>
-
                     <div className="grid items-center grid-cols-1 gap-5 mt-5">
-                        <div>
-                            <label htmlFor="estado_documentacion" className="inline-block mb-2 text-base font-medium">
-                                Estado de Documentación
-                            </label>
-
-                            <select 
-                                name="estado_documentacion" 
-                                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                                value={formik.values.estado_documentacion}
-                                onChange={formik.handleChange}
-                            >
-                                {
-                                    EstadoOptions.map((estado, index) => (
-                                        <option key={index} value={estado.value}>{estado.label}</option>
-                                    ))
-                                }
-                            </select>
-
-                            { formik.touched.estado_documentacion && formik.errors.estado_documentacion ? (
-                                <p className="text-red-400">{ formik.errors.estado_documentacion }</p>
-                            ) : null }
-                        </div>
-
                         <div>
                             <label htmlFor="comentario" className="inline-block mb-2 text-base font-medium">Comentario</label>
                             <textarea 
@@ -323,6 +319,7 @@ const PersonalInfo = () => {
                                 className="px-3 form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
                                 rows={4}
                                 placeholder="Agregar un comentario"
+                                // onChange={(e) => handleChangeDoc("comentario", e.target.value)}
                                 value={formik.values.comentario}
                                 onChange={formik.handleChange} 
                                 >
@@ -336,75 +333,80 @@ const PersonalInfo = () => {
             {/* Modal */}
             <Modal show={show} onHide={toggle} modal-center="true"
                 className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
-                dialogClassName="w-screen md:w-[40rem] bg-white shadow rounded-md dark:bg-zink-600 flex flex-col h-full">
+                dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
                 <Modal.Header className="flex items-center justify-between p-4 border-b dark:border-zink-500"
                     closeButtonClass="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
-                    <Modal.Title className="text-16">Editar Documentación</Modal.Title>
+                    <Modal.Title className="text-16">Editar Usuario</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-                    <div>
-                        <Tab.Container defaultActiveKey="foto">
-                            <Nav className="flex justify-between w-full text-sm font-medium text-center border-b border-slate-200 dark:border-zink-500 nav-tabs">
-                                <Nav.Item eventKey="foto" className="group">
-                                    <a href="#!" data-tab-toggle data-target="foto" className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 active:text-custom-500 dark:hover:text-custom-500 dark:active:text-custom-500 dark:group-[.active]:hover:text-custom-500 -mb-[1px]">Foto de Rostro</a>
-                                </Nav.Item>
-                                <Nav.Item eventKey="documento_frontal" className="group">
-                                    <a href="#!" data-tab-toggle data-target="documento_frontal" className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 active:text-custom-500 dark:hover:text-custom-500 dark:active:text-custom-500 dark:group-[.active]:hover:text-custom-500 -mb-[1px]">Frente de Documento</a>
-                                </Nav.Item>
-                                <Nav.Item eventKey="documento_dorsal" className="group">
-                                    <a href="#!" data-tab-toggle data-target="documento_dorsal" className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 active:text-custom-500 dark:hover:text-custom-500 dark:active:text-custom-500 dark:group-[.active]:hover:text-custom-500 -mb-[1px]">Dorso de Documento</a>
-                                </Nav.Item>
-                                <Nav.Item eventKey="documentacion_menor" className="group">
-                                    <a href="#!" data-tab-toggle data-target="documentacion_menor" className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 active:text-custom-500 dark:hover:text-custom-500 dark:active:text-custom-500 dark:group-[.active]:hover:text-custom-500 -mb-[1px]">Documentación de Menor</a>
-                                </Nav.Item>
-                            </Nav>
-
-                            <Tab.Content className="mt-5 tab-content">
-                                <Tab.Pane eventKey="foto" id="foto">
-                                    <UploadFile 
-                                        input="foto"
-                                        src={activeUser.foto}
-                                        alt="Foto de Rostro"
-                                        handleInputChange={handleInputChange}
+                    <form action="#!">
+                        <div className="grid grid-cols-1 gap-4">
+                            <div className="grid items-end grid-cols-1 gap-5">
+                                <div>
+                                    <label htmlFor="documento_frontal" className="inline-block mb-2 text-base font-medium">
+                                        Frente de Documento
+                                    </label>
+                                    <input 
+                                        id="documento_frontal"
+                                        type="file" 
+                                        name="documento_frontal" 
+                                        className="cursor-pointer form-file form-file-sm border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
+                                        onChange={(e) => handleChangeDoc(e)}
                                     />
-                                </Tab.Pane>
+                                </div>
+                            </div>
 
-                                <Tab.Pane eventKey="documento_frontal" id="documento_frontal">
-                                    <UploadFile 
-                                        input="documento_frontal"
-                                        src={activeUser.documento_frontal}
-                                        alt="Frente de Documento"
-                                        handleInputChange={handleInputChange}
+                            <div className="grid items-end grid-cols-1 gap-5 mt-4">
+                                <div>
+                                    <label htmlFor="documento_dorsal" className="inline-block mb-2 text-base font-medium">
+                                        Dorso de Documento
+                                    </label>
+                                    <input 
+                                        id="documento_dorsal"
+                                        type="file" 
+                                        name="documento_dorsal" 
+                                        className="cursor-pointer form-file form-file-sm border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
                                     />
-                                </Tab.Pane>
+                                </div>
+                            </div>
 
-                                <Tab.Pane eventKey="documento_dorsal" id="documento_dorsal">
-                                    <UploadFile 
-                                        input="documento_dorsal"
-                                        src={activeUser.documento_dorsal}
-                                        alt="Dorso de Documento"
-                                        handleInputChange={handleInputChange}
+                            <div className="grid items-end grid-cols-1 gap-5 mt-4">
+                                <div>
+                                    <label htmlFor="foto" className="inline-block mb-2 text-base font-medium">
+                                        Foto de Rostro
+                                    </label>
+                                    <input 
+                                        id="foto"
+                                        type="file" 
+                                        name="foto" 
+                                        className="cursor-pointer form-file form-file-sm border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
                                     />
-                                </Tab.Pane>
+                                </div>
+                            </div>
 
-                                <Tab.Pane eventKey="documentacion_menor" id="documentacion_menor">
-                                    <UploadFile 
-                                        input="documentacion_menor"
-                                        src={activeUser.documentacion_menor}
-                                        alt="Documentación de Menor"
-                                        handleInputChange={handleInputChange}
+                            <div className="grid items-end grid-cols-1 gap-5 mt-4">
+                                <div>
+                                    <label htmlFor="documentacion_menor" className="inline-block mb-2 text-base font-medium">
+                                        Documentación de Menor
+                                    </label>
+                                    <input 
+                                        id="documentacion_menor"
+                                        type="file" 
+                                        name="documentacion_menor" 
+                                        className="cursor-pointer form-file form-file-sm border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
                                     />
-                                </Tab.Pane>
-                            </Tab.Content> 
-                        </Tab.Container>
+                                </div>
+                            </div>
+
+                        </div>
 
                         <div className="flex justify-end gap-2 mt-5">
-                            <button type="button" onClick={toggle} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Cancelar</button>
-                            <button type="button" onClick={toggle} className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
-                                Aceptar
+                            <button type="button" className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10" onClick={toggle}>Cancelar</button>
+                            <button type="button" className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                                Guardar
                             </button>
                         </div>
-                    </div>
+                    </form>
                 </Modal.Body>
             </Modal>
         </React.Fragment >

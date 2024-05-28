@@ -28,7 +28,7 @@ const AccountInfo = () => {
                         <h5 className="mb-1">{activeUser.nombre} {activeUser.apellido} <BadgeCheck className="inline-block size-4 text-sky-500 fill-sky-100 dark:fill-custom-500/20"></BadgeCheck></h5>
                         <div className="flex gap-3 mb-4">
                             <p className="text-slate-500 dark:text-zink-200"><MapPin className="inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></MapPin> Argentina</p>
-                            <p className="text-slate-500 dark:text-zink-200"><Phone className="inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></Phone> Cel: +543834870697</p>
+                            <p className="text-slate-500 dark:text-zink-200"><Phone className="inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></Phone> Cel: {activeUser.numero_celular}</p>
                         </div>
 
                         <p className="mt-4 text-slate-500 dark:text-zink-200">Strong leader and negotiator adept at driving collaboration and innovation. Highly accomplished CEO & Founder with 10+ years of experience creating, launching and leading successful business ventures. Proven ability to build relationships, drive customer loyalty and increase profitability.</p>
@@ -40,7 +40,7 @@ const AccountInfo = () => {
                             </a>
 
                             {
-                                (!activeUser.activo)
+                                (!activeUser.is_active)
                                     ? <button onClick={enableUser} type="button" className="px-8 text-white transition-all duration-200 ease-linear btn bg-green-500 border-green-500 hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/20">Activar</button>
                                     : <button onClick={enableUser} type="button" className="px-8 text-white transition-all duration-200 ease-linear btn bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600 focus:text-white focus:bg-red-600 focus:border-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:border-red-600 active:ring active:ring-red-100 dark:ring-red-400/20">Inhabilitar</button>
                             }

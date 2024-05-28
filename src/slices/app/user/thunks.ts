@@ -1,8 +1,8 @@
 import { Action, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
+import { toast } from "react-toastify";
 import { RootState } from "slices";
 import { APIClient } from "helpers/api_helper";
-import { toast } from "react-toastify";
 import { handleUsers, setStatusUser } from "./reducer";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -24,6 +24,19 @@ export const startPaginateUsers = (page: number): ThunkAction<void, RootState, u
     } catch (error) {
         console.log(error);
     }
+};
+
+export const startUpdateUser = (id: number, data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
+    // try {
+        console.log(id, data)
+        const response = await api.put(`/admin/usuario/${id}`, data)
+        console.log(response)
+        dispatch( setStatusUser() )
+        toast.success("Usuario actualizado con exito", { autoClose: 3000, theme: "colored", icon: true });
+    // } catch (error) {
+    //     toast.error("Error al actualizar el usuario", { autoClose: 3000, theme: "colored", icon: true });
+    //     console.log(error);
+    // }
 };
 
 export const startActiveUser = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
