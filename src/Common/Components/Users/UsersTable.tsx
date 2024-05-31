@@ -10,7 +10,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Modal from "../Ui/Modal";
 import avatar1 from "assets/images/users/avatar-1.png";
-import { getAllHubs, getAllUnits } from "helpers/api_select";
+import { getAllHubs } from "helpers/api_select";
 import { startSavingTravel } from "slices/app/travel/thunks";
 import { startLoadingUsers, startPaginateUsers } from "slices/app/user/thunks";
 import NoResults from "Common/NoResults";
@@ -155,15 +155,15 @@ const UserTable = () => {
         setHubs(data);
     };
 
-    const getUnitsToSelect = async () => {
+    /* const getUnitsToSelect = async () => {
         const response: any = await getAllUnits(); //TODO: Agregar endpoint de bicicletas sin paginar o buscador
         setUnits(response.items);
-    };
+    }; */
         
     useEffect(() => {
         dispatch( startLoadingUsers() );
         getHubsToSelect();
-        getUnitsToSelect();
+        // getUnitsToSelect();
     }, []);
 
     return (
@@ -280,7 +280,7 @@ const UserTable = () => {
                                             ) : null }
                                         </div>
 
-                                        <div className="xl:col-span-12">
+                                        {/* <div className="xl:col-span-12">
                                             <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>
                                             <select
                                                 id="bicicleta_id"
@@ -300,7 +300,7 @@ const UserTable = () => {
                                             { formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
                                                 <p className="text-red-400">{ formik.errors.bicicleta_id }</p>
                                             ) : null }
-                                        </div>
+                                        </div> */}
                                     </div>
 
                                     <div className="flex justify-end gap-2 mt-4">

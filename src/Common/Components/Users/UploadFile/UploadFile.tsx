@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Ban, Check } from "lucide-react";
+import { Ban, Check, File, FileX2 } from "lucide-react";
 import Spinner from "Common/Components/Spinner";
 
 interface PropFile {
@@ -58,25 +58,41 @@ const UploadFile = ({ input, src, alt, handleInputChange }: PropFile) => {
         setIsLoading(false)
     }
 
+    const handleRemoveDoc = () => {
+        handleInputChange(input , '')
+        setUrl(null)
+        setMessage('Se elimino el documento')
+        setStatus('Exito')
+    }
+
     return (
       <React.Fragment>
         <div className="flex justify-center">
             {
                 isLoading
                     ? <Spinner />
-                    : (<img className="w-64 h-56" src={url || src} alt={alt} />)
+                    : (url || src)
+                        ? (<img className="w-64 h-56" src={url || src} alt={alt} />)
+                        : <div><FileX2 className="my-14 size-16 inline-block text-red-500 fill-red-100 dark:fill-red-500/20"></FileX2></div>
             }
         </div>
 
-        <div className="mt-8 px-4">
-            <input 
-                id={input}
-                type="file" 
-                name={input} 
-                className="cursor-pointer form-file form-file-sm border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
-                onChange={(e) => handleChangeDoc(e)}
-            />
+        <div className="mt-8 flex justify-between">
+            <div className="px-4 flex-1">
+                <input 
+                    id={input}
+                    type="file" 
+                    name={input} 
+                    className="cursor-pointer form-file form-file-sm border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500" 
+                    onChange={(e) => handleChangeDoc(e)}
+                />
+            </div>
+
+            <button type="button" onClick={handleRemoveDoc} className="py-1 text-red-500 bg-red-100 btn hover:text-white hover:bg-red-600 focus:text-white focus:bg-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:ring active:ring-red-100 dark:bg-red-500/20 dark:text-red-500 dark:hover:bg-red-500 dark:hover:text-white dark:focus:bg-red-500 dark:focus:text-white dark:active:bg-red-500 dark:active:text-white dark:ring-red-400/20">
+                Eliminar
+            </button>
         </div>
+        
 
         {
             (status === 'Exito' && !isLoading) &&

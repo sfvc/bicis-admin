@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { getAllHubs, getAllUnits } from "helpers/api_select";
+import { getAllHubs, getSearchUnits } from "helpers/api_select";
 import Modal from "Common/Components/Ui/Modal";
 import { startSavingTravel } from "slices/app/travel/thunks";
+import Select from 'react-select';
 
 interface FormData {
     estacion_inicio_id: string,
@@ -34,19 +35,20 @@ const InitTravel = () => {
         } as FormData,
 
         validationSchema: Yup.object({
-            estacion_inicio_id: Yup.string().required("Please Enter Date"),
-            estacion_final_id: Yup.string().required("Please Enter Date"),
-            bicicleta_id: Yup.string().required("Please Enter Date"),
+            estacion_inicio_id: Yup.string().required("La estación de inicio es requerida"),
+            estacion_final_id: Yup.string().required("La estación de fin es requerida"),
+            bicicleta_id: Yup.string().required("La bicicleta es requerida"),
         }),
 
         onSubmit: (values: any) => {
             const data = {
                 ...values, 
-                persona_id: activeUser.id,
+                persona_id: activeUser.id
             };
-            dispatch( startSavingTravel(data) )
-            toggle();
-            navigate('/viajes')
+            console.log(data)
+            // dispatch( startSavingTravel(data) )
+            // toggle();
+            // navigate('/viajes')
         },
     });
 
@@ -64,10 +66,15 @@ const InitTravel = () => {
         setHubs(data);
     };
 
-    const getUnitsToSelect = async () => {
-        const response: any = await getAllUnits(); //TODO: Agregar endpoint de bicicletas sin paginar o buscador
-        setUnits(response.items);
+    const getUnitsToSelect = async (patente: any) => {
+        const data: any = await getSearchUnits(patente);
+        console.log(data)
+        setUnits(data);
     };
+
+    const handleInputChange = (inputValue: any) => {
+        getUnitsToSelect(inputValue)
+    }
 
     const handleNumericChange = (fieldName: string, value: string) => {
         formik.setFieldValue(fieldName, parseInt(value));
@@ -75,7 +82,7 @@ const InitTravel = () => {
         
     useEffect(() => {
         getHubsToSelect();
-        getUnitsToSelect();
+        // getUnitsToSelect();
     }, []);
 
     return (
@@ -140,7 +147,7 @@ const InitTravel = () => {
                                 ) : null }
                             </div>
 
-                            <div className="xl:col-span-12">
+                            {/* <div className="xl:col-span-12">
                                 <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>
                                 <select
                                     id="bicicleta_id"
@@ -160,6 +167,25 @@ const InitTravel = () => {
                                 { formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
                                     <p className="text-red-400">{ formik.errors.bicicleta_id }</p>
                                 ) : null }
+                            </div> */}
+
+                            <div className="xl:col-span-12">
+                                <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>
+                                <Select
+                                    name="bicicleta_id"
+                                    className="border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
+                                    options={units}
+                                    onChange={(option: any) => formik.setFieldValue('bicicleta_id', option.value)}
+                                    onBlur={() => formik.setFieldTouched('bicicleta_id', true)}
+                                    value={units.find((option: any) => option.value === formik.values.bicicleta_id)}
+                                    onInputChange={handleInputChange}
+                                    data-choices
+                                    onFocus={() => formik.setFieldValue('bicicleta_id', '')}
+                                />
+
+                                {formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
+                                    <p className="text-red-400">{formik.errors.bicicleta_id}</p>
+                                ) : null}
                             </div>
                         </div>
 
