@@ -1,20 +1,44 @@
-import React from 'react';
-import CountTravels from 'Common/Components/Travels/Dashboard/CountTravels';
-import TravelsMap from 'Common/Components/Travels/Dashboard/TravelsMap';
-import TravelsFilter from 'Common/Components/Travels/Dashboard/TravelsFilter';
-import TravelsTable from 'Common/Components/Travels/Dashboard/TravelsTable';
+import { useState, useEffect } from 'react';
+import useWebSocket, {ReadyState} from 'react-use-websocket';
 
 const Travels = () => {
+  const [data, setData] = useState(null);
+
+  // URL del WebSocket
+  const socketUrl = 'ws://localhost:1000';
+
+  // Usar el hook useWebSocket
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+
+  // Efecto para manejar los mensajes recibidos
+  useEffect(() => {
+    if (lastMessage !== null) {
+      try {
+        const eventData = JSON.parse(lastMessage?.data);
+        if (eventData.event === 'front/031054167945') {
+          setData(eventData.data);
+        }
+
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+    }
+  }, [lastMessage]);
+
+  // Estado del WebSocket
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Open',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Closed',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
 
   return (
-    <React.Fragment>
-        <div className="pt-4 container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
-            <CountTravels />
-            <TravelsMap />
-            <TravelsFilter />
-            <TravelsTable />
-        </div>
-    </React.Fragment>
+    <div>
+      <p>Connection Status: {connectionStatus}</p>
+      <p>Received Data: {data}</p>
+    </div>
   );
 };
 
