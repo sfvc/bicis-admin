@@ -1,35 +1,24 @@
+import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { bikeMarker, initialPosition } from "Common/Components/Map";
 import MapComponent from "../../Map/MapComponent";
-import { useEffect, useState } from "react";
 import simulateTravel from "helpers/simulateTravels";
-import useSocket from "Hooks/useSocket";
 
 const TravelsMap = () => {
-    /* const [travels, setTravels] = useState<any>([])
-    const [index, setIndex] = useState<number>(0) */
+    const [travels, setTravels] = useState<any>([])
+    const [index, setIndex] = useState<number>(0)
 
-    const { initiateSocket, subscribeToChat } = useSocket()
-    const [data, setData] = useState(null);
-
-    /* function handleTravels () {
+    function handleTravels () {
         setTimeout(() => {
             const data = simulateTravel(index)
             setTravels(data)
             if(data) setIndex(index + 1)
         }, 4000)
-    } */
+    }
 
-    /* useEffect(() => {
+    useEffect(() => {
         handleTravels()
-    }, [index]) */
-
-    useEffect(()=>{
-        initiateSocket('messageToServer')
-        subscribeToChat((error, msg)=>{
-            setData(msg);
-        })
-    },[])
+    }, [index])
     
     return (
         <MapComponent >
@@ -39,7 +28,7 @@ const TravelsMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                {/* {
+                {
                     (travels.length > 0) && travels.map(( travel: any ) => (
                         <Marker key={travel.id} position={travel.coords.point} icon={bikeMarker}>
                             <Popup>
@@ -52,12 +41,8 @@ const TravelsMap = () => {
                             </Popup>
                         </Marker>
                     ))
-                } */}
+                }
             </MapContainer>
-
-            <div className="mt-4 px-4">
-                <p>Received Data: {JSON.stringify(data)}</p>
-            </div>
         </MapComponent>
     )
 }

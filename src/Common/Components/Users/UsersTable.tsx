@@ -7,14 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveUser } from "slices/app/user/reducer";
 import { useFormik } from "formik";
+import Select from 'react-select';
 import * as Yup from "yup";
 import Modal from "../Ui/Modal";
 import avatar1 from "assets/images/users/avatar-1.png";
-import { getAllHubs } from "helpers/api_select";
+import { getAllHubs, getSearchUnits } from "helpers/api_select";
 import { startSavingTravel } from "slices/app/travel/thunks";
 import { startLoadingUsers, startPaginateUsers } from "slices/app/user/thunks";
 import NoResults from "Common/NoResults";
 import Pagination from "../Pagination";
+import ErrorAlert from "../Ui/Alert/ErrorAlert";
 
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
@@ -98,6 +100,8 @@ const UserTable = () => {
     const [show, setShow] = useState<boolean>(false);
     const [hubs, setHubs] = useState<any>([]);
     const [units, setUnits] = useState<any>([]);
+    const [select, setSelect] = useState<any>(null)
+    const [errorMessage, setErrorMessage] = useState<string>('')
 
     // Formik
     const formik: any = useFormik({
@@ -110,26 +114,26 @@ const UserTable = () => {
         } as FormData,
 
         validationSchema: Yup.object({
-            estacion_inicio_id: Yup.string().required("La estación es requerida"),
-            estacion_final_id: Yup.string().required("La estación es requerida"),
+            estacion_inicio_id: Yup.string().required("La estación de inicio es requerida"),
+            estacion_final_id: Yup.string().required("La estación de fin es requerida"),
             bicicleta_id: Yup.string().required("La bicicleta es requerida"),
         }),
 
-        onSubmit: (values: any) => {
+        onSubmit: async (values: any) => {
             const data = {
                 ...values, 
-                persona_id: activeUser.id,
+                usuario_id: activeUser.id
             };
-            dispatch( startSavingTravel(data) )
-            toggle();
-            navigate('/viajes')
-        },
-    });
 
-    // Función para manejar valores numéricos
-    const handleNumericChange = (fieldName: string, value: string) => {
-        formik.setFieldValue(fieldName, parseInt(value));
-    };
+            const response = await dispatch( startSavingTravel(data) )
+            if (response === true) {
+                toggle();
+                navigate('/viajes')
+            } else {
+                setErrorMessage(response)
+            }
+        }
+    });
 
     const showUser = (id: number) => {
         dispatch( setActiveUser(id) );
@@ -146,6 +150,7 @@ const UserTable = () => {
             setShow(false);
         } else {
             setShow(true);
+            setSelect(null);
             formik.resetForm();
         }
     }, [show, formik]);
@@ -155,15 +160,18 @@ const UserTable = () => {
         setHubs(data);
     };
 
-    /* const getUnitsToSelect = async () => {
-        const response: any = await getAllUnits(); //TODO: Agregar endpoint de bicicletas sin paginar o buscador
-        setUnits(response.items);
-    }; */
+    const getUnitsToSelect = async (patente: any) => {
+        const data: any = await getSearchUnits(patente);
+        setUnits(data);
+    };
+
+    const handleInputChange = (inputValue: any) => { getUnitsToSelect(inputValue) }
+
+    const handleNumericChange = (fieldName: string, value: string) => formik.setFieldValue(fieldName, parseInt(value));
         
     useEffect(() => {
         dispatch( startLoadingUsers() );
         getHubsToSelect();
-        // getUnitsToSelect();
     }, []);
 
     return (
@@ -224,7 +232,7 @@ const UserTable = () => {
                                             <h5 className="mb-1">{activeUser.nombre} {activeUser.apellido}<BadgeCheck className="inline-block size-4 text-sky-500 fill-sky-100 dark:fill-custom-500/20"></BadgeCheck></h5>
                                             <div className="flex flex-col sm:flex-row gap-3 mb-4">
                                                 <p className="text-slate-500 dark:text-zink-200"><MapPin className="inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></MapPin> Argentina</p>
-                                                <p className="text-slate-500 dark:text-zink-200"><Phone className="inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></Phone> Cel: {activeUser.telefono}</p>
+                                                <p className="text-slate-500 dark:text-zink-200"><Phone className="inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500"></Phone> Cel: {activeUser.numero_celular}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -265,7 +273,7 @@ const UserTable = () => {
                                                 name="estacion_final_id"
                                                 className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                                 onChange={(e) => handleNumericChange("estacion_final_id", e.target.value)}
-                                                    value={formik.values.estacion_final_id || ""}
+                                                value={formik.values.estacion_final_id || ""}
                                             >
                                                 <option value="">Seleccionar una estación</option>
                                                 {
@@ -280,28 +288,34 @@ const UserTable = () => {
                                             ) : null }
                                         </div>
 
-                                        {/* <div className="xl:col-span-12">
+                                        <div className="xl:col-span-12">
                                             <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>
-                                            <select
-                                                id="bicicleta_id"
+                                            <Select
                                                 name="bicicleta_id"
-                                                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                                                onChange={(e) => handleNumericChange("bicicleta_id", e.target.value)}
-                                                    value={formik.values.bicicleta_id || ""}
-                                            >
-                                                <option value="">Seleccionar una bicicleta</option>
-                                                {
-                                                    units.length > 0 && units.map((unit: any) => (
-                                                        <option key={unit.id} value={unit.id}>{unit.patente}</option>
-                                                    ))
-                                                }
-                                            </select>
+                                                className="border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
+                                                options={units}
+                                                value={select}
+                                                onInputChange={handleInputChange}
+                                                data-choices
+                                                onChange={(option: any) => {
+                                                    formik.setFieldValue('bicicleta_id', option.value)
+                                                    setSelect(option)
+                                                }}
+                                                onFocus={() => {
+                                                    formik.setFieldValue('bicicleta_id', '')
+                                                    setSelect(null)
+                                                }}
+                                            />
 
-                                            { formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
-                                                <p className="text-red-400">{ formik.errors.bicicleta_id }</p>
-                                            ) : null }
-                                        </div> */}
+                                            {formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
+                                                <p className="text-red-400">{formik.errors.bicicleta_id}</p>
+                                            ) : null}
+                                        </div>
                                     </div>
+
+                                    {
+                                        errorMessage && <ErrorAlert message={errorMessage}/>
+                                    }
 
                                     <div className="flex justify-end gap-2 mt-4">
                                         <button type="reset" className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10" onClick={toggle}>Cancelar</button>

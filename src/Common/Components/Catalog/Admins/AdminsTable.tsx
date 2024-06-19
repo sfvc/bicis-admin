@@ -15,7 +15,7 @@ import Pagination from "Common/Components/Pagination";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
-const rolData = ['MONITOREO', 'ADMIN'];
+const rolData = ['AGENTE', 'ADMIN'];
 
 const initialValues = {
     nombre: "",

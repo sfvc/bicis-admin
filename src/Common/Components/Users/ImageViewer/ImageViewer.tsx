@@ -24,7 +24,7 @@ const ImageViewer = ({ src, alt, caption }: any) => {
                 &times;
               </span>
               <div className="modal-content">
-                <img className="" src={src} alt={alt} />
+                <img className="w-full" src={src} alt={alt} />
                 {caption.length > 0 && <div className="caption">{caption}</div>}
               </div>
             </div>

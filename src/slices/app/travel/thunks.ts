@@ -1,5 +1,5 @@
-import { Action, Dispatch } from "redux";
-import { ThunkAction } from "redux-thunk";
+import { Action } from "redux";
+import { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { RootState } from "slices";
 import { APIClient } from "helpers/api_helper";
 import { toast } from "react-toastify";
@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const api = new APIClient();
 
-export const startLoadingTravels = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
+export const startLoadingTravels = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.get('/admin/viaje', null)
         dispatch( handleTravels(response) ); 
@@ -17,7 +17,7 @@ export const startLoadingTravels = (): ThunkAction<void, RootState, unknown, Act
     }
 };
 
-export const startPaginateTravels = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
+export const startPaginateTravels = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.get('/admin/viaje', {page})
         dispatch( handleTravels(response) ); 
@@ -26,20 +26,22 @@ export const startPaginateTravels = (page: number): ThunkAction<void, RootState,
     }
 };
 
-export const startSavingTravel = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
+export const startSavingTravel = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response = await api.create('/viaje', data)
-        startLoadingTravels() // TODO: Corregir esta llamada al metodo
+        const response: any = await api.create('/admin/viaje', data)
+        if(response.status === 400) return response.data.message
+        dispatch( startLoadingTravels() ) 
         toast.success("Viaje creado con exito", { autoClose: 3000, theme: "colored", icon: true });
+        return true;
     } catch (error) {
-        toast.error("Error al crear el viaje", { autoClose: 3000, theme: "colored", icon: true });
-        console.log(error);
+        console.log(error)
     }
 };
 
-export const startCloseTravel = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
+export const startCloseTravel = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response = await api.create(`/viaje/${id}/finalizar`, data)
+        await api.create(`/admin/viaje/finalizar/${id}`, data)
+        dispatch( startLoadingTravels() ) 
         toast.success("Viaje finalizado con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         toast.error("Error al finalizar el viaje", { autoClose: 3000, theme: "colored", icon: true });
@@ -47,7 +49,7 @@ export const startCloseTravel = (data: any, id: number): ThunkAction<void, RootS
     }
 };
 
-export const startFilterTravels = (data: any): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: Dispatch) => {
+export const startFilterTravels = (data: any): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.create('/admin/viaje/filtro', data)
         dispatch( handleTravels(response) ); 
@@ -55,21 +57,3 @@ export const startFilterTravels = (data: any): ThunkAction<void, RootState, unkn
         console.log(error);
     }
 };
-
-/* export const startUpdateTravel = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
-    try {
-        const response = await api.update(`http://localhost:1000/api/v1/viaje/${id}`, data)
-        console.log(response)
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-export const startDeleteTravel = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
-    try {
-        const response = await api.delete(`http://localhost:1000/api/v1/viaje/${id}`, data)
-        console.log(response)
-    } catch (error) {
-        console.log(error);
-    }
-}; */

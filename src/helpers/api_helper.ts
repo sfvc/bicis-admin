@@ -16,7 +16,9 @@ axios.interceptors.response.use(
     return response.data ? response.data : response;
   },
   function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Any status codes that falls outside the range of 2xx cause this function to triggerclg
+    if(error?.response?.status === 400) return error.response
+
     let message;
     switch (error.status) {
       case 500:

@@ -82,13 +82,13 @@ const menuData: any = [
             {
                 id: 'tipodespot',
                 label: 'Tipo de Spot',
-                link: '#',
+                link: '/catalogo/tipo-spot',
                 parentId: "catalogos"
             },
             {
                 id: 'tiposdepenalidad',
                 label: 'Tipos de Penalidad',
-                link: '#',
+                link: '/catalogo/tipo-penalidad',
                 parentId: "catalogos"
             },
             {
@@ -100,7 +100,7 @@ const menuData: any = [
             {
                 id: 'locks',
                 label: 'Locks',
-                link: '#',
+                link: '/catalogo/locks',
                 parentId: "catalogos"
             },
             {
@@ -112,19 +112,19 @@ const menuData: any = [
             {
                 id: 'razonesparataller',
                 label: 'Razones para Taller',
-                link: '#',
+                link: '/catalogo/razones',
                 parentId: "catalogos"
             },
             {
                 id: 'categoriasfaq',
                 label: 'Categoria FAQ',
-                link: '#',
+                link: '/catalogo/categorias',
                 parentId: "catalogos"
             },
             {
                 id: 'categoriasfaq',
                 label: 'Preguntas Frecuentes',
-                link: '#',
+                link: '/catalogo/preguntas-frecuentes',
                 parentId: "catalogos"
             }
         ]

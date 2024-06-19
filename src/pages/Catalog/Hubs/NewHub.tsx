@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, Polygon  } from 'react-leaflet';
-import { LatLngExpression, Marker as TypeMarker } from 'leaflet';
+import { LatLngExpression, LatLng , Marker as TypeMarker } from 'leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { Field, Formik, Form } from 'formik';
 import { Pen } from 'lucide-react';
@@ -14,15 +14,15 @@ import { Tooltip } from 'react-tooltip';
 interface FormData {
     nombre: string,
     direccion: string,
-    capacidadElectrica: number | null,
-    capacidadMecanica: number | null
+    capacidad_electrica: number | null,
+    capacidad_mecanica: number | null
 }
 
 const initialValues: FormData = {
     nombre: '',
     direccion: '',
-    capacidadElectrica: null,
-    capacidadMecanica: null
+    capacidad_electrica: null,
+    capacidad_mecanica: null
 };
 
 const initialPolygon = [
@@ -112,10 +112,20 @@ const NewHub = () => {
     }
 
     function handleSubmit (values: FormData) {
-        if(activeHub) {
-            dispatch( startUpdateHub({...values, ubicacion: position, perimetro: polygon}, activeHub.id) )
-        } else {
-            dispatch( startSavingHub({...values, ubicacion: position, perimetro: polygon}) )
+        if (position instanceof LatLng) {
+            const {lat, lng} = position
+
+            const data = {
+                ...values, 
+                ubicacion: { lat, lng }, 
+                perimetro: polygon
+            }
+
+            if(activeHub) {
+                dispatch( startUpdateHub(data, activeHub.id) )
+            } else {
+                dispatch( startSavingHub(data) )
+            }
         }
 
         navigate('/catalogo/estaciones')
@@ -190,14 +200,14 @@ const NewHub = () => {
                                 <label htmlFor="capacidadMecanica" className="inline-block mb-2 text-base font-medium">
                                     Capacidad de Bicis Mecanicas
                                 </label>
-                                <Field type="number" id="capacidadMecanica" name="capacidadMecanica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Electricas"/>
+                                <Field type="number" id="capacidad_mecanica" name="capacidad_mecanica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Electricas"/>
                             </div>
 
                             <div className="xl:col-span-6">
-                                <label htmlFor="capacidadElectrica" className="inline-block mb-2 text-base font-medium">
+                                <label htmlFor="capacidad_electrica" className="inline-block mb-2 text-base font-medium">
                                     Capacidad de Bicis Electricas
                                 </label>
-                                <Field type="number" id="capacidadElectrica" name="capacidadElectrica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Mecanicas"/>
+                                <Field type="number" id="capacidad_electrica" name="capacidad_electrica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Mecanicas"/>
                             </div>
      
                         </div>

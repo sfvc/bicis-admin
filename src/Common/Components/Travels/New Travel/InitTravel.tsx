@@ -7,6 +7,7 @@ import { getAllHubs, getSearchUnits } from "helpers/api_select";
 import Modal from "Common/Components/Ui/Modal";
 import { startSavingTravel } from "slices/app/travel/thunks";
 import Select from 'react-select';
+import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
 
 interface FormData {
     estacion_inicio_id: string,
@@ -23,6 +24,8 @@ const InitTravel = () => {
     const [show, setShow] = useState<boolean>(false);
     const [hubs, setHubs] = useState<any>([]);
     const [units, setUnits] = useState<any>([]);
+    const [select, setSelect] = useState<any>(null)
+    const [errorMessage, setErrorMessage] = useState<string>('')
 
     // Formik
     const formik: any = useFormik({
@@ -40,16 +43,20 @@ const InitTravel = () => {
             bicicleta_id: Yup.string().required("La bicicleta es requerida"),
         }),
 
-        onSubmit: (values: any) => {
+        onSubmit: async (values: any) => {
             const data = {
                 ...values, 
-                persona_id: activeUser.id
+                usuario_id: activeUser.id
             };
-            console.log(data)
-            // dispatch( startSavingTravel(data) )
-            // toggle();
-            // navigate('/viajes')
-        },
+
+            const response = await dispatch( startSavingTravel(data) )
+            if (response === true) {
+                toggle();
+                navigate('/viajes')
+            } else {
+                setErrorMessage(response)
+            }
+        }
     });
 
     const toggle = useCallback(() => {
@@ -57,6 +64,7 @@ const InitTravel = () => {
             setShow(false);
         } else {
             setShow(true);
+            setSelect(null);
             formik.resetForm();
         }
     }, [show, formik]);
@@ -68,21 +76,15 @@ const InitTravel = () => {
 
     const getUnitsToSelect = async (patente: any) => {
         const data: any = await getSearchUnits(patente);
-        console.log(data)
         setUnits(data);
     };
 
-    const handleInputChange = (inputValue: any) => {
-        getUnitsToSelect(inputValue)
-    }
+    const handleInputChange = (inputValue: any) => { getUnitsToSelect(inputValue) }
 
-    const handleNumericChange = (fieldName: string, value: string) => {
-        formik.setFieldValue(fieldName, parseInt(value));
-    };
+    const handleNumericChange = (fieldName: string, value: string) => formik.setFieldValue(fieldName, parseInt(value));
         
     useEffect(() => {
         getHubsToSelect();
-        // getUnitsToSelect();
     }, []);
 
     return (
@@ -147,40 +149,23 @@ const InitTravel = () => {
                                 ) : null }
                             </div>
 
-                            {/* <div className="xl:col-span-12">
-                                <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>
-                                <select
-                                    id="bicicleta_id"
-                                    name="bicicleta_id"
-                                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                                    onChange={(e) => handleNumericChange("bicicleta_id", e.target.value)}
-                                    value={formik.values.bicicleta_id || ""}
-                                >
-                                    <option value="">Seleccionar una bicicleta</option>
-                                    {
-                                        units.length > 0 && units.map((unit: any) => (
-                                            <option key={unit.id} value={unit.id}>{unit.patente}</option>
-                                        ))
-                                    }
-                                </select>
-
-                                { formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
-                                    <p className="text-red-400">{ formik.errors.bicicleta_id }</p>
-                                ) : null }
-                            </div> */}
-
                             <div className="xl:col-span-12">
                                 <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>
                                 <Select
                                     name="bicicleta_id"
                                     className="border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
                                     options={units}
-                                    onChange={(option: any) => formik.setFieldValue('bicicleta_id', option.value)}
-                                    onBlur={() => formik.setFieldTouched('bicicleta_id', true)}
-                                    value={units.find((option: any) => option.value === formik.values.bicicleta_id)}
+                                    value={select}
                                     onInputChange={handleInputChange}
                                     data-choices
-                                    onFocus={() => formik.setFieldValue('bicicleta_id', '')}
+                                    onChange={(option: any) => {
+                                        formik.setFieldValue('bicicleta_id', option.value)
+                                        setSelect(option)
+                                    }}
+                                    onFocus={() => {
+                                        formik.setFieldValue('bicicleta_id', '')
+                                        setSelect(null)
+                                    }}
                                 />
 
                                 {formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
@@ -188,6 +173,10 @@ const InitTravel = () => {
                                 ) : null}
                             </div>
                         </div>
+
+                        {
+                            errorMessage && <ErrorAlert message={errorMessage}/>
+                        }
 
                         <div className="flex justify-end gap-2 mt-4">
                             <button type="reset" className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10" onClick={toggle}>Cancelar</button>

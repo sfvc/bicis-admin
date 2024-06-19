@@ -13,15 +13,18 @@ import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
 
-export const tiposBicicleta = ['ELECTRICA', 'MECANICA']
-export const estadosBicicleta = ['ACTIVO', 'INACTIVO']
+export const tiposBicicleta = ['ELECTRICA', 'ESTANDAR']
+export const estadosBicicleta = ['EN_BASE', 'EN_HUB', 'EN_TALLER', 'EN_CALLE', 'BALANCEO_POR_EL_OPERADOR']
+export const condicionBicicleta = ['ACTIVA', 'INACTIVA']
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
 const initialValues = {
     patente: "",
-    tipo: "",
-    estado: ""
+    tipo_de_unidad: "",
+    estado: "",
+    condicion: "",
+    imei: ""
 }
 
 const api = new APIClient();
@@ -40,8 +43,10 @@ const UnitsTable = () => {
         initialValues: activeUnit || initialValues,
         validationSchema: Yup.object({
             patente: Yup.string().required("La patente es requerida"),
-            tipo: Yup.string().required("El tipo es requerido"),
+            tipo_de_unidad: Yup.string().required("El tipo es requerido"),
             estado: Yup.string().required("El estado es requerido"),
+            condicion: Yup.string().required("El estado es requerido"),
+            imei: Yup.string().required("El estado es requerido"),
         }),
 
         onSubmit: (values: any) => {
@@ -231,13 +236,13 @@ const UnitsTable = () => {
                             </div>
 
                             <div className="xl:col-span-12">
-                                <label htmlFor="tipo" className="inline-block mb-2 text-base font-medium">Tipo de Bicicleta</label>
+                                <label htmlFor="tipo_de_unidad" className="inline-block mb-2 text-base font-medium">Tipo de Bicicleta</label>
                                 <select
-                                    id="tipo"
-                                    name="tipo"
+                                    id="tipo_de_unidad"
+                                    name="tipo_de_unidad"
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                     onChange={formik.handleChange}
-                                    value={formik.values.tipo || ""}
+                                    value={formik.values.tipo_de_unidad || ""}
                                 >
                                     <option value="">Seleccionar un tipo</option>
                                     {
@@ -247,8 +252,8 @@ const UnitsTable = () => {
                                     }
                                 </select>
 
-                                { formik.touched.tipo && formik.errors.tipo ? (
-                                    <p className="text-red-400">{ formik.errors.tipo }</p>
+                                { formik.touched.tipo_de_unidad && formik.errors.tipo_de_unidad ? (
+                                    <p className="text-red-400">{ formik.errors.tipo_de_unidad }</p>
                                 ) : null }
                             </div>
 
@@ -271,6 +276,45 @@ const UnitsTable = () => {
 
                                 { formik.touched.estado && formik.errors.estado ? (
                                     <p className="text-red-400">{ formik.errors.estado }</p>
+                                ) : null }
+                            </div>
+
+                            <div className="xl:col-span-12">
+                                <label htmlFor="condicion" className="inline-block mb-2 text-base font-medium">Condición</label>
+                                <select
+                                    id="condicion"
+                                    name="condicion"
+                                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                    onChange={formik.handleChange}
+                                    value={formik.values.condicion || ""}
+                                >
+                                    <option value="">Seleccionar una condición</option>
+                                    {
+                                        condicionBicicleta.map((condicion, index) => (
+                                            <option key={index} value={condicion}>{condicion}</option>
+                                        ))
+                                    }
+                                </select>
+
+                                { formik.touched.condicion && formik.errors.condicion ? (
+                                    <p className="text-red-400">{ formik.errors.condicion }</p>
+                                ) : null }
+                            </div>
+
+                            <div className="xl:col-span-12">
+                                <label htmlFor="imei" className="inline-block mb-2 text-base font-medium">Imei</label>
+                                <input 
+                                    type="text" 
+                                    name="imei" 
+                                    id="imei" 
+                                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
+                                    placeholder="Imei" 
+                                    onChange={formik.handleChange}
+                                    value={formik.values.imei}
+                                />
+
+                                { formik.touched.imei && formik.errors.imei ? (
+                                    <p className="text-red-400">{ formik.errors.imei }</p>
                                 ) : null }
                             </div>
                         </div>
