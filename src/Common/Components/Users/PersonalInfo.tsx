@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -6,6 +6,7 @@ import ImageViewer from "./ImageViewer/ImageViewer";
 import * as Yup from "yup";
 import { startUpdateUser } from "slices/app/user/thunks";
 import ModalFile from "./UploadFile/ModalFile";
+import ErrorAlert from "../Ui/Alert/ErrorAlert";
 
 interface Option { label: string; value: string; isDisabled?: boolean };
 
@@ -55,6 +56,7 @@ const PersonalInfo = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<any>();
     const { activeUser } = useSelector( (state: any) => state.User );
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     // Formik
     const formik: any = useFormik({
@@ -76,10 +78,15 @@ const PersonalInfo = () => {
             documentacion_menor: Yup.string().nullable()
         }),
 
-        onSubmit: (values: any) => {
-            dispatch( startUpdateUser(activeUser.id, values) )
-            resetForm()
-            navigate('/usuarios')
+        onSubmit: async (values: any) => {
+            const response = await dispatch( startUpdateUser(activeUser.id, values) )
+            if (response === true) {
+                resetForm()
+                navigate('/usuarios')
+            } else {
+                setErrorMessage(response)
+            }
+            
         },
     });
 
@@ -108,7 +115,7 @@ const PersonalInfo = () => {
                                         DNI
                                     </label>
                                     <input 
-                                        type="number" 
+                                        type="text" 
                                         id="documento_numero" 
                                         name="documento_numero" 
                                         className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
@@ -220,6 +227,10 @@ const PersonalInfo = () => {
                                     ) : null }
                                 </div>
                             </div>
+
+                            {
+                                errorMessage && <ErrorAlert message={errorMessage} />
+                            }
 
                             <div className="flex justify-end mt-6 gap-x-4">
                                 <button type="button" onClick={resetForm} className="text-red-500 bg-red-100 btn hover:text-white hover:bg-red-600 focus:text-white focus:bg-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:ring active:ring-red-100 dark:bg-red-500/20 dark:text-red-500 dark:hover:bg-red-500 dark:hover:text-white dark:focus:bg-red-500 dark:focus:text-white dark:active:bg-red-500 dark:active:text-white dark:ring-red-400/20">

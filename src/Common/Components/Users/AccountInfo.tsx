@@ -12,7 +12,8 @@ const AccountInfo = () => {
     const dispatch = useDispatch<any>()
 
     function enableUser () {
-        dispatch( startActiveUser(activeUser.id) )
+        const data = { is_active: !activeUser.is_active }
+        dispatch( startActiveUser(activeUser.id, data) )
     }
 
     return (

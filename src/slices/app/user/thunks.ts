@@ -27,21 +27,20 @@ export const startPaginateUsers = (page: number): ThunkAction<void, RootState, u
 };
 
 export const startUpdateUser = (id: number, data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
-    // try {
-        console.log(id, data)
+    try {
         const response = await api.put(`/admin/usuario/${id}`, data)
-        console.log(response)
-        dispatch( setStatusUser() )
+        if(response.status === 400) return response.data.message
         toast.success("Usuario actualizado con exito", { autoClose: 3000, theme: "colored", icon: true });
-    // } catch (error) {
-    //     toast.error("Error al actualizar el usuario", { autoClose: 3000, theme: "colored", icon: true });
-    //     console.log(error);
-    // }
+        return true 
+    } catch (error) {
+        toast.error("Error al actualizar el usuario", { autoClose: 3000, theme: "colored", icon: true });
+        console.log(error);
+    }
 };
 
-export const startActiveUser = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
+export const startActiveUser = (id: number, data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: Dispatch) => {
     try {
-        const response = await api.get(`/persona/${id}/active`, null)
+        await api.put(`/admin/usuario/${id}`, data)
         dispatch( setStatusUser() )
         toast.success("Usuario hablitado con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
