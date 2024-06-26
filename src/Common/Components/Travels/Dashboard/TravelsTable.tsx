@@ -143,7 +143,7 @@ const TravelsTable = () => {
                             )
                         }
 
-                        <button onClick={() => navigate(`/detalle-viaje/${props.row.original.id}`)} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
+                        <button onClick={() => onShowTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
                             <Tooltip id="default" place="top" content="Ver Viaje" />
                             <Eye className="inline-block text-blue-500 dark:text-blue-200"></Eye>
                         </button>
@@ -197,6 +197,11 @@ const TravelsTable = () => {
     const onCloseTravel = (id: number) => {
         dispatch( setActiveTravel(id) );
         toggle()
+    };
+
+    const onShowTravel = (id: number) => {
+        dispatch( setActiveTravel(id) );
+        navigate(`/detalle-viaje/${id}`);
     };
         
     useEffect(() => {

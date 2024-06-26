@@ -25,8 +25,8 @@ const Login = (props: any) => {
         enableReinitialize: true,
 
         initialValues: {
-            username: "admin" || '',
-            password: "12345678" || '',
+            username: '',
+            password: '',
         },
         validationSchema: Yup.object({
             username: Yup.string().required("El usuario es requerido."),

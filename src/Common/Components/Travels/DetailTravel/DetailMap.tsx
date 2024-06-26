@@ -1,23 +1,27 @@
-import { MapContainer, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
-import { hubMarker, initialPosition } from "Common/Components/Map";
-import MapComponent from "../../Map/MapComponent";
 import { useEffect, useState } from "react";
-import { generateTrayectory } from "helpers/generateTrayectory";
-
-interface Trayectory {
-    start: [number, number], 
-    end: [number, number], 
-    trayectory: [number, number][]
-}
+import { useSelector } from "react-redux";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import useSocket from "Hooks/useSocket";
+import MapComponent from "../../Map/MapComponent";
+import { bikeMarker, initialPosition } from "Common/Components/Map";
+import { LatLngExpression } from "leaflet";
 
 const DetailMap = () => {
-    const [points, setPoints] = useState<Trayectory | null >(null)
+    const { activeTravel } =  useSelector((state: any) => state.Travel)
+    const { initiateSocket, subscribeToChat } = useSocket()
+    const [position, setPosition] = useState<LatLngExpression>(initialPosition);
 
-    useEffect(() => {
-        // Simula una trayectoria real de un hub a otro
-        const data = generateTrayectory()
-        setPoints(data)
-    }, [])
+    const formatPoint = (data: any) => {
+        // TODO: Corroborar que el id del tracker corresponda con el de la bici en viaje 
+        // if(data.id === activeTravel.bicicleta.id) return false 
+        const point: LatLngExpression = [ data.latitude, data.longitude ]
+        setPosition(point);
+    }
+
+    useEffect(()=>{
+        initiateSocket('messageToServer')
+        subscribeToChat((error, msg) => formatPoint(msg))
+    },[])
 
     return (
         <MapComponent >
@@ -27,28 +31,16 @@ const DetailMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                {
-                    (points) && (
-                        <>
-                            {/* Estacion incial */}
-                            <Marker position={points.start} icon={hubMarker}>
-                                <Popup>
-                                    A pretty CSS3 popup. <br /> Easily customizable.
-                                </Popup>
-                            </Marker>
-
-                            {/* Estacion final */}
-                            <Marker position={points.end} icon={hubMarker}>
-                                <Popup>
-                                    A pretty CSS3 popup. <br /> Easily customizable.
-                                </Popup>
-                            </Marker>
-
-                            {/* Trayectoria */}
-                            <Polyline positions={points.trayectory} color="purple" />
-                        </>
-                    )
-                }
+                <Marker key={activeTravel.id} position={position} icon={bikeMarker}>
+                    <Popup>
+                        <div className="text-center">
+                            <span className="font-semibold">Usuario: </span>{activeTravel.usuario.nombre} {activeTravel.usuario.apellido} <br /> 
+                            <span className="font-semibold">Unidad: </span>{activeTravel.bicicleta.patente} <br /> 
+                            <span className="font-semibold">Tipo: </span>{activeTravel.bicicleta.tipo_unidad || 'PROVISORIO'} <br /> 
+                            {/* <span className="font-semibold">Ultima posición <br /></span>{activeTravel.coords.date} <br />  */}
+                        </div>
+                    </Popup>
+                </Marker>
 
             </MapContainer>
         </MapComponent>
