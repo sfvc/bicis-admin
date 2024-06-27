@@ -45,7 +45,7 @@ const TravelsTable = () => {
             },
             {
                 header: 'Tipo de unidad',
-                accessorKey: 'bicicleta.tipo',
+                accessorKey: 'bicicleta.tipo_de_unidad',
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (

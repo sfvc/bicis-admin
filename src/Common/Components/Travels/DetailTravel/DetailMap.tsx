@@ -31,17 +31,20 @@ const DetailMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                <Marker key={activeTravel.id} position={position} icon={bikeMarker}>
-                    <Popup>
-                        <div className="text-center">
-                            <span className="font-semibold">Usuario: </span>{activeTravel.usuario.nombre} {activeTravel.usuario.apellido} <br /> 
-                            <span className="font-semibold">Unidad: </span>{activeTravel.bicicleta.patente} <br /> 
-                            <span className="font-semibold">Tipo: </span>{activeTravel.bicicleta.tipo_unidad || 'PROVISORIO'} <br /> 
-                            {/* <span className="font-semibold">Ultima posición <br /></span>{activeTravel.coords.date} <br />  */}
-                        </div>
-                    </Popup>
-                </Marker>
-
+                {
+                    position !== initialPosition && (
+                        <Marker key={activeTravel.id} position={position} icon={bikeMarker}>
+                            <Popup>
+                                <div className="text-center">
+                                    <span className="font-semibold">Usuario: </span>{activeTravel.usuario.nombre} {activeTravel.usuario.apellido} <br /> 
+                                    <span className="font-semibold">Unidad: </span>{activeTravel.bicicleta.patente} <br /> 
+                                    <span className="font-semibold">Tipo: </span>{activeTravel.bicicleta.tipo_de_unidad} <br /> 
+                                    {/* <span className="font-semibold">Ultima posición <br /></span>{activeTravel.coords.date} <br />  */}
+                                </div>
+                            </Popup>
+                        </Marker>
+                    )
+                }
             </MapContainer>
         </MapComponent>
     )
