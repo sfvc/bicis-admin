@@ -46,7 +46,7 @@ const TravelInfo = () => {
                             <p className="text-slate-500 dark:text-zink-200">Número de viaje</p>
                         </div>
                         <div className="px-4 text-center border-slate-200 dark:border-zink-500">
-                            <p className="text-lg font-bold mt-4 text-blue-600 dark:text-slate-200">17:39</p>
+                            <p className="text-lg font-bold mt-4 text-blue-600 dark:text-slate-200">{activeTravel?.duracion || '-'}</p>
                             <p className="text-slate-500 dark:text-zink-200">Duración</p>
                         </div>
                         <div className="px-4 text-center border-slate-200 dark:border-zink-500">
