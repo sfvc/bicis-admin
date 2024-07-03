@@ -15,7 +15,7 @@ interface Trayectory {
 
 const DetailMap = () => {
     const { activeTravel } =  useSelector((state: any) => state.Travel)
-    const { initiateSocket, subscribeToChat } = useSocket()
+    const { initiateSocket, subscribeToChat } = useSocket('front/031054167945')
     const [position, setPosition] = useState<LatLngExpression>(initialPosition);
 
     const [points, setPoints] = useState<Trayectory | null >(null)

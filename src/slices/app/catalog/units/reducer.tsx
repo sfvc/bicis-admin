@@ -7,6 +7,7 @@ interface Unit {
     tipo_de_unidad: string,
     estado: string,
     condicion: string,
+    lock_id: string,
     created_at: string,
     updated_at: string
 }

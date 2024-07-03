@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
-import { Eye, Pen, Search } from "lucide-react";
+import { Eye, Pen, Search, Trash } from "lucide-react";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
 import { useDispatch, useSelector } from "react-redux";
 import { startLoadingUnits, startPaginateUnits, startSavingUnit, startUpdateUnit } from "slices/app/catalog/units/thunks";
@@ -24,7 +24,8 @@ const initialValues = {
     tipo_de_unidad: "",
     estado: "",
     condicion: "",
-    imei: ""
+    imei: "",
+    // lock_id: ""
 }
 
 const api = new APIClient();
@@ -47,6 +48,7 @@ const UnitsTable = () => {
             estado: Yup.string().required("El estado es requerido"),
             condicion: Yup.string().required("El estado es requerido"),
             imei: Yup.string().required("El estado es requerido"),
+            // lock_id: Yup.string().required("El lock es requerido"),
         }),
 
         onSubmit: (values: any) => {
@@ -121,9 +123,14 @@ const UnitsTable = () => {
                             <Pen className="inline-block size-5 text-slate-500 dark:text-zink-200"></Pen>
                         </button>
 
+                        {/* <button className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver">
+                            <Tooltip id="default" place="top" content="Ver" />
+                            <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
+                        </button> */}
+
                         <button className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
                             <Tooltip id="default" place="top" content="Eliminar" />
-                            <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
+                            <Trash className="inline-block size-5 text-slate-500 dark:text-zink-200"></Trash>
                         </button>
                     </div>
                 ),
@@ -317,6 +324,23 @@ const UnitsTable = () => {
                                     <p className="text-red-400">{ formik.errors.imei }</p>
                                 ) : null }
                             </div>
+
+                            {/* <div className="xl:col-span-12">
+                                <label htmlFor="lock_id" className="inline-block mb-2 text-base font-medium">Lock</label>
+                                <input 
+                                    type="text" 
+                                    name="lock_id" 
+                                    id="lock_id" 
+                                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
+                                    placeholder="Lock" 
+                                    onChange={formik.handleChange}
+                                    value={formik.values.lock_id}
+                                />
+
+                                { formik.touched.lock_id && formik.errors.lock_id ? (
+                                    <p className="text-red-400">{ formik.errors.lock_id }</p>
+                                ) : null }
+                            </div> */}
                         </div>
 
                         <div className="flex justify-end gap-2 mt-4">

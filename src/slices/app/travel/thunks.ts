@@ -5,6 +5,7 @@ import { APIClient } from "helpers/api_helper";
 import { toast } from "react-toastify";
 import { handleTravels } from "./reducer";
 import 'react-toastify/dist/ReactToastify.css';
+import { handleNotifications } from "../notification/reducer";
 
 const api = new APIClient();
 
@@ -37,6 +38,27 @@ export const startSavingTravel = (data: any): ThunkAction<void, RootState, unkno
         console.log(error)
     }
 };
+
+export const startApproveTravel = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+    try {
+        await api.create(`mobile/viaje/${id}/autorizar`, data)
+
+        const storage = localStorage.getItem('notifications')
+        if(storage) {
+            const notifications = JSON.parse(storage)
+            const update = notifications.filter((notification: any) => notification.id !== id)
+            localStorage.setItem('notifications', JSON.stringify(update))
+            dispatch( handleNotifications(update) )
+        }
+
+        dispatch( startLoadingTravels() ) 
+        toast.success("Solicitud de viaje aprobada con exito", { autoClose: 3000, theme: "colored", icon: true });
+    } catch (error) {
+        toast.error("Error al finalizar el viaje", { autoClose: 3000, theme: "colored", icon: true });
+        console.log(error);
+    }
+};
+
 
 export const startCloseTravel = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {

@@ -43,13 +43,17 @@ const travelSlice = createSlice({
         },
         setActiveTravel(state: TravelState, action: PayloadAction<number>) {
             state.activeTravel = state.travels.find((travel) => travel.id === action.payload) || null
-        }
+        },
+        addNewTravel(state: TravelState, action: PayloadAction<any>) {
+            state.travels = [ action.payload, ...state.travels ]
+        },
     },
 });
 
 export const { 
     handleTravels, 
-    setActiveTravel 
+    setActiveTravel,
+    addNewTravel 
 } = travelSlice.actions;
 
 export default travelSlice.reducer;

@@ -1,7 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 let socket: Socket;
 
-const useSocket = () => {
+const useSocket = (channel: String) => {
   const initiateSocket = (room: string) => {
     socket = io('http://localhost:1000');
     console.log(`Connecting socket...`);
@@ -15,7 +15,8 @@ const useSocket = () => {
   
   const subscribeToChat = (cb: (err: Error | null, msg: any) => void): boolean => {
       if (!socket) return true;
-      socket.on('front/031054167945', (msg: any) => {
+      // socket.on('front/031054167945', (msg: any) => {
+      socket.on(`${channel}`, (msg: any) => {
         console.log('Websocket event received!');
         cb(null, msg);
       });

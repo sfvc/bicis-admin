@@ -12,6 +12,9 @@ import UserReducer from "./app/user/reducer";
 // Travels
 import TravelReducer from "./app/travel/reducer";
 
+// Notifications
+import NotificationReducer from "./app/notification/reducer";
+
 // Catalog
 import hubCatalogReducer from "./app/catalog/hubs/reducer";
 import unitCatalogReducer from "./app/catalog/units/reducer";
@@ -22,6 +25,7 @@ const rootReducer = combineReducers({
     Login: LoginReducer,
     Travel: TravelReducer,
     User: UserReducer,
+    Notification: NotificationReducer,
     HubCatalog: hubCatalogReducer,
     UnitCatalog: unitCatalogReducer,
     AdminCatalog: adminCatalogReducer

@@ -9,7 +9,7 @@ const TravelsMap = () => {
     /* const [travels, setTravels] = useState<any>([])
     const [index, setIndex] = useState<number>(0) */
 
-    const { initiateSocket, subscribeToChat } = useSocket()
+    const { initiateSocket, subscribeToChat } = useSocket('front/031054167945')
     const [data, setData] = useState(null);
 
     /* function handleTravels () {
