@@ -21,7 +21,7 @@ const NotificationDropdown = () => {
     const [showApprove, setShowApprove] = useState<boolean>(false);
 
     const onApproveTravel = async(id: number) => {
-        dispatch( setActiveTravel(id) );
+        await dispatch( setActiveTravel(id) ); // TODO: El travel debe estar dentro del listado y paginado. Crear endpoint para traer un viaje especifico
         toggleApprove();
     }
 
@@ -33,18 +33,14 @@ const NotificationDropdown = () => {
         }
     }, [showApprove]);
 
-    const handleApproveTravel = async(action: string) => {
-        if (action === 'APROBAR') {
-            dispatch( startApproveTravel({ admin_id: user.id }, activeTravel.id) );
-        }
+    const handleApproveTravel = async (action: string) => {
+        if (action === 'APROBAR' && activeTravel) await dispatch( startApproveTravel({ admin_id: user.id }, activeTravel.id) );
         toggleApprove();
     }
 
     const initLoading = () => {
-        const data = localStorage.getItem('notifications')
-        if (data) {
-            dispatch( handleNotifications(JSON.parse(data)) ) 
-        }
+        const data = localStorage.getItem('notifications');
+        if (data) return dispatch( handleNotifications( JSON.parse(data)) );
     };
 
     useEffect(() => {
@@ -54,12 +50,16 @@ const NotificationDropdown = () => {
     useEffect(() => {
         initiateSocket('messageToServer')
         subscribeToChat((error, travel) => {
-            const array = new Set( [travel, ...notifications] );
-            const data = Array.from(array);
+            let state: any[] = [];
+            const storage = localStorage.getItem('notifications')
+            if (storage) state = [...JSON.parse(storage)]
+
+            const array = new Set( [travel, ...state] );
+            const data = Array.from(array) ;
             
             dispatch( handleNotifications(data) )
             localStorage.setItem('notifications', JSON.stringify(data));
-        })
+        });
     },[])
     
     return (

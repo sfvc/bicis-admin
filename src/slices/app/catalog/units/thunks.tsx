@@ -39,19 +39,22 @@ export const startSavingUnit = (data: any): ThunkAction<void, RootState, unknown
 
 export const startUpdateUnit = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        console.log(data)
-        const response = await api.update(`/bicicleta/${id}`, data)
-        console.log(response)
+        await api.put(`/admin/bicicleta/${id}`, data);
+        dispatch( startLoadingUnits() );
+        toast.success("Bicicleta editada con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         console.log(error);
+        toast.error("Error al editar la bicicleta", { autoClose: 3000, theme: "colored", icon: true });
     }
 };
 
-export const startDeleteUnit = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startDeleteUnit = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response = await api.delete(`/bicicleta/${id}`, data)
-        console.log(response)
+        await api.delete(`/admin/bicicleta/${id}`, null);
+        dispatch( startLoadingUnits() );
+        toast.success("Bicicleta eliminada con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         console.log(error);
+        toast.error("Error al eliminar la bicicleta", { autoClose: 3000, theme: "colored", icon: true });
     }
 };

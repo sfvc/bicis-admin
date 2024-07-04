@@ -38,11 +38,21 @@ export const startSavingHub = (data: any): ThunkAction<void, RootState, unknown,
 
 export const startUpdateHub = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response = await api.update(`/estacion/${id}`, data)
-        console.log(response)
+        await api.put(`/admin/estacion/${id}`, data)
         toast.success("Estación editada con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         console.log(error);
         toast.error("Error al editar la estación", { autoClose: 3000, theme: "colored", icon: true });
+    }
+};
+
+export const startDeleteHub = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+    try {
+        await api.delete(`/admin/estacion/${id}`, null);
+        dispatch( startLoadingHubs() );
+        toast.success("Estación eliminada con exito", { autoClose: 3000, theme: "colored", icon: true });
+    } catch (error) {
+        console.log(error);
+        toast.error("Error al eliminar la estación", { autoClose: 3000, theme: "colored", icon: true });
     }
 };

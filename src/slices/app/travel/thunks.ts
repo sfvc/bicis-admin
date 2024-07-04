@@ -54,7 +54,7 @@ export const startApproveTravel = (data: any, id: number): ThunkAction<void, Roo
         dispatch( startLoadingTravels() ) 
         toast.success("Solicitud de viaje aprobada con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
-        toast.error("Error al finalizar el viaje", { autoClose: 3000, theme: "colored", icon: true });
+        toast.error("Error al aprobar solicitud de viaje", { autoClose: 3000, theme: "colored", icon: true });
         console.log(error);
     }
 };
@@ -79,3 +79,4 @@ export const startFilterTravels = (data: any): ThunkAction<void, RootState, unkn
         console.log(error);
     }
 };
+

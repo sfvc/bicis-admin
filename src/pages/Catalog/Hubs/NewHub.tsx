@@ -111,7 +111,7 @@ const NewHub = () => {
         )
     }
 
-    function handleSubmit (values: FormData) {
+    async function handleSubmit (values: FormData) {
         if (position instanceof LatLng) {
             const {lat, lng} = position
 
@@ -122,9 +122,9 @@ const NewHub = () => {
             }
 
             if(activeHub) {
-                dispatch( startUpdateHub(data, activeHub.id) )
+                await dispatch( startUpdateHub(data, activeHub.id) )
             } else {
-                dispatch( startSavingHub(data) )
+                await dispatch( startSavingHub(data) )
             }
         }
 
@@ -165,7 +165,7 @@ const NewHub = () => {
                         <button
                             type="button" 
                             onClick={handleEdit}
-                            style={{ zIndex: 9999 }}
+                            style={{ zIndex: 1000 }}
                             className="py-1.5 px-1 border-2 shadow-sm rounded-md absolute top-2.5 right-14 flex items-center text-white bg-custom-500 hover:bg-custom-600"
                             data-tooltip-id="default" 
                             data-tooltip-content="Editar"

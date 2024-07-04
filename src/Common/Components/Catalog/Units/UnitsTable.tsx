@@ -4,7 +4,7 @@ import { Tooltip } from 'react-tooltip'
 import { Eye, Pen, Search, Trash } from "lucide-react";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
 import { useDispatch, useSelector } from "react-redux";
-import { startLoadingUnits, startPaginateUnits, startSavingUnit, startUpdateUnit } from "slices/app/catalog/units/thunks";
+import { startDeleteUnit, startLoadingUnits, startPaginateUnits, startSavingUnit, startUpdateUnit } from "slices/app/catalog/units/thunks";
 import Modal from "Common/Components/Ui/Modal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -36,6 +36,7 @@ const UnitsTable = () => {
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
+    const [showDelete, setShowDelete] = useState<boolean>(false);
 
     // Formik
     const formik: any = useFormik({
@@ -51,11 +52,11 @@ const UnitsTable = () => {
             // lock_id: Yup.string().required("El lock es requerido"),
         }),
 
-        onSubmit: (values: any) => {
+        onSubmit: async (values: any) => {
             if (activeUnit) {
-                dispatch( startUpdateUnit(values, activeUnit.id) )
+                await dispatch( startUpdateUnit(values, activeUnit.id) )
             } else {
-                dispatch( startSavingUnit(values) )
+                await dispatch( startSavingUnit(values) )
             }
             toggle();
         },
@@ -70,6 +71,19 @@ const UnitsTable = () => {
             formik.resetForm();
         }
     }, [show, formik]);
+
+    const toggleDelete = useCallback(() => {
+        if (showDelete) {
+            setShowDelete(false);
+        } else {
+            setShowDelete(true);
+        }
+    }, [showDelete]);
+
+    const confirmAction = async (action: string) => {
+        if (action === 'ELIMINAR' && activeUnit) await dispatch( startDeleteUnit( activeUnit.id ) );
+        toggleDelete();
+    }
 
     const columns: column[] = React.useMemo(
         () => [
@@ -128,7 +142,7 @@ const UnitsTable = () => {
                             <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
                         </button> */}
 
-                        <button className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
+                        <button onClick={() => onDeleteUnit( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
                             <Tooltip id="default" place="top" content="Eliminar" />
                             <Trash className="inline-block size-5 text-slate-500 dark:text-zink-200"></Trash>
                         </button>
@@ -140,8 +154,13 @@ const UnitsTable = () => {
     );
 
     function onEditUnit (id: number) {
-        dispatch( setActiveUnit(id) )
-        toggle()
+        dispatch( setActiveUnit(id) );
+        toggle();
+    }
+
+    function onDeleteUnit (id: number) {
+        dispatch( setActiveUnit(id) );
+        toggleDelete();
     }
 
     const onSearch = async ({target}: any) => {
@@ -210,7 +229,7 @@ const UnitsTable = () => {
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Modal para crear un bicilceta */}
             <Modal show={show} onHide={toggle} modal-center="true"
                 className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
                 dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
@@ -352,6 +371,27 @@ const UnitsTable = () => {
                     </form>
                 </Modal.Body>
             </Modal> 
+
+            {/* Modal para eliminar una bicicleta */}
+            <Modal show={showDelete} onHide={toggleDelete} modal-center="true"
+                className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
+                dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
+                <Modal.Header className="flex items-center justify-between p-4 border-b dark:border-zink-500"
+                    closeButtonClass="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
+                    <Modal.Title className="text-16">Eliminar estación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
+                    <p className="font-semibold text-center text-14">¿Desea eliminar la bicicleta "{activeUnit?.patente}"?</p>
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button type="reset" onClick={() => confirmAction('CANCELAR')} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">
+                            Cancelar
+                        </button>
+                        <button type="submit" onClick={() => confirmAction('ELIMINAR')} className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                            Eliminar
+                        </button>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </React.Fragment>
     );
 }
