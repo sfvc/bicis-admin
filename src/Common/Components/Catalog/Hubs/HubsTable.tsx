@@ -9,6 +9,7 @@ import { startDeleteHub, startLoadingHubs, startPaginateHubs } from "slices/app/
 import { setActiveHub } from "slices/app/catalog/hubs/reducer";
 import NoResults from "Common/NoResults";
 import Modal from "Common/Components/Ui/Modal";
+import map from 'assets/images/map.png'
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -160,7 +161,12 @@ const HubsTable = () => {
                     <Modal.Title className="text-16">Eliminar estación</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-                    <p className="font-semibold text-center text-14">¿Desea eliminar la estación "{activeHub?.nombre}"?</p>
+                    <p className="font-semibold text-center text-14 mb-2">¿Desea eliminar la estación "{activeHub?.nombre}"?</p>
+
+                    <div className="pr-16">
+                        <img src={map} className="w-80" alt="Imagen de Estación" />
+                    </div>
+
                     <div className="flex justify-end gap-2 mt-4">
                         <button type="reset" onClick={() => confirmAction('CANCELAR')} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">
                             Cancelar

@@ -28,9 +28,11 @@ export const startPaginateUnits = (page: number): ThunkAction<void, RootState, u
 
 export const startSavingUnit = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.create('/admin/bicicleta', data)
+        const response: any = await api.create('/admin/bicicleta', data)
+        if(response.status === 400) return response.data.message;
         dispatch( startLoadingUnits() );
         toast.success("Unidad creada con exito", { autoClose: 3000, theme: "colored", icon: true });
+        return true;
     } catch (error) {
         toast.error("Error al crear la unidad", { autoClose: 3000, theme: "colored", icon: true });
         console.log(error);
@@ -39,9 +41,11 @@ export const startSavingUnit = (data: any): ThunkAction<void, RootState, unknown
 
 export const startUpdateUnit = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.put(`/admin/bicicleta/${id}`, data);
+        const response: any = await api.put(`/admin/bicicleta/${id}`, data);
+        if(response.status === 400) return response.data.message;
         dispatch( startLoadingUnits() );
         toast.success("Bicicleta editada con exito", { autoClose: 3000, theme: "colored", icon: true });
+        return true
     } catch (error) {
         console.log(error);
         toast.error("Error al editar la bicicleta", { autoClose: 3000, theme: "colored", icon: true });

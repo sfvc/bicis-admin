@@ -22,14 +22,16 @@ interface UnitState {
         total: number,
         totalPages: number
     } | null,
-    activeUnit: Unit | null
+    activeUnit: Unit | null,
+    errorMessage: string | null
 }
 
 
 const initialState: UnitState  = {
     units: [],
     paginate: null,
-    activeUnit: null
+    activeUnit: null,
+    errorMessage: null
 }
 
 const unitCatalogSlice = createSlice({
@@ -53,7 +55,7 @@ const unitCatalogSlice = createSlice({
         },
         resetActiveUnit(state: UnitState) {
             state.activeUnit = null
-        }
+        },
     },
 });
 
@@ -62,7 +64,7 @@ export const {
     handleSearchUnit,
     addNewUnit,
     setActiveUnit,
-    resetActiveUnit
+    resetActiveUnit,
 } = unitCatalogSlice.actions;
 
 export default unitCatalogSlice.reducer;

@@ -30,6 +30,7 @@ export const startSavingHub = (data: any): ThunkAction<void, RootState, unknown,
         await api.create('/admin/estacion', data)
         dispatch( startLoadingHubs() )
         toast.success("Estación creada con exito", { autoClose: 3000, theme: "colored", icon: true });
+        return true;
     } catch (error) {
         console.log(error);
         toast.error("Error al crear la estación", { autoClose: 3000, theme: "colored", icon: true });
@@ -40,6 +41,7 @@ export const startUpdateHub = (data: any, id: number): ThunkAction<void, RootSta
     try {
         await api.put(`/admin/estacion/${id}`, data)
         toast.success("Estación editada con exito", { autoClose: 3000, theme: "colored", icon: true });
+        return true;
     } catch (error) {
         console.log(error);
         toast.error("Error al editar la estación", { autoClose: 3000, theme: "colored", icon: true });

@@ -10,6 +10,7 @@ import { startSavingHub, startUpdateHub } from 'slices/app/catalog/hubs/thunks';
 import { initialPosition, markerDefault } from 'Common/Components/Map';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import { Tooltip } from 'react-tooltip';
+import ErrorAlert from 'Common/Components/Ui/Alert/ErrorAlert';
 
 interface FormData {
     nombre: string,
@@ -59,6 +60,7 @@ const NewHub = () => {
     const [position, setPosition] = useState<LatLngExpression>(activeHub?.ubicacion || initialPosition)
     const [polygon, setPolygon] = useState<LatLngExpression[]>(activeHub?.perimetro || [])
     const featureGroupRef = useRef<any>(null); // Ref para acceder al grupo de características del polígono
+    const [errorMessage, setErrorMessage] = useState<string>('')
 
     const onCreated = (e: any) => {
 		let layer = e.layer;
@@ -112,6 +114,8 @@ const NewHub = () => {
     }
 
     async function handleSubmit (values: FormData) {
+        let response;
+
         if (position instanceof LatLng) {
             const {lat, lng} = position
 
@@ -122,13 +126,17 @@ const NewHub = () => {
             }
 
             if(activeHub) {
-                await dispatch( startUpdateHub(data, activeHub.id) )
+                response = await dispatch( startUpdateHub(data, activeHub.id) )
             } else {
-                await dispatch( startSavingHub(data) )
+                response = await dispatch( startSavingHub(data) )
             }
+
+            if(response === !true) setErrorMessage(response);
+        } else {
+            setErrorMessage('Debe seleccionar la ubicación de la estación.')
         }
 
-        navigate('/catalogo/estaciones')
+        if(response === true) navigate('/catalogo/estaciones')
     };
 
     return (
@@ -209,8 +217,11 @@ const NewHub = () => {
                                 </label>
                                 <Field type="number" id="capacidad_electrica" name="capacidad_electrica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Mecanicas"/>
                             </div>
-     
                         </div>
+
+                        {
+                            errorMessage && <ErrorAlert message={errorMessage}/>
+                        }
 
                         <div className="flex justify-end mt-6 gap-x-4">
                             <button type="button" onClick={() => navigate('/catalogo/estaciones')} className="text-red-500 bg-red-100 btn hover:text-white hover:bg-red-600 focus:text-white focus:bg-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:ring active:ring-red-100 dark:bg-red-500/20 dark:text-red-500 dark:hover:bg-red-500 dark:hover:text-white dark:focus:bg-red-500 dark:focus:text-white dark:active:bg-red-500 dark:active:text-white dark:ring-red-400/20">

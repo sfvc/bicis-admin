@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
-import { Eye, Pen, Search, Trash } from "lucide-react";
+import { Pen, Search, Trash } from "lucide-react";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
 import { useDispatch, useSelector } from "react-redux";
 import { startDeleteUnit, startLoadingUnits, startPaginateUnits, startSavingUnit, startUpdateUnit } from "slices/app/catalog/units/thunks";
@@ -12,6 +12,8 @@ import { setActiveUnit, resetActiveUnit, handleSearchUnit } from "slices/app/cat
 import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
+import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
+import bike from 'assets/images/bike.png'
 
 export const tiposBicicleta = ['ELECTRICA', 'ESTANDAR']
 export const estadosBicicleta = ['EN_BASE', 'EN_HUB', 'EN_TALLER', 'EN_CALLE', 'BALANCEO_POR_EL_OPERADOR']
@@ -32,58 +34,8 @@ const api = new APIClient();
 
 const UnitsTable = () => {
     const dispatch = useDispatch<any>();
-    const { units, paginate, activeUnit } = useSelector( (state: any) => state.UnitCatalog )
-
-    // Modal states
-    const [show, setShow] = useState<boolean>(false);
-    const [showDelete, setShowDelete] = useState<boolean>(false);
-
-    // Formik
-    const formik: any = useFormik({
-        enableReinitialize: true,
-
-        initialValues: activeUnit || initialValues,
-        validationSchema: Yup.object({
-            patente: Yup.string().required("La patente es requerida"),
-            tipo_de_unidad: Yup.string().required("El tipo es requerido"),
-            estado: Yup.string().required("El estado es requerido"),
-            condicion: Yup.string().required("El estado es requerido"),
-            imei: Yup.string().required("El estado es requerido"),
-            // lock_id: Yup.string().required("El lock es requerido"),
-        }),
-
-        onSubmit: async (values: any) => {
-            if (activeUnit) {
-                await dispatch( startUpdateUnit(values, activeUnit.id) )
-            } else {
-                await dispatch( startSavingUnit(values) )
-            }
-            toggle();
-        },
-    });
-
-    const toggle = useCallback(() => {
-        if (show) {
-            setShow(false);
-            activeUnit && dispatch( resetActiveUnit() );
-        } else {
-            setShow(true);
-            formik.resetForm();
-        }
-    }, [show, formik]);
-
-    const toggleDelete = useCallback(() => {
-        if (showDelete) {
-            setShowDelete(false);
-        } else {
-            setShowDelete(true);
-        }
-    }, [showDelete]);
-
-    const confirmAction = async (action: string) => {
-        if (action === 'ELIMINAR' && activeUnit) await dispatch( startDeleteUnit( activeUnit.id ) );
-        toggleDelete();
-    }
+    const { units, paginate, activeUnit } = useSelector( (state: any) => state.UnitCatalog );
+    const [errorMessage, setErrorMessage] = useState<string>('')
 
     const columns: column[] = React.useMemo(
         () => [
@@ -152,6 +104,62 @@ const UnitsTable = () => {
         ],
         []
     );
+
+    // Modal states
+    const [show, setShow] = useState<boolean>(false);
+    const [showDelete, setShowDelete] = useState<boolean>(false);
+
+    // Formik
+    const formik: any = useFormik({
+        enableReinitialize: true,
+
+        initialValues: activeUnit || initialValues,
+        validationSchema: Yup.object({
+            patente: Yup.string().required("La patente es requerida"),
+            tipo_de_unidad: Yup.string().required("El tipo es requerido"),
+            estado: Yup.string().required("El estado es requerido"),
+            condicion: Yup.string().required("El estado es requerido"),
+            imei: Yup.string().required("El estado es requerido"),
+            // lock_id: Yup.string().required("El lock es requerido"),
+        }),
+
+        onSubmit: async (values: any) => {
+            let response;
+
+            if (activeUnit) {
+                response = await dispatch( startUpdateUnit(values, activeUnit.id) )
+            } else {
+                response = await dispatch( startSavingUnit(values) )
+            }
+
+            if(response === true) toggle();
+            else setErrorMessage(response);
+        },
+    });
+
+    const toggle = useCallback(() => {
+        if (show) {
+            setShow(false);
+            activeUnit && dispatch( resetActiveUnit() );
+            setErrorMessage('')
+        } else {
+            setShow(true);
+            formik.resetForm();
+        }
+    }, [show, formik]);
+
+    const toggleDelete = useCallback(() => {
+        if (showDelete) {
+            setShowDelete(false);
+        } else {
+            setShowDelete(true);
+        }
+    }, [showDelete]);
+
+    const confirmAction = async (action: string) => {
+        if (action === 'ELIMINAR' && activeUnit) await dispatch( startDeleteUnit( activeUnit.id ) );
+        toggleDelete();
+    }
 
     function onEditUnit (id: number) {
         dispatch( setActiveUnit(id) );
@@ -362,6 +370,10 @@ const UnitsTable = () => {
                             </div> */}
                         </div>
 
+                        {
+                            errorMessage && <ErrorAlert message={errorMessage}/>
+                        }
+
                         <div className="flex justify-end gap-2 mt-4">
                             <button type="reset" onClick={toggle} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Cancelar</button>
                             <button type="submit" className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
@@ -381,7 +393,12 @@ const UnitsTable = () => {
                     <Modal.Title className="text-16">Eliminar estación</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-                    <p className="font-semibold text-center text-14">¿Desea eliminar la bicicleta "{activeUnit?.patente}"?</p>
+                    <p className="font-semibold text-center text-16 mb-2">¿Desea eliminar la bicicleta "{activeUnit?.patente}"?</p>
+
+                    <div className="mx-auto w-48 h-48">
+                        <img src={bike} alt="Imagen de Bicicleta" />
+                    </div>
+
                     <div className="flex justify-end gap-2 mt-4">
                         <button type="reset" onClick={() => confirmAction('CANCELAR')} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">
                             Cancelar
