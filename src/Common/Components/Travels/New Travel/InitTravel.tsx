@@ -8,6 +8,7 @@ import Modal from "Common/Components/Ui/Modal";
 import { startSavingTravel } from "slices/app/travel/thunks";
 import Select from 'react-select';
 import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
+import { Bike } from "lucide-react";
 
 interface FormData {
     estacion_inicio_id: string,
@@ -89,7 +90,9 @@ const InitTravel = () => {
 
     return (
         <React.Fragment>
-            <button onClick={toggle} type="button" className="px-8 text-white transition-all duration-200 ease-linear btn bg-custom-500 border-custom-500 hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">Iniciar Viaje</button>
+            <button onClick={toggle} type="button" className="flex justify-center gap-1 min-w-28 px-8 text-white transition-all duration-200 ease-linear btn bg-custom-500 border-custom-500 hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                <Bike className="inline size-4" /> Iniciar Viaje
+            </button>
 
             <Modal show={show} onHide={toggle} modal-center="true"
                 className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
@@ -106,7 +109,7 @@ const InitTravel = () => {
                     }}>
                         <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
                             <div className="xl:col-span-12">
-                                <label htmlFor="estacion_inicio_id" className="inline-block mb-2 text-base font-medium">Estacion de Origen</label>
+                                <label htmlFor="estacion_inicio_id" className="inline-block mb-2 text-base font-medium">Estación de Origen</label>
                                 <select
                                     id="estacion_inicio_id"
                                     name="estacion_inicio_id"
@@ -128,7 +131,7 @@ const InitTravel = () => {
                             </div>
 
                             <div className="xl:col-span-12">
-                                <label htmlFor="estacion_final_id" className="inline-block mb-2 text-base font-medium">Estacion de Destino</label>
+                                <label htmlFor="estacion_final_id" className="inline-block mb-2 text-base font-medium">Estación de Destino</label>
                                 <select
                                     id="estacion_final_id"
                                     name="estacion_final_id"

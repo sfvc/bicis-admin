@@ -247,7 +247,7 @@ const PersonalInfo = () => {
                 {/* Imagenes de usuario  */}
                 <div className="card p-5">
                     <h6 className="mb-1 text-15">Acciones y Documentación</h6>
-                    <div className="grid items-end grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3 mt-5">
+                    <div className="grid items-end grid-cols-1 gap-5 xl:grid-cols-2 2xl:grid-cols-3 mt-5">
                         <ImageViewer
                             key='Frente-Documento'
                             src={activeUser.documento_frontal}

@@ -16,7 +16,7 @@ const ModalFile = ({ activeUser, handleInputChange }: any) => {
                 <button 
                 type="button" 
                 onClick={toggle} 
-                className="w-full mt-2 bg-white border-dashed text-custom-500 btn border-custom-500 hover:text-custom-500 hover:bg-custom-50 hover:border-custom-600 focus:text-custom-600 focus:bg-custom-50 focus:border-custom-600 active:text-custom-600 active:bg-custom-50 active:border-custom-600 dark:bg-zink-700 dark:ring-custom-400/20 dark:hover:bg-custom-800/20 dark:focus:bg-custom-800/20 dark:active:bg-custom-800/20"
+                className="w-full min-w-40 mt-2 bg-white border-dashed text-custom-500 btn border-custom-500 hover:text-custom-500 hover:bg-custom-50 hover:border-custom-600 focus:text-custom-600 focus:bg-custom-50 focus:border-custom-600 active:text-custom-600 active:bg-custom-50 active:border-custom-600 dark:bg-zink-700 dark:ring-custom-400/20 dark:hover:bg-custom-800/20 dark:focus:bg-custom-800/20 dark:active:bg-custom-800/20"
                 >
                     <PenIcon className="mr-1 inline-block size-3 text-custom-500 fill-sky-100 dark:fill-custom-500/20"></PenIcon>
                     Editar Documentación

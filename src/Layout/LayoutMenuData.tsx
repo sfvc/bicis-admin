@@ -110,6 +110,12 @@ const menuData: any = [
                 parentId: "catalogos"
             },
             {
+                id: 'tiposdeticket',
+                label: 'Tipos de Ticket',
+                link: '/catalogo/tipo-ticket',
+                parentId: "catalogos"
+            },
+            {
                 id: 'razonesparataller',
                 label: 'Razones para Taller',
                 link: '/catalogo/razones',

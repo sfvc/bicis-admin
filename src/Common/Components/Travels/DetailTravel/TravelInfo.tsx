@@ -4,6 +4,8 @@ import { Calendar, Clock4, MessageCircle, Phone } from "lucide-react";
 import hub from 'assets/images/logo-muni.png'
 import bike from 'assets/images/bike.png'
 import { useSelector } from "react-redux";
+import CreateTicket from "../New Travel/CreateTicket";
+import Sanction from "../New Travel/Sanction";
 
 interface Date {
     fecha: string, 
@@ -133,9 +135,12 @@ const TravelInfo = () => {
 
                             <div className="mt-2">
                                 <a href="https://wa.me/543834407708" target="_blank" rel="noreferrer">
-                                    <button type="button" className="flex px-8 justify-center gap-x-1 text-white transition-all duration-200 ease-linear btn bg-green-500 border-green-500 hover:bg-green-400 hover:border-green-400 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/20"><MessageCircle className="size-4"></MessageCircle> WhatsApp</button>
+                                    <button type="button" className="flex w-full px-8 justify-center gap-x-1 text-white transition-all duration-200 ease-linear btn bg-green-500 border-green-500 hover:bg-green-400 hover:border-green-400 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/20"><MessageCircle className="size-4"></MessageCircle> WhatsApp</button>
                                 </a>
                             </div>
+
+                            <CreateTicket />
+                            <Sanction />
                         </div>
                     </div>
                 </div>

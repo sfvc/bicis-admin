@@ -35,7 +35,7 @@ const initialState: AdminState  = {
 }
 
 const adminCatalogSlice = createSlice({
-    name: "hubsCatalog",
+    name: "adminCatalog",
     initialState,
     reducers: {
         handleAdmins(state: AdminState, action: PayloadAction<any>) {

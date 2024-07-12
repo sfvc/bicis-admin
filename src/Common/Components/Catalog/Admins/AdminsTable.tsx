@@ -121,11 +121,11 @@ const AdminsTable = () => {
         initialValues: {...activeAdmin, password: ""} || initialValues,
         validationSchema: activeAdmin ? validationUpdate : validationCreate,
 
-        onSubmit: (values: any) => {
+        onSubmit: async (values: any) => {
             if (activeAdmin) {
-                dispatch( startUpdateAdmin(values, activeAdmin.id) )
+                await dispatch( startUpdateAdmin(values, activeAdmin.id) )
             } else {
-                dispatch( startSavingAdmin(values) )
+                await dispatch( startSavingAdmin(values) )
             }
             toggle();
         },

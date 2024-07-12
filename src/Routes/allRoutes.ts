@@ -13,6 +13,8 @@ import CatalogUnits from "pages/Catalog/Units";
 import Login from "pages/Authentication/Login";
 import Logout from "pages/Authentication/LogOut";
 import CatalogAdmins from "pages/Catalog/Admins";
+import CatalogPenalties from "pages/Catalog/Penalties";
+import CatalogTickets from "pages/Catalog/Tickets";
 
 interface RouteObject {
   path: string;
@@ -46,6 +48,12 @@ const authProtectedRoutes: Array<RouteObject> = [
 
     // Administradores
     { path: "/catalogo/administradores", component: CatalogAdmins },
+
+    // Penalties
+    { path: "/catalogo/tipo-penalidad", component: CatalogPenalties },
+
+    // Tickets
+    { path: "/catalogo/tipo-ticket", component: CatalogTickets },
 ];
 
 const publicRoutes = [
