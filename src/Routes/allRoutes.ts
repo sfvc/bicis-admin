@@ -5,6 +5,9 @@ import Units from "pages/Units";
 import Travels from "pages/Travels";
 import NewTravel from "pages/Travels/NewTravel";
 import TravelDetail from "pages/Travels/TravelDetail";
+import Sanctions from "pages/Sanctions";
+import Tickets from "pages/Tickets";
+import TicketDetail from "pages/Tickets/TicketDetail";
 
 import CatalogHubs from "pages/Catalog/Hubs";
 import NewHub from "pages/Catalog/Hubs/NewHub";
@@ -37,6 +40,13 @@ const authProtectedRoutes: Array<RouteObject> = [
 
   // Unidades
   { path: "/unidades", component: Units },
+
+  // Sanciones
+  { path: "/sanciones", component: Sanctions },
+
+  // Tickets
+  { path: "/tickets", component: Tickets },
+  { path: "/detalle-ticket/:id", component: TicketDetail },
 
   // Catalogo
     // Estaciones

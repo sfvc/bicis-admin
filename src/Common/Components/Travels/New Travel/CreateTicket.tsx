@@ -14,7 +14,7 @@ interface FormData {
 
 const api = new APIClient(); 
 const CreateTicket = () => {
-    const { activeUser } = useSelector( (state: any) => state.User );
+    const { activeTravel } = useSelector( (state: any) => state.Travel );
     const dispatch = useDispatch<any>();
     
     // Modal states
@@ -39,7 +39,7 @@ const CreateTicket = () => {
         onSubmit: async (values: any) => {
             const data = {
                 ...values, 
-                usuario_id: activeUser.id
+                viaje_id: activeTravel.id
             };
 
             console.log(data)
@@ -63,7 +63,7 @@ const CreateTicket = () => {
     }, [show, formik]);
 
     const initLoading = async () => {
-        const { items }: any = await api.get('http://localhost:1000/api/v1/admin/ticket', null);
+        const { items }: any = await api.get('/admin/ticket', null);
         setTickets(items);
     }
 

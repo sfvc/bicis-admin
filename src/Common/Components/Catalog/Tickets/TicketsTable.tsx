@@ -9,8 +9,8 @@ import Modal from "Common/Components/Ui/Modal";
 import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
-import { setActiveTicket } from "slices/app/catalog/tickets/reducer";
-import { startDeleteTicket, startLoadingTickets, startPaginateTickets, startSavingTicket, startUpdateTicket } from "slices/app/catalog/tickets/thunks";
+import { setActiveTicket } from "slices/app/catalog/type_ticket/reducer";
+import { startDeleteTicket, startLoadingTickets, startPaginateTickets, startSavingTicket, startUpdateTicket } from "slices/app/tickets/thunks";
 import ticket from "assets/images/ticket.png"
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };

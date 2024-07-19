@@ -1,66 +1,141 @@
 import React, { useCallback, useEffect, useState } from "react";
+import TableContainer from "Common/TableContainer";
+import { Tooltip } from 'react-tooltip'
+import { Eye, Pen, Trash } from "lucide-react";
+import PigBadge from "Common/Components/Ui/Label/PigBadge";
 import { useDispatch, useSelector } from "react-redux";
+import Modal from "Common/Components/Ui/Modal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Modal from "Common/Components/Ui/Modal";
+import NoResults from "Common/NoResults";
+import Pagination from "Common/Components/Pagination";
 import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
-import { Gavel } from "lucide-react";
+import bike from 'assets/images/bike.png'
+import { setActiveSanction } from "slices/app/sanctions/reducer";
+import { startDeleteSanction, startLoadingSanctions, startPaginateSanctions, startSavingSanction, startUpdateSanction } from "slices/app/sanctions/thunks";
 import { APIClient } from "helpers/api_helper";
 
-interface FormData {
-    fecha_vencimiento: string,
-    tipo_penalidad_id: string,
-    dias_sancion: number,
-    dias_bloqueo: number,
-    comentario: string,
+interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
+
+const initialValues = {
+    fecha_vencimiento: "",
+    tipo_penalidad: "",
+    dias_sancion: "",
+    dias_bloqueo: "",
+    comentario: ""
 }
 
 const api = new APIClient(); 
 
-const Sanction = () => {
-    const { activeTravel } = useSelector( (state: any) => state.Travel );
+const SanctionsTable = () => {
     const dispatch = useDispatch<any>();
+    const { sanctions, paginate, activeSanction } = useSelector( (state: any) => state.Sanction );
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [penalties, setPenalties] = useState<any>([]);
+
+    const columns: column[] = React.useMemo(
+        () => [
+            {
+                header: 'Id',
+                accessorKey: 'id',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Fecga de Generación',
+                accessorKey: 'created_at',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Usuario',
+                accessorKey: 'usuario',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Nro. de viaje',
+                accessorKey: 'viaje_id',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Tipo de Penalidad',
+                accessorKey: 'tipo_penalidad',
+                enableColumnFilter: false,
+                enableSorting: true,
+                cell: (props: any) => (<PigBadge color="slate" label={props.getValue()} />)
+            },
+            {
+                header: 'Días',
+                accessorKey: 'dias',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Estado',
+                accessorKey: 'estado',
+                enableColumnFilter: false,
+                enableSorting: true,
+                cell: (props: any) => (<PigBadge color="custom" label={props.getValue()} />)
+            },
+            {
+                header: 'Acciones',
+                accessorKey: 'acciones',
+                enableColumnFilter: false,
+                enableSorting: true,
+                cell: (props: any) => (
+                    <div className="flex flex-wrap justify-start gap-2">
+                        <button onClick={() => onShowSanction( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver">
+                            <Tooltip id="default" place="top" content="Ver" />
+                            <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
+                        </button>
+
+                        <button onClick={() => onEditSanction( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Editar">
+                            <Tooltip id="default" place="top" content="Editar" />
+                            <Pen className="inline-block size-5 text-slate-500 dark:text-zink-200"></Pen>
+                        </button>
+
+                        <button onClick={() => onDeleteSanction( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
+                            <Tooltip id="default" place="top" content="Eliminar" />
+                            <Trash className="inline-block size-5 text-slate-500 dark:text-zink-200"></Trash>
+                        </button>
+                    </div>
+                ),
+            },
+        ],
+        []
+    );
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string>('')
-    const [penalties, setPenalties] = useState<any>([])
+    const [showDelete, setShowDelete] = useState<boolean>(false);
 
     // Formik
     const formik: any = useFormik({
         enableReinitialize: true,
 
-        initialValues: {
-            fecha_vencimiento: "",
-            tipo_penalidad_id: "",
-            dias_sancion: 0,
-            dias_bloqueo: 0,
-            comentario: "",
-        } as FormData,
-
+        initialValues: activeSanction || initialValues,
         validationSchema: Yup.object({
             fecha_vencimiento: Yup.string().required("La fecha de vencimiento es requerida"),
-            tipo_penalidad_id: Yup.string().required("El tipo de penalidad es requerida"),
+            tipo_penalidad: Yup.string().required("El tipo de penalidad es requerida"),
             dias_sancion: Yup.string().required("Los dias de sanción son requeridos"),
             dias_bloqueo: Yup.string().nullable(),
             comentario: Yup.string().nullable(),
         }),
 
         onSubmit: async (values: any) => {
-            const data = {
-                ...values, 
-                viaje_id: activeTravel.id
-            };
+            let response;
 
-            console.log(data);
-
-            /* const response = await dispatch( startSavingTravel(data) )
-            if (response === true) {
-                toggle();
+            if (activeSanction) {
+                response = await dispatch( startUpdateSanction(values, activeSanction.id) )
             } else {
-                setErrorMessage(response)
-            } */
-        }
+                response = await dispatch( startSavingSanction(values) )
+            }
+
+            if(response === true) toggle();
+            else setErrorMessage(response);
+        },
     });
 
     const toggle = useCallback(() => {
@@ -72,7 +147,36 @@ const Sanction = () => {
         }
     }, [show, formik]);
 
+    const toggleDelete = useCallback(() => {
+        if (showDelete) {
+            setShowDelete(false);
+        } else {
+            setShowDelete(true);
+        }
+    }, [showDelete]);
+
+    const confirmAction = async (action: string) => {
+        if (action === 'DESESTIMAR' && activeSanction) await dispatch( startDeleteSanction( activeSanction.id ) );
+        toggleDelete();
+    }
+
+    function onShowSanction (id: number) {
+        dispatch( setActiveSanction(id) );
+        // toggle();
+    }
+
+    function onEditSanction (id: number) {
+        dispatch( setActiveSanction(id) );
+        toggle();
+    }
+
+    function onDeleteSanction (id: number) {
+        dispatch( setActiveSanction(id) );
+        toggleDelete();
+    }
+
     const initLoading = async () => {
+        dispatch( startLoadingSanctions() )
         const { items }: any = await api.get('/admin/penalidad', null);
         setPenalties(items);
     }
@@ -83,19 +187,49 @@ const Sanction = () => {
 
     return (
         <React.Fragment>
-            <button onClick={toggle} type="button" className="flex gap-1 min-w-40 mt-2 px-8 text-white transition-all duration-200 ease-linear btn bg-custom-500 border-custom-500 hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
-                <Gavel className="inline size-4" /> Sancionar
-            </button>
+            <div className="col-span-12 card 2xl:col-span-12">
+                <div className="card-body">
+                    <div className="flex justify-between items-center gap-3 mb-5">
+                        <div className="2xl:col-span-3">
+                            <h6 className="text-15">Listado de Sanciones</h6>
+                        </div>
+                    </div>
 
+                    <TableContainer
+                        isPagination={false}
+                        columns={(columns || [])}
+                        data={(sanctions || [])}
+                        customPageSize={7}
+                        divclassName="overflow-x-auto"
+                        tableclassName="w-full whitespace-nowrap"
+                        theadclassName="ltr:text-left rtl:text-right bg-slate-100 text-slate-500 dark:text-zink-200 dark:bg-zink-600"
+                        thclassName="px-3.5 py-2.5 first:pl-5 last:pr-5 font-semibold border-y border-slate-200 dark:border-zink-500"
+                        tdclassName="px-3.5 py-2.5 first:pl-5 last:pr-5 border-y border-slate-200 dark:border-zink-500"
+                        PaginationClassName="flex flex-col items-center mt-5 md:flex-row"
+                    />
+
+                    <NoResults data={sanctions}/>
+
+                    { paginate && (
+                        <Pagination
+                            data={paginate}
+                            onPageChange={(page) => dispatch( startPaginateSanctions(page) )}
+                        />
+                    )}
+
+                </div>
+            </div>
+
+            {/* Modal para editar una sanción */}
             <Modal show={show} onHide={toggle} modal-center="true"
                 className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
                 dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
                 <Modal.Header className="flex items-center justify-between p-4 border-b dark:border-zink-500"
                     closeButtonClass="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
-                    <Modal.Title className="text-16">Nueva Sanción</Modal.Title>
+                    <Modal.Title className="text-16">Editar Sanción</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-                    <form action="#!" onSubmit={(e) => {
+                <form action="#!" onSubmit={(e) => {
                         e.preventDefault();
                         formik.handleSubmit();
                         return false;
@@ -211,9 +345,35 @@ const Sanction = () => {
                         </div>
                     </form>
                 </Modal.Body>
+            </Modal> 
+
+            {/* Modal para desestimar una sanción */}
+            <Modal show={showDelete} onHide={toggleDelete} modal-center="true"
+                className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
+                dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
+                <Modal.Header className="flex items-center justify-between p-4 border-b dark:border-zink-500"
+                    closeButtonClass="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
+                    <Modal.Title className="text-16">Desestimar Sanción</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
+                    <p className="font-semibold text-center text-16 mb-2">¿Desea desestimar la sanción?</p>
+
+                    <div className="mx-auto w-48 h-48">
+                        <img src={bike} alt="Imagen de Bicicleta" />
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button type="reset" onClick={() => confirmAction('CANCELAR')} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">
+                            Cancelar
+                        </button>
+                        <button type="submit" onClick={() => confirmAction('DESESTIMAR')} className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                            Desestimar
+                        </button>
+                    </div>
+                </Modal.Body>
             </Modal>
         </React.Fragment>
-    )
+    );
 }
 
-export default Sanction;
+export default SanctionsTable;

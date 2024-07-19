@@ -1,4 +1,4 @@
-import { Bike, ListCollapse, LocateFixed, Map, PenLine, UserRound } from "lucide-react";
+import { Bike, Gavel, ListCollapse, LocateFixed, Map, PenLine, Phone, UserRound } from "lucide-react";
 
 const menuData: any = [
     {
@@ -64,6 +64,34 @@ const menuData: any = [
                 label: 'Dashboard',
                 link: '/usuarios',
                 parentId: "usuarios"
+            },
+        ]
+    },
+    {
+        id: "sanciones",
+        label: 'Sanciones',
+        link: "/#",
+        icon: <Gavel />,
+        subItems: [
+            {
+                id: 'sancionesdashboard',
+                label: 'Dashboard',
+                link: '/sanciones',
+                parentId: "sanciones"
+            },
+        ]
+    },
+    {
+        id: "tickets",
+        label: 'Tickets',
+        link: "/#",
+        icon: <Phone />,
+        subItems: [
+            {
+                id: 'ticketsdashboard',
+                label: 'Dashboard',
+                link: '/tickets',
+                parentId: "tickets"
             },
         ]
     },
