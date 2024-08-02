@@ -1,16 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
-import { Pen, Search, Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Modal from "Common/Components/Ui/Modal";
-import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
-import { setActiveTicket } from "slices/app/catalog/type_ticket/reducer";
-import { startDeleteTicket, startLoadingTickets, startPaginateTickets, startSavingTicket, startUpdateTicket } from "slices/app/tickets/thunks";
+import { setActiveTypeTicket } from "slices/app/catalog/types_ticket/reducer";
+import { startDeleteTypeTicket, startLoadingTypesTicket, startPaginateTypesTicket, startSavingTypeTicket, startUpdateTypeTicket } from "slices/app/catalog/types_ticket/thunks";
 import ticket from "assets/images/ticket.png"
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
@@ -28,7 +27,7 @@ const validationSchema = Yup.object({
 })
 
 const TicketsTable = () => {
-    const { tickets, paginate, activeTicket } = useSelector( (state: any) => state.TicketCatalog )
+    const { typesTicket, paginate, activeTicket } = useSelector( (state: any) => state.TypesTicketCatalog )
     const dispatch = useDispatch<any>();
 
     const columns: column[] = React.useMemo(
@@ -88,9 +87,9 @@ const TicketsTable = () => {
 
         onSubmit: async (values: any) => {
             if (activeTicket) {
-                await dispatch( startUpdateTicket(values, activeTicket.id) )
+                await dispatch( startUpdateTypeTicket(values, activeTicket.id) )
             } else {
-                await dispatch( startSavingTicket(values) )
+                await dispatch( startSavingTypeTicket(values) )
             }
             toggle();
         },
@@ -115,22 +114,22 @@ const TicketsTable = () => {
     }, [showDelete]);
 
     const onEditTicket = (id: number) => {
-        dispatch( setActiveTicket(id) );
+        dispatch( setActiveTypeTicket(id) );
         toggle();
     }
     
     const onDeleteTicket = (id: number) => {
-        dispatch( setActiveTicket(id) );
+        dispatch( setActiveTypeTicket(id) );
         toggleDelete();
     }
 
     const confirmAction = async (action: string) => {
-        if (action === 'ELIMINAR' && activeTicket) await dispatch( startDeleteTicket( activeTicket.id ) );
+        if (action === 'ELIMINAR' && activeTicket) await dispatch( startDeleteTypeTicket( activeTicket.id ) );
         toggleDelete();
     }
 
     useEffect(() => {
-        dispatch( startLoadingTickets() )
+        dispatch( startLoadingTypesTicket() )
     }, [])
 
     return (
@@ -155,7 +154,7 @@ const TicketsTable = () => {
                     <TableContainer
                         isPagination={false}
                         columns={(columns || [])}
-                        data={(tickets || [])}
+                        data={(typesTicket || [])}
                         customPageSize={7}
                         divclassName="overflow-x-auto"
                         tableclassName="w-full whitespace-nowrap"
@@ -165,12 +164,12 @@ const TicketsTable = () => {
                         PaginationClassName="flex flex-col items-center mt-5 md:flex-row"
                     />
 
-                    <NoResults data={tickets}/>
+                    <NoResults data={typesTicket}/>
 
                     { paginate && (
                         <Pagination
                             data={paginate}
-                            onPageChange={(page) => dispatch( startPaginateTickets(page) )}
+                            onPageChange={(page) => dispatch( startPaginateTypesTicket(page) )}
                         />
                     )}
                 </div>

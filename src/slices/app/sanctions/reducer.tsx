@@ -1,12 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+enum Estado {
+    EN_REVISION = 'EN REVISIÓN',
+    ACEPTADA = 'ACEPTADA',
+    RECHAZADA = 'RECHAZADA'
+}
+
 interface Sanction {
     id: number,
     fecha_vencimiento: string,
     tipo_penalidad: object,
-    dias_sancion : number,
+    tipo_penalidad_id: number,
+    // dias_sancion : number,
     dias_bloqueo: number,
-    comentario: number,
+    comentario: string,
+    estado: Estado,
+    viaje_id: number,
+    usuario: object,
+    usuario_id: number,
     created_at: string,
     updated_at: string
 }
@@ -23,7 +34,6 @@ interface SantionState {
     } | null
     activeSanction: Sanction | null;
 }
-
 
 const initialState: SantionState  = {
     sanctions: [],

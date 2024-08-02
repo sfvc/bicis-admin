@@ -6,6 +6,7 @@ import Modal from "Common/Components/Ui/Modal";
 import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
 import { Gavel } from "lucide-react";
 import { APIClient } from "helpers/api_helper";
+import { startSavingSanction } from "slices/app/sanctions/thunks";
 
 interface FormData {
     fecha_vencimiento: string,
@@ -15,6 +16,7 @@ interface FormData {
     comentario: string,
 }
 
+const ID_PROVISORIO = 1;
 const api = new APIClient(); 
 
 const Sanction = () => {
@@ -49,17 +51,17 @@ const Sanction = () => {
         onSubmit: async (values: any) => {
             const data = {
                 ...values, 
-                viaje_id: activeTravel.id
+                viaje_id: activeTravel.id,
+                usuario_id: activeTravel.usuario?.id || ID_PROVISORIO, //TODO: Sacar id provisorio.
+                estado: 'EN REVISIÓN' // 'EN REVISIÓN', 'ACEPTADA', 'RECHAZADA'
             };
 
-            console.log(data);
-
-            /* const response = await dispatch( startSavingTravel(data) )
+            const response = await dispatch( startSavingSanction(data) )
             if (response === true) {
                 toggle();
             } else {
                 setErrorMessage(response)
-            } */
+            }
         }
     });
 
@@ -71,6 +73,8 @@ const Sanction = () => {
             formik.resetForm();
         }
     }, [show, formik]);
+
+    const handleNumericChange = (fieldName: string, value: string) => formik.setFieldValue(fieldName, parseInt(value));
 
     const initLoading = async () => {
         const { items }: any = await api.get('/admin/penalidad', null);
@@ -126,7 +130,7 @@ const Sanction = () => {
                                     id="tipo_penalidad_id"
                                     name="tipo_penalidad_id"
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                                    onChange={(e) => formik.setFieldValue("tipo_penalidad_id", e.target.value)}
+                                    onChange={(e) => handleNumericChange("tipo_penalidad_id", e.target.value)}
                                     value={formik.values.tipo_penalidad_id || ""}
                                 >
                                     <option value="">Seleccionar un tipo</option>

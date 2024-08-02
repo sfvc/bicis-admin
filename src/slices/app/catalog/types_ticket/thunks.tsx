@@ -3,33 +3,33 @@ import { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { RootState } from "slices";
 import { APIClient } from "helpers/api_helper";
 import { toast } from "react-toastify";
-import { handleTickets } from "./reducer";
+import { handleTypesTicket } from "./reducer";
 import 'react-toastify/dist/ReactToastify.css';
 
 const api = new APIClient();
 
-export const startLoadingTickets = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startLoadingTypesTicket = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.get('admin/ticket', null)
-        dispatch( handleTickets(response) );
+        dispatch( handleTypesTicket(response) );
     } catch (error) {
         console.log(error);
     }
 };
 
-export const startPaginateTickets = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startPaginateTypesTicket = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.get('admin/ticket', {page})
-        dispatch( handleTickets(response) );
+        dispatch( handleTypesTicket(response) );
     } catch (error) {
         console.log(error);
     }
 };
 
-export const startSavingTicket = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startSavingTypeTicket = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         await api.create('admin/ticket', data)
-        dispatch( startLoadingTickets() )
+        dispatch( startLoadingTypesTicket() )
         toast.success("Tipo de ticket creado con exito", { autoClose: 3000, theme: "colored", icon: true }); 
     } catch (error) {
         console.log(error);
@@ -37,10 +37,10 @@ export const startSavingTicket = (data: any): ThunkAction<void, RootState, unkno
     }
 };
 
-export const startUpdateTicket = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startUpdateTypeTicket = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         await api.put(`admin/ticket/${id}`, data)
-        dispatch( startLoadingTickets() )
+        dispatch( startLoadingTypesTicket() )
         toast.success("Tipo de ticket actualizado con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         console.log(error);
@@ -48,10 +48,10 @@ export const startUpdateTicket = (data: any, id: number): ThunkAction<void, Root
     }
 };
 
-export const startDeleteTicket = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startDeleteTypeTicket = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         await api.delete(`admin/ticket/${id}`, null)
-        dispatch( startLoadingTickets() )
+        dispatch( startLoadingTypesTicket() )
         toast.success("Tipo de ticket eliminado con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         console.log(error);

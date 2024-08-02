@@ -11,6 +11,7 @@ const api = new APIClient();
 export const startLoadingTickets = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.get('admin/provisorio', null)
+        console.log(response)
         dispatch( handleTickets(response) );
     } catch (error) {
         console.log(error);
@@ -20,6 +21,7 @@ export const startLoadingTickets = (): ThunkAction<void, RootState, unknown, Act
 export const startPaginateTickets = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.get('admin/provisorio', {page})
+        console.log(response)
         dispatch( handleTickets(response) );
     } catch (error) {
         console.log(error);

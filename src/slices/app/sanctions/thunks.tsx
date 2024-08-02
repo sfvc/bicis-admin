@@ -9,7 +9,7 @@ const api = new APIClient();
 
 export const startLoadingSanctions = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/sancion', null)
+        const response = await api.get('/admin/sancion', null)
         dispatch( handleSanctions(response) ); 
     } catch (error) {
         console.log(error);
@@ -18,7 +18,7 @@ export const startLoadingSanctions = (): ThunkAction<void, RootState, unknown, A
 
 export const startPaginateSanctions = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/sancion', { page });
+        const response = await api.get('/admin/sancion', { page });
         dispatch( handleSanctions(response) ); 
     } catch (error) {
         console.log(error);
@@ -27,8 +27,8 @@ export const startPaginateSanctions = (page: number): ThunkAction<void, RootStat
 
 export const startSavingSanction = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.create('/admin/sancion', data)
-        dispatch( startLoadingSanctions() )
+        await api.create('/admin/sancion', data);
+        dispatch( startLoadingSanctions() );
         toast.success("Sanción creada con exito", { autoClose: 3000, theme: "colored", icon: true });
         return true;
     } catch (error) {
@@ -39,7 +39,10 @@ export const startSavingSanction = (data: any): ThunkAction<void, RootState, unk
 
 export const startUpdateSanction = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.put(`/admin/sancion/${id}`, data)
+        console.log(data)
+        const response = await api.put(`/admin/sancion/${id}`, data);
+        console.log(response)
+        dispatch( startLoadingSanctions() );
         toast.success("Sanción editada con exito", { autoClose: 3000, theme: "colored", icon: true });
         return true;
     } catch (error) {

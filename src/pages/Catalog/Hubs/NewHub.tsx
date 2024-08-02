@@ -26,7 +26,7 @@ const initialValues: FormData = {
     capacidad_mecanica: null
 };
 
-const initialPolygon = [
+/* const initialPolygon = [
     {
         lat: -28.472444960005284,
         lng: -65.78540325164796
@@ -51,13 +51,16 @@ const initialPolygon = [
         lat: -28.470860515651488,
         lng: -65.78845024108888
     }
-]
+] */
 
 const NewHub = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<any>()
     const { activeHub } = useSelector(( state: any ) => state.HubCatalog)
-    const [position, setPosition] = useState<LatLngExpression>(activeHub?.ubicacion || initialPosition)
+    const [position, setPosition] = useState<any>(() => {
+        if(activeHub) return [activeHub.ubicacion.lat, activeHub.ubicacion.lng];
+        return initialPosition;
+    })
     const [polygon, setPolygon] = useState<LatLngExpression[]>(activeHub?.perimetro || [])
     const featureGroupRef = useRef<any>(null); // Ref para acceder al grupo de características del polígono
     const [errorMessage, setErrorMessage] = useState<string>('')
@@ -113,16 +116,45 @@ const NewHub = () => {
         )
     }
 
-    async function handleSubmit (values: FormData) {
+    /* async function handleSubmit (values: FormData) {
         let response;
 
+        console.log(position)
         if (position instanceof LatLng) {
             const {lat, lng} = position
 
             const data = {
                 ...values, 
                 ubicacion: { lat, lng }, 
-                perimetro: polygon
+                // perimetro: polygon
+            }
+
+            console.log(data)
+
+            if(activeHub) {
+                response = await dispatch( startUpdateHub(data, activeHub.id) )
+            } else {
+                response = await dispatch( startSavingHub(data) )
+            }
+
+            if(response === !true) setErrorMessage(response);
+        } else {
+            setErrorMessage('Debe seleccionar la ubicación de la estación.')
+        }
+
+        if(response === true) navigate('/catalogo/estaciones')
+    }; */
+
+    async function handleSubmit (values: FormData) {
+        let response;
+
+        if (position !== initialPosition) {
+            const { lat, lng } = position
+
+            const data = {
+                ...values, 
+                ubicacion: { lat, lng },
+                // perimetro: polygon
             }
 
             if(activeHub) {
@@ -145,7 +177,7 @@ const NewHub = () => {
                 <h6 className="mb-1 text-15">Agregar Estación</h6>
 
                 {/* Mapa */}
-                <MapContainer center={initialPosition} zoom={15} scrollWheelZoom={true} className="h-[30rem] mb-5">
+                <MapContainer center={initialPosition} zoom={14} scrollWheelZoom={true} className="h-[30rem] mb-5">
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

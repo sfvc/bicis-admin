@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
-import { Eye, Pen, Trash } from "lucide-react";
+import { Ban, Eye, Pen } from "lucide-react";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "Common/Components/Ui/Modal";
@@ -10,9 +10,9 @@ import * as Yup from "yup";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
 import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
-import bike from 'assets/images/bike.png'
+import penality from 'assets/images/penality.png'
 import { setActiveSanction } from "slices/app/sanctions/reducer";
-import { startDeleteSanction, startLoadingSanctions, startPaginateSanctions, startSavingSanction, startUpdateSanction } from "slices/app/sanctions/thunks";
+import { startDeleteSanction, startLoadingSanctions, startPaginateSanctions, startUpdateSanction } from "slices/app/sanctions/thunks";
 import { APIClient } from "helpers/api_helper";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
@@ -20,10 +20,13 @@ interface column { header: string; accessorKey: string; enableColumnFilter: bool
 const initialValues = {
     fecha_vencimiento: "",
     tipo_penalidad: "",
-    dias_sancion: "",
-    dias_bloqueo: "",
+    estado: "EN REVISIÓN",
+    dias_sancion: 0,
+    dias_bloqueo: 0,
     comentario: ""
 }
+
+const estados = ['EN REVISIÓN','ACEPTADA','RECHAZADA']
 
 const api = new APIClient(); 
 
@@ -42,16 +45,22 @@ const SanctionsTable = () => {
                 enableSorting: true,
             },
             {
-                header: 'Fecga de Generación',
+                header: 'Fecha de Generación',
                 accessorKey: 'created_at',
                 enableColumnFilter: false,
                 enableSorting: true,
+                cell: (props: any) => (
+                    <span> { new Date(props.row.original.created_at).toLocaleString() } </span>
+                )
             },
             {
                 header: 'Usuario',
                 accessorKey: 'usuario',
                 enableColumnFilter: false,
                 enableSorting: true,
+                cell: (props: any) => (
+                    <span> {props.row.original.usuario.apellido} {props.row.original.usuario.nombre} </span>
+                )
             },
             {
                 header: 'Nro. de viaje',
@@ -64,11 +73,13 @@ const SanctionsTable = () => {
                 accessorKey: 'tipo_penalidad',
                 enableColumnFilter: false,
                 enableSorting: true,
-                cell: (props: any) => (<PigBadge color="slate" label={props.getValue()} />)
+                cell: (props: any) => (
+                    <span> {props.row.original.tipo_penalidad?.nombre}</span>
+                )
             },
             {
                 header: 'Días',
-                accessorKey: 'dias',
+                accessorKey: 'dias_bloqueo',
                 enableColumnFilter: false,
                 enableSorting: true,
             },
@@ -86,19 +97,19 @@ const SanctionsTable = () => {
                 enableSorting: true,
                 cell: (props: any) => (
                     <div className="flex flex-wrap justify-start gap-2">
-                        <button onClick={() => onShowSanction( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver">
+                        <button onClick={() => onEditSanction( props.row.original.id, 'SHOW' )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver">
                             <Tooltip id="default" place="top" content="Ver" />
                             <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
                         </button>
 
-                        <button onClick={() => onEditSanction( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Editar">
+                        <button onClick={() => onEditSanction( props.row.original.id, 'EDIT' )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Editar">
                             <Tooltip id="default" place="top" content="Editar" />
                             <Pen className="inline-block size-5 text-slate-500 dark:text-zink-200"></Pen>
                         </button>
 
-                        <button onClick={() => onDeleteSanction( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
+                        <button onClick={() => onDeleteSanction( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Desestimar">
                             <Tooltip id="default" place="top" content="Eliminar" />
-                            <Trash className="inline-block size-5 text-slate-500 dark:text-zink-200"></Trash>
+                            <Ban className="inline-block size-5 text-slate-500 dark:text-zink-200"></Ban>
                         </button>
                     </div>
                 ),
@@ -109,6 +120,7 @@ const SanctionsTable = () => {
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
+    const [disabled, setDisabled] = useState<boolean>(false);
     const [showDelete, setShowDelete] = useState<boolean>(false);
 
     // Formik
@@ -118,19 +130,19 @@ const SanctionsTable = () => {
         initialValues: activeSanction || initialValues,
         validationSchema: Yup.object({
             fecha_vencimiento: Yup.string().required("La fecha de vencimiento es requerida"),
-            tipo_penalidad: Yup.string().required("El tipo de penalidad es requerida"),
-            dias_sancion: Yup.string().required("Los dias de sanción son requeridos"),
-            dias_bloqueo: Yup.string().nullable(),
+            tipo_penalidad_id: Yup.string().required("El tipo de penalidad es requerida"),
+            estado: Yup.string().required("El estado es requerido"),
+            dias_bloqueo: Yup.string().required("Los dias de sanción son requeridos"),
+            dias_sancion: Yup.string().nullable(),
             comentario: Yup.string().nullable(),
         }),
 
         onSubmit: async (values: any) => {
             let response;
 
+            console.log(values)
             if (activeSanction) {
-                response = await dispatch( startUpdateSanction(values, activeSanction.id) )
-            } else {
-                response = await dispatch( startSavingSanction(values) )
+                response = await dispatch( startUpdateSanction(values, activeSanction.id) );
             }
 
             if(response === true) toggle();
@@ -141,6 +153,7 @@ const SanctionsTable = () => {
     const toggle = useCallback(() => {
         if (show) {
             setShow(false);
+            setDisabled(false);
         } else {
             setShow(true);
             formik.resetForm();
@@ -160,12 +173,8 @@ const SanctionsTable = () => {
         toggleDelete();
     }
 
-    function onShowSanction (id: number) {
-        dispatch( setActiveSanction(id) );
-        // toggle();
-    }
-
-    function onEditSanction (id: number) {
+    function onEditSanction (id: number, action: string) {
+        if(action === 'SHOW') setDisabled(true);
         dispatch( setActiveSanction(id) );
         toggle();
     }
@@ -229,11 +238,11 @@ const SanctionsTable = () => {
                     <Modal.Title className="text-16">Editar Sanción</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-                <form action="#!" onSubmit={(e) => {
-                        e.preventDefault();
-                        formik.handleSubmit();
-                        return false;
-                    }}>
+                    <form action="#!" onSubmit={(e) => {
+                            e.preventDefault();
+                            formik.handleSubmit();
+                            return false;
+                        }}>
                         <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
                             <div className="xl:col-span-12">
                                 <label htmlFor="telefono" className="inline-block mb-2 text-base font-medium">
@@ -245,8 +254,9 @@ const SanctionsTable = () => {
                                     name="fecha_vencimiento" 
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
                                     placeholder="Fecha de Vencimiento"
-                                    value={formik.values.fecha_vencimiento}
+                                    value={formik.values.fecha_vencimiento ? formik.values.fecha_vencimiento.split('T')[0] : ''}
                                     onChange={formik.handleChange} 
+                                    disabled={disabled}
                                 />
                                 
                                 { formik.touched.fecha_vencimiento && formik.errors.fecha_vencimiento ? (
@@ -262,6 +272,7 @@ const SanctionsTable = () => {
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                                     onChange={(e) => formik.setFieldValue("tipo_penalidad_id", e.target.value)}
                                     value={formik.values.tipo_penalidad_id || ""}
+                                    disabled={disabled}
                                 >
                                     <option value="">Seleccionar un tipo</option>
                                     {
@@ -276,6 +287,29 @@ const SanctionsTable = () => {
                                 ) : null }
                             </div>
 
+                            <div className="xl:col-span-12">
+                                <label htmlFor="estado" className="inline-block mb-2 text-base font-medium">Estado</label>
+                                <select
+                                    id="estado"
+                                    name="estado"
+                                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                    onChange={(e) => formik.setFieldValue("estado", e.target.value)}
+                                    value={formik.values.estado || ""}
+                                    disabled={disabled}
+                                >
+                                    <option value="">Seleccionar un estado</option>
+                                    {
+                                        estados.length > 0 && estados.map((estado: string) => (
+                                            <option key={estado} value={estado}>{estado}</option>
+                                        ))
+                                    }
+                                </select>
+
+                                { formik.touched.estado && formik.errors.estado ? (
+                                    <p className="text-red-400">{ formik.errors.estado }</p>
+                                ) : null }
+                            </div>
+
                             <div className="xl:col-span-6">
                                 <label htmlFor="telefono" className="inline-block mb-2 text-base font-medium">
                                     Dias de Sanción
@@ -285,9 +319,11 @@ const SanctionsTable = () => {
                                     id="dias_sancion" 
                                     name="dias_sancion" 
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
-                                    placeholder="Fecha de Vencimiento"
+                                    placeholder="Dias de Sanción"
                                     value={formik.values.dias_sancion}
                                     onChange={formik.handleChange} 
+                                    min={0}
+                                    disabled={disabled}
                                 />
                                 
                                 { formik.touched.dias_sancion && formik.errors.dias_sancion ? (
@@ -304,9 +340,11 @@ const SanctionsTable = () => {
                                     id="dias_bloqueo" 
                                     name="dias_bloqueo" 
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
-                                    placeholder="Fecha de Vencimiento"
+                                    placeholder="Dias de Bloqueo"
                                     value={formik.values.dias_bloqueo}
                                     onChange={formik.handleChange} 
+                                    min={0}
+                                    disabled={disabled}
                                 />
                                 
                                 { formik.touched.dias_bloqueo && formik.errors.dias_bloqueo ? (
@@ -324,6 +362,7 @@ const SanctionsTable = () => {
                                     value={formik.values.comentario || ""}
                                     onChange={formik.handleChange} 
                                     rows={4}
+                                    disabled={disabled}
                                     >
                                 </textarea>
 
@@ -338,7 +377,10 @@ const SanctionsTable = () => {
                         }
 
                         <div className="flex justify-end gap-2 mt-4">
-                            <button type="reset" className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10" onClick={toggle}>Cancelar</button>
+                            <button type="reset" className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10" onClick={toggle}>
+                                {disabled ? 'Cerrar' : 'Cancelar'}
+                            </button>
+
                             <button type="submit" className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
                                 Guardar
                             </button>
@@ -359,7 +401,7 @@ const SanctionsTable = () => {
                     <p className="font-semibold text-center text-16 mb-2">¿Desea desestimar la sanción?</p>
 
                     <div className="mx-auto w-48 h-48">
-                        <img src={bike} alt="Imagen de Bicicleta" />
+                        <img src={penality} alt="Imagen de Bicicleta" />
                     </div>
 
                     <div className="flex justify-end gap-2 mt-4">

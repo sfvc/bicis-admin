@@ -6,21 +6,22 @@ import { AlertCircle } from 'lucide-react';
 import { Dropdown } from './Components/Dropdown';
 import useSocket from 'Hooks/useSocket';
 import Modal from './Components/Ui/Modal';
+import { setActiveTravel } from 'slices/app/travel/reducer';
 import { startApproveTravel } from 'slices/app/travel/thunks';
 import { handleNotifications } from 'slices/app/notification/reducer';
 
 const NotificationDropdown = () => {
     const { initiateSocket, subscribeToChat } = useSocket('adminViaje');
     const { notifications } = useSelector( (state: any) => state.Notification );
+    const { activeTravel } = useSelector( (state: any) => state.Travel );
     const { user } = useSelector( (state: any) => state.Login );
     const dispatch = useDispatch<any>()
 
     // Modal states
     const [showApprove, setShowApprove] = useState<boolean>(false);
-    const [travel, setTravel] = useState<any>(null);
 
     const onApproveTravel = async(id: number) => {
-        setTravel(() => notifications.find((notification: any) => notification.id === id));
+        await dispatch( setActiveTravel(id) ); // TODO: El travel debe estar dentro del listado y paginado. Crear endpoint para traer un viaje especifico
         toggleApprove();
     }
 
@@ -33,7 +34,7 @@ const NotificationDropdown = () => {
     }, [showApprove]);
 
     const handleApproveTravel = async (action: string) => {
-        if (action === 'APROBAR' && travel) await dispatch( startApproveTravel({ admin_id: user.id }, travel.id) );
+        if (action === 'APROBAR' && activeTravel) await dispatch( startApproveTravel({ admin_id: user.id }, activeTravel.id) );
         toggleApprove();
     }
 

@@ -1,30 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-
-// Images
-import logoSm from "assets/images/logo-sm.png";
-import avatar1 from "assets/images/users/avatar-1.png";
-import avatar5 from "assets/images/users/avatar-5.png";
-import user2 from "assets/images/users/user-2.jpg";
-import img2 from "assets/images/small/img-2.jpg";
-
+import { createSelector } from "@reduxjs/toolkit";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ChevronsLeft, Send, Star } from "lucide-react";
+import { Link } from "react-router-dom";
+import SimpleBar from "simplebar-react";
+import avatar1 from 'assets/images/users/avatar-1.png'
+import avatar5 from 'assets/images/users/avatar-5.png'
 import userDummayImage from "assets/images/users/user-dummy-img.jpg";
-import SimpleBar from 'simplebar-react';
-
-
-// Icons
-import { ChevronsLeft, Send, Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
-// react-redux
-import { useDispatch, useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
-
-import {
-    getChat as onGetChat,
-    addChat as onAddChat,
-    deleteChat as onDeleteChat,
-    bookmarkChat as onBookmarkChat
-} from 'slices/thunk';
 
 const TicketDetail = () => {
     const [Chat_Box_Username, setChat_Box_Username] = useState<any>("Marie Prohaska");
@@ -47,7 +29,7 @@ const TicketDetail = () => {
 
     // Get Message
     useEffect(() => {
-        dispatch(onGetChat(currentRoomId));
+        // dispatch(onGetChat(currentRoomId));
     }, [dispatch, currentRoomId]);
 
     useEffect(() => {
@@ -64,7 +46,7 @@ const TicketDetail = () => {
                 img: avatar1,
                 isSender: true,
             };
-            dispatch(onAddChat(message));
+            // dispatch(onAddChat(message));
         }
         setcurMessage("");
     };
@@ -96,10 +78,7 @@ const TicketDetail = () => {
         <React.Fragment>
             <div className="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto relative">
                 <div className="flex gap-5 mt-5">
-                    <div id='chartlist' className={`h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full hidden [&.show]:block [&.active]:xl:block chat-content active`}>
-                        <div className="px-4 py-3 text-sm unreadConversations-alert text-yellow-500 border border-transparent rounded-md bg-yellow-50 dark:bg-yellow-400/20 hidden" id="copyClipBoard">
-                            <span className="font-bold">Message Copied</span>
-                        </div>
+                    <div id='chartlist' className={`h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full [&.show]:block [&.active]:xl:block chat-content active`}>
                         <div className="relative flex flex-col h-full">
                             <div className="card-body">
                                 <div className="flex items-center gap-3">
@@ -156,14 +135,14 @@ const TicketDetail = () => {
                             <div className="card-body">
                                 <div className="flex items-center gap-2">
                                     <div className="grow">
-                                        <input type="text" id="inputText" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Type your message here ..."
+                                        <input type="text" id="inputText" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Escriba su mensaje aquí ..."
                                             value={curMessage}
                                             onKeyDown={onKeyPress}
                                             onChange={e => setcurMessage(e.target.value)}
                                         />
                                     </div>
                                     <div className="flex gap-2 shrink-0">
-                                        <button type="button" className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20" disabled={!curMessage} onClick={addMessage}><Send className="inline-block size-4 mr-1 align-middle" /> <span className="align-middle">Send</span></button>
+                                        <button type="button" className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20" disabled={!curMessage} onClick={addMessage}><Send className="inline-block size-4 mr-1 align-middle" /> <span className="align-middle">Envíar</span></button>
                                     </div>
                                 </div>
                             </div>

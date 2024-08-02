@@ -139,7 +139,7 @@ const TravelInfo = () => {
                                 </a>
                             </div>
 
-                            <CreateTicket />
+                            {/* <CreateTicket /> */}
                             <Sanction />
                         </div>
                     </div>

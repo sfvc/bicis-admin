@@ -29,7 +29,7 @@ import hubCatalogReducer from "./app/catalog/hubs/reducer";
 import unitCatalogReducer from "./app/catalog/units/reducer";
 import adminCatalogReducer from "./app/catalog/admins/reducer";
 import penaltyCatalogReducer from "./app/catalog/penalty/reducer";
-import ticketCatalogReducer from "./app/catalog/type_ticket/reducer";
+import typesTicketCatalogReducer from "./app/catalog/types_ticket/reducer";
 
 const rootReducer = combineReducers({
     Layout: LayoutReducer,
@@ -40,12 +40,12 @@ const rootReducer = combineReducers({
     Sanction: SanctionReducer,
     Ticket: TicketReducer,
     Chat: ChatReducer,
-    
+    // Catalogo
     HubCatalog: hubCatalogReducer,
     UnitCatalog: unitCatalogReducer,
     AdminCatalog: adminCatalogReducer,
     PenaltyCatalog: penaltyCatalogReducer,
-    TicketCatalog: ticketCatalogReducer
+    TypesTicketCatalog: typesTicketCatalogReducer
 });
 
 
