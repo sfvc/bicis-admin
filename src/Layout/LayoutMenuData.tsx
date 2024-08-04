@@ -17,12 +17,12 @@ const menuData: any = [
                 link: '/viajes',
                 parentId: "viajes"
             },
-            {
-                id: 'iniciar_viaje',
-                label: 'Iniciar Viaje',
-                link: '/nuevo-viaje',
-                parentId: "viajes"
-            },
+            // {
+            //     id: 'iniciar_viaje',
+            //     label: 'Iniciar Viaje',
+            //     link: '/nuevo-viaje',
+            //     parentId: "viajes"
+            // },
         ]
     },
     {

@@ -54,8 +54,14 @@ const HubsTable = () => {
                 enableSorting: true,
             },
             {
-                header: 'Cantidad de Bicicletas',
-                accessorKey: 'cantidad_bicicletas',
+                header: 'Cantidad Mecanicas',
+                accessorKey: 'cantidad_mecanica',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Cantidad Electricas',
+                accessorKey: 'cantidad_electrica',
                 enableColumnFilter: false,
                 enableSorting: true,
             },

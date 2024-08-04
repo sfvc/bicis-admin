@@ -9,7 +9,7 @@ const api = new APIClient();
 
 export const startLoadingHubs = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/estacion', null)
+        const response = await api.get('/admin/estacion', null)
         dispatch( handleHubs(response) ); 
     } catch (error) {
         console.log(error);
@@ -18,7 +18,7 @@ export const startLoadingHubs = (): ThunkAction<void, RootState, unknown, Action
 
 export const startPaginateHubs = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/estacion', { page });
+        const response = await api.get('/admin/estacion', { page });
         dispatch( handleHubs(response) ); 
     } catch (error) {
         console.log(error);
@@ -27,7 +27,8 @@ export const startPaginateHubs = (page: number): ThunkAction<void, RootState, un
 
 export const startSavingHub = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.create('/admin/estacion', data)
+        const response = await api.create('/admin/estacion', data)
+        if(response.status === 400) return response.data.message[0];
         dispatch( startLoadingHubs() )
         toast.success("Estación creada con exito", { autoClose: 3000, theme: "colored", icon: true });
         return true;
@@ -39,7 +40,8 @@ export const startSavingHub = (data: any): ThunkAction<void, RootState, unknown,
 
 export const startUpdateHub = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.put(`/admin/estacion/${id}`, data)
+        const response = await api.put(`/admin/estacion/${id}`, data)
+        if(response.status === 400) return response.data.message[0];
         toast.success("Estación editada con exito", { autoClose: 3000, theme: "colored", icon: true });
         return true;
     } catch (error) {

@@ -39,9 +39,23 @@ export const startSavingAdmin = (data: any): ThunkAction<void, RootState, unknow
 
 export const startUpdateAdmin = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response = await api.update(`admin/administrador/${id}`, data)
-        console.log(response)
+        await api.put(`admin/administrador/${id}`, data);
+        dispatch( startLoadingAdmins() );
+        toast.success("Usuario editado con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         console.log(error);
+        toast.error("Error al editar el usuario", { autoClose: 3000, theme: "colored", icon: true });
+    }
+};
+
+export const startDeleteAdmin = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+    try {
+        const response = await api.delete(`admin/administrador/${id}`, null)
+        console.log(response)
+        dispatch( startLoadingAdmins() );
+        toast.success("Usuario eliminado con exito", { autoClose: 3000, theme: "colored", icon: true });
+    } catch (error) {
+        console.log(error);
+        toast.error("Error al eliminar el usuario", { autoClose: 3000, theme: "colored", icon: true });
     }
 };

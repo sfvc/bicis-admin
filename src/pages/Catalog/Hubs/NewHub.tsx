@@ -1,57 +1,31 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, Polygon  } from 'react-leaflet';
-import { LatLngExpression, LatLng , Marker as TypeMarker } from 'leaflet';
-import { EditControl } from 'react-leaflet-draw';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Marker as TypeMarker } from 'leaflet';
 import { Field, Formik, Form } from 'formik';
-import { Pen } from 'lucide-react';
 import { startSavingHub, startUpdateHub } from 'slices/app/catalog/hubs/thunks';
 import { initialPosition, markerDefault } from 'Common/Components/Map';
-import 'leaflet-draw/dist/leaflet.draw.css';
-import { Tooltip } from 'react-tooltip';
 import ErrorAlert from 'Common/Components/Ui/Alert/ErrorAlert';
+import 'leaflet-draw/dist/leaflet.draw.css';
 
 interface FormData {
     nombre: string,
     direccion: string,
-    capacidad_electrica: number | null,
-    capacidad_mecanica: number | null
+    capacidad_electrica: number,
+    capacidad_mecanica: number,
+    cantidad_electrica: number,
+    cantidad_mecanica: number
 }
 
 const initialValues: FormData = {
     nombre: '',
     direccion: '',
-    capacidad_electrica: null,
-    capacidad_mecanica: null
+    capacidad_electrica: 0,
+    capacidad_mecanica: 0,
+    cantidad_electrica: 0,
+    cantidad_mecanica: 0,
 };
-
-/* const initialPolygon = [
-    {
-        lat: -28.472444960005284,
-        lng: -65.78540325164796
-    },
-    {
-        lat: -28.473425794601898,
-        lng: -65.78274250030519
-    },
-    {
-        lat: -28.47059643928235,
-        lng: -65.78098297119142
-    },
-    {
-        lat: -28.467691555660018,
-        lng: -65.78278541564943
-    },
-    {
-        lat: -28.467729281933185,
-        lng: -65.78750610351564
-    },
-    {
-        lat: -28.470860515651488,
-        lng: -65.78845024108888
-    }
-] */
 
 const NewHub = () => {
     const navigate = useNavigate();
@@ -61,19 +35,7 @@ const NewHub = () => {
         if(activeHub) return [activeHub.ubicacion.lat, activeHub.ubicacion.lng];
         return initialPosition;
     })
-    const [polygon, setPolygon] = useState<LatLngExpression[]>(activeHub?.perimetro || [])
-    const featureGroupRef = useRef<any>(null); // Ref para acceder al grupo de características del polígono
     const [errorMessage, setErrorMessage] = useState<string>('')
-
-    const onCreated = (e: any) => {
-		let layer = e.layer;
-		// console.log("Geojson", layer.toGeoJSON());
-        setPolygon(layer.getLatLngs()[0]) // Retorna un array de poligonos. Solo tomo el primero
-	};
-
-    const handleEdit = () => {
-        setPolygon([])
-    }
 
     function DraggableMarker () {
         const [draggable, setDraggable] = useState<boolean>(false)
@@ -85,7 +47,8 @@ const NewHub = () => {
               const marker = markerRef.current;
 
               if (marker != null) {
-                setPosition(marker.getLatLng())
+                const { lat, lng } = marker.getLatLng()
+                setPosition([lat, lng])
               }
             },
           }),
@@ -116,45 +79,15 @@ const NewHub = () => {
         )
     }
 
-    /* async function handleSubmit (values: FormData) {
-        let response;
-
-        console.log(position)
-        if (position instanceof LatLng) {
-            const {lat, lng} = position
-
-            const data = {
-                ...values, 
-                ubicacion: { lat, lng }, 
-                // perimetro: polygon
-            }
-
-            console.log(data)
-
-            if(activeHub) {
-                response = await dispatch( startUpdateHub(data, activeHub.id) )
-            } else {
-                response = await dispatch( startSavingHub(data) )
-            }
-
-            if(response === !true) setErrorMessage(response);
-        } else {
-            setErrorMessage('Debe seleccionar la ubicación de la estación.')
-        }
-
-        if(response === true) navigate('/catalogo/estaciones')
-    }; */
-
     async function handleSubmit (values: FormData) {
         let response;
 
         if (position !== initialPosition) {
-            const { lat, lng } = position
+            const [ lat, lng ] = position
 
             const data = {
                 ...values, 
                 ubicacion: { lat, lng },
-                // perimetro: polygon
             }
 
             if(activeHub) {
@@ -163,7 +96,7 @@ const NewHub = () => {
                 response = await dispatch( startSavingHub(data) )
             }
 
-            if(response === !true) setErrorMessage(response);
+            if(response !== true) setErrorMessage(response);
         } else {
             setErrorMessage('Debe seleccionar la ubicación de la estación.')
         }
@@ -174,7 +107,7 @@ const NewHub = () => {
     return (
         <React.Fragment>
             <div className="card p-5 mt-5">
-                <h6 className="mb-1 text-15">Agregar Estación</h6>
+                <h6 className="mb-1 text-15">{activeHub ? "Editar Estación" : "Agregar Estación"}</h6>
 
                 {/* Mapa */}
                 <MapContainer center={initialPosition} zoom={14} scrollWheelZoom={true} className="h-[30rem] mb-5">
@@ -182,39 +115,6 @@ const NewHub = () => {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-
-                    {/* Grupo de características del polígono */}
-                    <FeatureGroup ref={featureGroupRef}>
-                        {/* Control de edición del polígono */}
-                        <EditControl
-                            position="topright"
-                            onCreated={onCreated}
-                            draw={{
-                                rectangle: false, // Deshabilitar dibujar rectángulos
-                                circle: false, // Deshabilitar dibujar círculos
-                                marker: false, // Deshabilitar dibujar marcadores
-                                circlemarker: false,
-                                polyline: false
-                            }}
-                        />
-                    </FeatureGroup>
-
-                    <Polygon pathOptions={{ fillColor: 'blue' }} positions={polygon} />
-                    
-                    <div className='relative'>
-                        <button
-                            type="button" 
-                            onClick={handleEdit}
-                            style={{ zIndex: 1000 }}
-                            className="py-1.5 px-1 border-2 shadow-sm rounded-md absolute top-2.5 right-14 flex items-center text-white bg-custom-500 hover:bg-custom-600"
-                            data-tooltip-id="default" 
-                            data-tooltip-content="Editar"
-                        >
-                            <Tooltip id="default" place="top" content="Editar" />
-                            <Pen className='h-5'></Pen>
-                        </button>
-                    </div>
-
                     <DraggableMarker />
                 </MapContainer>
 
@@ -226,28 +126,42 @@ const NewHub = () => {
                                 <label htmlFor="nombre" className="inline-block mb-2 text-base font-medium">
                                     Nombre
                                 </label>
-                                <Field type="text" id="nombre" name="nombre" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Nombre de Estación"/>
+                                <Field type="text" id="nombre" name="nombre" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Nombre de Estación" required/>
                             </div>
 
                             <div className="xl:col-span-6">
                                 <label htmlFor="direccion" className="inline-block mb-2 text-base font-medium">
                                     Dirección
                                 </label>
-                                <Field type="text" id="direccion" name="direccion" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Dirección"/>
+                                <Field type="text" id="direccion" name="direccion" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Dirección" required/>
                             </div>
 
                             <div className="xl:col-span-6">
                                 <label htmlFor="capacidadMecanica" className="inline-block mb-2 text-base font-medium">
                                     Capacidad de Bicis Mecanicas
                                 </label>
-                                <Field type="number" id="capacidad_mecanica" name="capacidad_mecanica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Electricas"/>
+                                <Field type="number" id="capacidad_mecanica" name="capacidad_mecanica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Electricas" min={0}/>
                             </div>
 
                             <div className="xl:col-span-6">
                                 <label htmlFor="capacidad_electrica" className="inline-block mb-2 text-base font-medium">
                                     Capacidad de Bicis Electricas
                                 </label>
-                                <Field type="number" id="capacidad_electrica" name="capacidad_electrica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Mecanicas"/>
+                                <Field type="number" id="capacidad_electrica" name="capacidad_electrica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Capacidad Mecanicas" min={0}/>
+                            </div>
+
+                            <div className="xl:col-span-6">
+                                <label htmlFor="cantidad_electrica" className="inline-block mb-2 text-base font-medium">
+                                    Cantidad de Bicis Mecanicas
+                                </label>
+                                <Field type="number" id="cantidad_mecanica" name="cantidad_mecanica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Cantidad Mecanicas" min={0}/>
+                            </div>
+
+                            <div className="xl:col-span-6">
+                                <label htmlFor="cantidad_electrica" className="inline-block mb-2 text-base font-medium">
+                                Cantidad de Bicis Electricas
+                                </label>
+                                <Field type="number" id="cantidad_electrica" name="cantidad_electrica" className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Cantidad Electricas" min={0}/>
                             </div>
                         </div>
 

@@ -52,7 +52,10 @@ const adminCatalogSlice = createSlice({
         },
         setActiveAdmin(state: AdminState, action: PayloadAction<number>) {
             state.activeAdmin = state.admins.find((admin) => admin.id === action.payload) || null
-        }
+        },
+        resetActiveAdmin(state: AdminState) {
+            state.activeAdmin = null
+        },
     },
 });
 
@@ -60,7 +63,8 @@ export const {
     handleAdmins, 
     handleSearchAdmin,
     addNewAdmin,
-    setActiveAdmin 
+    setActiveAdmin,
+    resetActiveAdmin
 } = adminCatalogSlice.actions;
 
 export default adminCatalogSlice.reducer;

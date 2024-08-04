@@ -6,12 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Modal from "Common/Components/Ui/Modal";
-import { startLoadingAdmins, startPaginateAdmins, startSavingAdmin, startUpdateAdmin } from "slices/app/catalog/admins/thunks";
+import { startDeleteAdmin, startLoadingAdmins, startPaginateAdmins, startSavingAdmin, startUpdateAdmin } from "slices/app/catalog/admins/thunks";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
-import { handleSearchAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
+import { handleSearchAdmin, resetActiveAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
 import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
+import admin from "assets/images/admin.webp";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -25,18 +26,11 @@ const initialValues = {
     rol: "",
 }
 
-const validationCreate = Yup.object({
+const validationSchema = Yup.object({
     nombre: Yup.string().required("El nombre es requerido"),
     apellido: Yup.string().required("El apellido es requerido"),
     username: Yup.string().required("El usuario es requerido"),
     password: Yup.string().required("La contraseña es requerida"),
-    rol: Yup.string().required("El rol es requerido"),
-})
-
-const validationUpdate = Yup.object({
-    nombre: Yup.string().required("El nombre es requerido"),
-    apellido: Yup.string().required("El apellido es requerido"),
-    username: Yup.string().required("El usuario es requerido"),
     rol: Yup.string().required("El rol es requerido"),
 })
 
@@ -80,7 +74,7 @@ const AdminsTable = () => {
             },
             {
                 header: 'Activo',
-                accessorKey: 'activo',
+                accessorKey: 'is_active',
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
@@ -99,7 +93,7 @@ const AdminsTable = () => {
                             <Pen className="inline-block size-5 text-slate-500 dark:text-zink-200"></Pen>
                         </button>
 
-                        <button className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
+                        <button onClick={() => onDeleteAdmin(props.row.original.id)} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
                             <Tooltip id="default" place="top" content="Editar" />
                             <Trash className="inline-block size-5 text-slate-500 dark:text-zink-200"></Trash>
                         </button>
@@ -112,14 +106,15 @@ const AdminsTable = () => {
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
+    const [showDelete, setShowDelete] = useState<boolean>(false);
     const [isEdit, setIsEdit] = useState<boolean>(false);
 
     // Formik
     const formik: any = useFormik({
         enableReinitialize: true,
 
-        initialValues: {...activeAdmin, password: ""} || initialValues,
-        validationSchema: activeAdmin ? validationUpdate : validationCreate,
+        initialValues: activeAdmin || initialValues,
+        validationSchema: validationSchema,
 
         onSubmit: async (values: any) => {
             if (activeAdmin) {
@@ -131,24 +126,48 @@ const AdminsTable = () => {
         },
     });
 
+    const handleSelectChange = (fieldName: string, value: string) => {
+        formik.setFieldValue(fieldName, value === 'true' ? true : false);
+    };
+
     const toggle = useCallback(() => {
         if (show) {
             setShow(false);
             setIsEdit(false);
+            activeAdmin && dispatch( resetActiveAdmin() );
         } else {
             setShow(true);
             formik.resetForm();
         }
     }, [show, formik]);
 
+    const toggleDelete = useCallback(() => {
+        if (showDelete) {
+            setShowDelete(false);
+            activeAdmin && dispatch( resetActiveAdmin() );
+        } else {
+            setShowDelete(true);
+        }
+    }, [showDelete]);
+
     const onEditAdmin = (id: number) => {
         dispatch( setActiveAdmin(id) )
         toggle()
     }
 
+    const onDeleteAdmin = (id: number) => {
+        dispatch( setActiveAdmin(id) );
+        toggleDelete();
+    }
+
+    const confirmAction = async (action: string) => {
+        if (action === 'ELIMINAR' && activeAdmin) await dispatch( startDeleteAdmin( activeAdmin.id ) );
+        toggleDelete();
+    }
+
     const onSearch = async ({target}: any) => {
         if(target.value === '') return dispatch( startLoadingAdmins() );
-        const response = await api.get(`http://localhost:1000/api/v1/usuario/search/${target.value}`, null);
+        const response = await api.get(`admin/administrador/${target.value}`, null);
         dispatch( handleSearchAdmin(response) );
     }
 
@@ -212,7 +231,7 @@ const AdminsTable = () => {
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Modal para crear un administrador */}
             <Modal show={show} onHide={toggle} modal-center="true"
                 className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
                 dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
@@ -316,6 +335,28 @@ const AdminsTable = () => {
                                     <p className="text-red-400">{ formik.errors.rol }</p>
                                 ) : null }
                             </div>
+
+                            {
+                                activeAdmin && 
+                                <div className="xl:col-span-12">
+                                    <label htmlFor="is_active" className="inline-block mb-2 text-base font-medium">Estado</label>
+                                    <select
+                                        id="is_active"
+                                        name="is_active"
+                                        className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                        onChange={(e) => handleSelectChange("is_active", e.target.value)}
+                                        value={formik.values.is_active ? "true" : "false"}
+                                        defaultValue={activeAdmin.is_active ? "true" : "false"}
+                                    >
+                                        <option value="true">Activo</option>
+                                        <option value="false">Inactivo</option>
+                                    </select>
+
+                                    { formik.touched.is_active && formik.errors.is_active ? (
+                                        <p className="text-red-400">{ formik.errors.is_active }</p>
+                                    ) : null }
+                                </div>
+                            }
                         </div>
 
                         <div className="flex justify-end gap-2 mt-4">
@@ -325,6 +366,32 @@ const AdminsTable = () => {
                             </button>
                         </div>
                     </form>
+                </Modal.Body>
+            </Modal>
+
+            {/* Modal para eliminar un administrador */}
+            <Modal show={showDelete} onHide={toggleDelete} modal-center="true"
+                className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
+                dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
+                <Modal.Header className="flex items-center justify-between p-4 border-b dark:border-zink-500"
+                    closeButtonClass="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
+                    <Modal.Title className="text-16">Eliminar Administrador</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
+                    <p className="font-semibold text-center text-16 mb-2">¿Desea eliminar el administrador "{activeAdmin?.nombre} {activeAdmin?.apellido}"?</p>
+
+                    <div className="mx-auto w-48">
+                        <img src={admin} alt="Imagen de Administrador" />
+                    </div>
+
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button type="reset" onClick={() => confirmAction('CANCELAR')} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">
+                            Cancelar
+                        </button>
+                        <button type="submit" onClick={() => confirmAction('ELIMINAR')} className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                            Eliminar
+                        </button>
+                    </div>
                 </Modal.Body>
             </Modal>
         </React.Fragment>

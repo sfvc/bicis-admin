@@ -151,6 +151,7 @@ const UnitsTable = () => {
     const toggleDelete = useCallback(() => {
         if (showDelete) {
             setShowDelete(false);
+            activeUnit && dispatch( resetActiveUnit() );
         } else {
             setShowDelete(true);
         }
