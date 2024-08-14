@@ -52,7 +52,7 @@ const TravelsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
-                    <PigBadge color={ props.getValue() === 'ELECTRICA' ? 'yellow' : 'purple' } label={props.getValue()} />
+                    <PigBadge color={ props.getValue() === 'ELECTRICA' ? 'yellow' : 'purple' } label={props.getValue() || 'FALTA_TIPO'} />
                 ),
             },
             {

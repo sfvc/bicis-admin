@@ -23,7 +23,7 @@ const HubsMap = () => {
 
                 {
                     hubs.length > 0 && hubs.map((hub: any) => (
-                        <Marker key={hub.id} position={hub.ubicacion} icon={hubMarker}>
+                        <Marker key={hub.id} position={[hub.ubicacion.lat, hub.ubicacion.long]} icon={hubMarker}>
                             <Popup>
                                 {hub.nombre} <br /> {hub.direccion}
                             </Popup>

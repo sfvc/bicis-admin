@@ -32,7 +32,7 @@ const NewHub = () => {
     const dispatch = useDispatch<any>()
     const { activeHub } = useSelector(( state: any ) => state.HubCatalog)
     const [position, setPosition] = useState<any>(() => {
-        if(activeHub) return [activeHub.ubicacion.lat, activeHub.ubicacion.lng];
+        if(activeHub) return [activeHub.ubicacion.lat, activeHub.ubicacion.long];
         return initialPosition;
     })
     const [errorMessage, setErrorMessage] = useState<string>('')
@@ -87,7 +87,7 @@ const NewHub = () => {
 
             const data = {
                 ...values, 
-                ubicacion: { lat, lng },
+                ubicacion: { lat, long: lng },
             }
 
             if(activeHub) {

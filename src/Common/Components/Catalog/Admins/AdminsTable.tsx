@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import Modal from "Common/Components/Ui/Modal";
 import { startDeleteAdmin, startLoadingAdmins, startPaginateAdmins, startSavingAdmin, startUpdateAdmin } from "slices/app/catalog/admins/thunks";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
-import { handleSearchAdmin, resetActiveAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
+import { handleAdmins, resetActiveAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
 import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
@@ -167,8 +167,9 @@ const AdminsTable = () => {
 
     const onSearch = async ({target}: any) => {
         if(target.value === '') return dispatch( startLoadingAdmins() );
-        const response = await api.get(`admin/administrador/${target.value}`, null);
-        dispatch( handleSearchAdmin(response) );
+        const response = await api.get(`admin/administrador?nombre=${target.value}`, null);
+        console.log(response)
+        dispatch( handleAdmins(response) );
     }
 
     useEffect(() => {

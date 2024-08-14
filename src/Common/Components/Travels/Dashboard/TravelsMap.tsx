@@ -2,62 +2,140 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { bikeMarker, initialPosition } from "Common/Components/Map";
 import MapComponent from "../../Map/MapComponent";
 import { useEffect, useState } from "react";
-import simulateTravel from "helpers/simulateTravels";
 import useSocket from "Hooks/useSocket";
+import { APIClient } from "helpers/api_helper";
+
+interface Point {
+    id: string,
+    latitude: number,
+    longitude: number
+}
+
+const test: Point[] = [
+    {
+        longitude: -65.7796562,
+        latitude: -28.4688493,
+        id: "031054168125"
+    },
+    {
+        longitude: -65.77897120903226,
+        latitude: -28.46882980580645,
+        id: "031054203526"
+    },
+    {
+        longitude: -65.77828621806452,
+        latitude: -28.468810311612902,
+        id: "031054168125"
+    },
+    {
+        longitude: -65.77760122709678,
+        latitude: -28.468790817419354,
+        id: "031054203526"
+    },
+]
+
+const api = new APIClient();
 
 const TravelsMap = () => {
-    /* const [travels, setTravels] = useState<any>([])
-    const [index, setIndex] = useState<number>(0) */
+    const { initiateSocket, subscribeToChat } = useSocket('front/global');
+    const [bikes, setBikes] = useState<any[]>([]);
+    const [travels, setTravels] = useState<any[]>([]);
 
-    const { initiateSocket, subscribeToChat } = useSocket('front/031054167945')
-    const [data, setData] = useState(null);
-
-    /* function handleTravels () {
-        setTimeout(() => {
-            const data = simulateTravel(index)
-            setTravels(data)
-            if(data) setIndex(index + 1)
-        }, 4000)
-    } */
-
-    /* useEffect(() => {
-        handleTravels()
-    }, [index]) */
-
-    useEffect(()=>{
-        initiateSocket('messageToServer')
-        subscribeToChat((error, msg)=>{
-            setData(msg);
-        })
-    },[])
+    const receivedData = (point: Point) => {
+        console.log("Point received from socket:", point);
+        console.log("Current travels:", travels);
     
+        setBikes((prevBikes) => {
+            const updatedBikes = prevBikes.map((bike) => {
+                if (bike.bicicleta.traccar_id === point.id) {
+                    return {
+                        ...bike,
+                        bicicleta: {
+                            ...bike.bicicleta,
+                            lat: point.latitude,
+                            long: point.longitude,
+                        },
+                    };
+                }
+                return bike;
+            });
+    
+            const isExistingBike = updatedBikes.some(
+                (bike) => bike.bicicleta.traccar_id === point.id
+            );
+    
+            if (!isExistingBike) {
+                const matchingTravel = travels.find(
+                    (travel) => travel.bicicleta.traccar_id === point.id
+                );
+                if (matchingTravel) {
+                    return [
+                        ...updatedBikes,
+                        {
+                            ...matchingTravel,
+                            bicicleta: {
+                                ...matchingTravel.bicicleta,
+                                lat: point.latitude,
+                                long: point.longitude,
+                            },
+                        },
+                    ];
+                }
+            }
+    
+            return updatedBikes;
+        });
+    };
+    
+    // Función asíncrona para obtener los viajes desde la API
+    const handleTravels = async () => {
+        try {
+            const response: any = await api.get('/admin/viaje', null);
+            console.log("Travels fetched from API:", response.items);
+            setTravels(response.items); // Guarda los viajes en el estado
+        } catch (error) {
+            console.error("Error fetching travels:", error);
+        }
+    };
+
+    // Este useEffect se encarga de obtener los viajes al cargar el componente
+    useEffect(() => {
+        handleTravels();
+    }, []);
+
+    // Este useEffect se encarga de iniciar el socket y suscribirse a los mensajes
+    useEffect(() => {
+        // Inicia el socket solo después de que los viajes han sido cargados
+        if (travels.length > 0) {
+            initiateSocket('messageToServer');
+            subscribeToChat((error, msg) => receivedData(msg)); // Suscríbete a los mensajes del socket
+        }
+    }, [travels]); // Se ejecutará solo cuando `travels` cambie (cuando se cargue)
+
     return (
         <MapComponent >
             <MapContainer center={initialPosition} zoom={15} scrollWheelZoom={true} className="h-[30rem]">
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                /> 
 
-                {/* {
-                    (travels.length > 0) && travels.map(( travel: any ) => (
-                        <Marker key={travel.id} position={travel.coords.point} icon={bikeMarker}>
+                {
+                    (bikes.length > 0) && bikes.map(( bike: any ) => (
+                        <Marker key={bike.id} position={[bike.bicicleta.lat, bike.bicicleta.long]} icon={bikeMarker}>
                             <Popup>
                                 <div className="text-center">
-                                    <span className="font-semibold">Usuario: </span>{travel.usuario.nombre} {travel.usuario.apellido} <br /> 
-                                    <span className="font-semibold">Unidad: </span>{travel.unidad} <br /> 
-                                    <span className="font-semibold">Tipo: </span>{travel.tipo_unidad} <br /> 
-                                    <span className="font-semibold">Ultima posición <br /></span>{travel.coords.date} <br /> 
+                                    <span className="font-semibold">Bicicleta: </span>{bike.id}<br /> 
+                                    <span className="font-semibold">Usuario: </span>{bike.usuario.nombre} {bike.usuario.apellido}<br />
+                                    <span className="font-semibold">Unidad: </span>{bike.bicicleta.patente} <br /> 
+                                    <span className="font-semibold">Tipo: </span>{bike.bicicleta.tipo_unidad || 'TIPO UNIDAD'} <br /> 
+                                    <span className="font-semibold">Ultima posición: <br /></span>[{bike.bicicleta.lat} {bike.bicicleta.long}]<br />  
                                 </div>
                             </Popup>
                         </Marker>
                     ))
-                } */}
+                }
             </MapContainer>
-
-            <div className="mt-4 px-4">
-                <p>Received Data: {JSON.stringify(data)}</p>
-            </div>
         </MapComponent>
     )
 }

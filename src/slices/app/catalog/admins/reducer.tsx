@@ -44,9 +44,6 @@ const adminCatalogSlice = createSlice({
             state.paginate = { ...paginate }
             state.activeAdmin = null
         },
-        handleSearchAdmin(state: AdminState, action: PayloadAction<any>) {
-            state.admins = action.payload
-        },
         addNewAdmin(state: AdminState, action: PayloadAction<Admin>) {
             state.admins = [...state.admins, action.payload]
         },
@@ -60,8 +57,7 @@ const adminCatalogSlice = createSlice({
 });
 
 export const { 
-    handleAdmins, 
-    handleSearchAdmin,
+    handleAdmins,
     addNewAdmin,
     setActiveAdmin,
     resetActiveAdmin

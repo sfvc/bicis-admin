@@ -3,7 +3,7 @@ let socket: Socket;
 
 const useSocket = (channel: String) => {
   const initiateSocket = (room: string) => {
-    socket = io('http://localhost:1000');
+    socket = io('64.226.117.238:5643'); // http://localhost:1000
     console.log(`Connecting socket...`);
     if (socket && room) socket.emit('join', room);
   }
