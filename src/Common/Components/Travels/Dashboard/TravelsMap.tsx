@@ -3,7 +3,10 @@ import { bikeMarker, initialPosition } from "Common/Components/Map";
 import MapComponent from "../../Map/MapComponent";
 import { useEffect, useState } from "react";
 import useSocket from "Hooks/useSocket";
-import { APIClient } from "helpers/api_helper";
+import { useDispatch, useSelector } from "react-redux";
+import { startLoadingTravelsMap } from "slices/app/map/thunks";
+
+const url = process.env.REACT_APP_SOCKET_TRACKER || '';
 
 interface Point {
     id: string,
@@ -34,12 +37,11 @@ const test: Point[] = [
     },
 ]
 
-const api = new APIClient();
-
 const TravelsMap = () => {
-    const { initiateSocket, subscribeToChat } = useSocket('front/global');
+    const { initiateSocket, subscribeToChat } = useSocket(url, 'front/global');
     const [bikes, setBikes] = useState<any[]>([]);
-    const [travels, setTravels] = useState<any[]>([]);
+    const dispatch = useDispatch<any>();
+    const { travelsMap: travels } = useSelector((state: any) => state.Map);
 
     const receivedData = (point: Point) => {
         console.log("Point received from socket:", point);
@@ -47,7 +49,7 @@ const TravelsMap = () => {
     
         setBikes((prevBikes) => {
             const updatedBikes = prevBikes.map((bike) => {
-                if (bike.bicicleta.traccar_id === point.id) {
+                if (bike.bicicleta.tracker.traccar_id === point.id) {
                     return {
                         ...bike,
                         bicicleta: {
@@ -61,12 +63,12 @@ const TravelsMap = () => {
             });
     
             const isExistingBike = updatedBikes.some(
-                (bike) => bike.bicicleta.traccar_id === point.id
+                (bike) => bike.bicicleta.tracker.traccar_id === point.id
             );
     
             if (!isExistingBike) {
                 const matchingTravel = travels.find(
-                    (travel) => travel.bicicleta.traccar_id === point.id
+                    (travel: any) => travel.bicicleta.tracker.traccar_id === point.id
                 );
                 if (matchingTravel) {
                     return [
@@ -86,31 +88,17 @@ const TravelsMap = () => {
             return updatedBikes;
         });
     };
-    
-    // Función asíncrona para obtener los viajes desde la API
-    const handleTravels = async () => {
-        try {
-            const response: any = await api.get('/admin/viaje', null);
-            console.log("Travels fetched from API:", response.items);
-            setTravels(response.items); // Guarda los viajes en el estado
-        } catch (error) {
-            console.error("Error fetching travels:", error);
-        }
-    };
 
-    // Este useEffect se encarga de obtener los viajes al cargar el componente
     useEffect(() => {
-        handleTravels();
-    }, []);
+        dispatch( startLoadingTravelsMap() );
+    }, [])
 
-    // Este useEffect se encarga de iniciar el socket y suscribirse a los mensajes
     useEffect(() => {
-        // Inicia el socket solo después de que los viajes han sido cargados
         if (travels.length > 0) {
             initiateSocket('messageToServer');
-            subscribeToChat((error, msg) => receivedData(msg)); // Suscríbete a los mensajes del socket
+            subscribeToChat((error, msg) => receivedData(msg));
         }
-    }, [travels]); // Se ejecutará solo cuando `travels` cambie (cuando se cargue)
+    }, [travels]);
 
     return (
         <MapComponent >

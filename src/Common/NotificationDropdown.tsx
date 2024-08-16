@@ -8,9 +8,12 @@ import useSocket from 'Hooks/useSocket';
 import Modal from './Components/Ui/Modal';
 import { startApproveTravel } from 'slices/app/travel/thunks';
 import { handleNotifications } from 'slices/app/notification/reducer';
+import { startLoadingTravelsMap } from 'slices/app/map/thunks';
+
+const url = process.env.REACT_APP_SOCKET_BACK || '';
 
 const NotificationDropdown = () => {
-    const { initiateSocket, subscribeToChat } = useSocket('adminViaje');
+    const { initiateSocket, subscribeToChat } = useSocket(url, 'adminViaje');
     const { notifications } = useSelector( (state: any) => state.Notification );
     const { user } = useSelector( (state: any) => state.Login );
     const dispatch = useDispatch<any>()
@@ -33,7 +36,10 @@ const NotificationDropdown = () => {
     }, [showApprove]);
 
     const handleApproveTravel = async (action: string) => {
-        if (action === 'APROBAR' && travel) await dispatch( startApproveTravel({ admin_id: user.id }, travel.id) );
+        if (action === 'APROBAR' && travel) {
+            await dispatch( startApproveTravel({ admin_id: user.id }, travel.id) );
+            await dispatch( startLoadingTravelsMap() );
+        }
         toggleApprove();
     }
 
@@ -97,7 +103,7 @@ const NotificationDropdown = () => {
                                                 </div>
                                             }
                                             <p className={`text-start text-sm text-slate-500 dark:text-zink-300 ${index === notifications.length - 3 ? "mb-3" : "mb-0"}`}>
-                                                <Clock className="inline-block size-3 mr-1"></Clock> <span className="align-middle">{ new Date(item.fecha_inicio).toLocaleString() }</span>
+                                                <Clock className="inline-block size-3 mr-1"></Clock> <span className="align-middle">{ new Date(item.fecha_solicitud).toLocaleString() }</span>
                                             </p>
                                         </div>
                                     </button>

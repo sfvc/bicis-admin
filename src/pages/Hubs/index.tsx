@@ -8,10 +8,10 @@ const Hubs = () => {
 
   return (
     <React.Fragment>
-        <div className="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
-            <CountHubs />
+        <div className="pt-4 container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
+            {/* <CountHubs /> */}
             <HubsMap />
-            <HubsFilter />
+            {/* <HubsFilter /> */}
             <HubsTable />
         </div>
     </React.Fragment>

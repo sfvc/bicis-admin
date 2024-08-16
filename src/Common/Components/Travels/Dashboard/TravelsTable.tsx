@@ -14,7 +14,7 @@ import NoResults from "Common/NoResults";
 import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
 import Cronometro from "Common/Components/Cronometro";
-import useSocket from "Hooks/useSocket";
+import { startLoadingTravelsMap } from "slices/app/map/thunks";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -25,7 +25,6 @@ interface FormData {
 const TravelsTable = () => {
     const { travels, paginate, activeTravel } = useSelector( (state: any) => state.Travel );
     const { user } = useSelector( (state: any) => state.Login );
-    const { initiateSocket, subscribeToChat } = useSocket('adminViaje')
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
 
@@ -113,12 +112,6 @@ const TravelsTable = () => {
                 enableSorting: true,
                 cell: (props: any) => (
                     <>
-                        {/* {
-                            props.getValue()
-                                ? <span>{ props.getValue() }</span>
-                                : <Cronometro fechaInicio={props.row.original.fecha_inicio} />
-                        } */}
-
                         {
                             props.row.original.estado === 'EN_VIAJE'
                                 ? <Cronometro fechaInicio={props.row.original.fecha_inicio} />
@@ -191,8 +184,9 @@ const TravelsTable = () => {
             estacion_final_id: Yup.string().required("La estación es requerida"),
         }),
 
-        onSubmit: (values: any) => {
-            dispatch( startCloseTravel(values, activeTravel.id) )
+        onSubmit: async (values: any) => {
+            await dispatch( startCloseTravel(values, activeTravel.id) );
+            await dispatch( startLoadingTravelsMap() );
             toggle();
         },
     });
@@ -240,7 +234,8 @@ const TravelsTable = () => {
 
     const handleApproveTravel = async(action: string) => {
         if (action === 'APROBAR') {
-            dispatch( startApproveTravel({ admin_id: user.id }, activeTravel.id) );
+            await dispatch( startApproveTravel({ admin_id: user.id }, activeTravel.id) );
+            await dispatch( startLoadingTravelsMap() );
         }
         toggleApprove();
     }
@@ -251,15 +246,8 @@ const TravelsTable = () => {
     }
         
     useEffect(() => {
-        initLoading()
+        initLoading();
     }, []);
-
-    useEffect(()=>{
-        initiateSocket('messageToServer')
-        subscribeToChat((error, travel) => {
-            dispatch( startLoadingTravels() )
-        })
-    },[])
 
     return (
         <React.Fragment>

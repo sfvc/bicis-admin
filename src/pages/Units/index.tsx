@@ -7,9 +7,9 @@ const Units = () => {
 
   return (
     <React.Fragment>
-        <div className="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
-            <CountUnits />
-            <UnitsFilter />
+        <div className="pt-4 container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
+            {/* <CountUnits /> */}
+            {/* <UnitsFilter /> */}
             <UnitsTable />
         </div>
     </React.Fragment>

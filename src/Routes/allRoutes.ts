@@ -5,9 +5,9 @@ import Units from "pages/Units";
 import Travels from "pages/Travels";
 import NewTravel from "pages/Travels/NewTravel";
 import TravelDetail from "pages/Travels/TravelDetail";
-import Sanctions from "pages/Sanctions";
-import Tickets from "pages/Tickets";
-import TicketDetail from "pages/Tickets/TicketDetail";
+// import Sanctions from "pages/Sanctions";
+// import Tickets from "pages/Tickets";
+// import TicketDetail from "pages/Tickets/TicketDetail";
 
 import CatalogHubs from "pages/Catalog/Hubs";
 import NewHub from "pages/Catalog/Hubs/NewHub";
@@ -16,8 +16,9 @@ import CatalogUnits from "pages/Catalog/Units";
 import Login from "pages/Authentication/Login";
 import Logout from "pages/Authentication/LogOut";
 import CatalogAdmins from "pages/Catalog/Admins";
-import CatalogPenalties from "pages/Catalog/Penalties";
-import CatalogTickets from "pages/Catalog/Tickets";
+// import CatalogPenalties from "pages/Catalog/Penalties";
+// import CatalogTickets from "pages/Catalog/Tickets";
+import CatalogTrackers from "pages/Catalog/Tracker";
 
 interface RouteObject {
   path: string;
@@ -42,11 +43,11 @@ const authProtectedRoutes: Array<RouteObject> = [
   { path: "/unidades", component: Units },
 
   // Sanciones
-  { path: "/sanciones", component: Sanctions },
+  // { path: "/sanciones", component: Sanctions },
 
   // Tickets
-  { path: "/tickets", component: Tickets },
-  { path: "/detalle-ticket/:id", component: TicketDetail },
+  // { path: "/tickets", component: Tickets },
+  // { path: "/detalle-ticket/:id", component: TicketDetail },
 
   // Catalogo
     // Estaciones
@@ -60,10 +61,13 @@ const authProtectedRoutes: Array<RouteObject> = [
     { path: "/catalogo/administradores", component: CatalogAdmins },
 
     // Penalties
-    { path: "/catalogo/tipo-penalidad", component: CatalogPenalties },
+    // { path: "/catalogo/tipo-penalidad", component: CatalogPenalties },
 
     // Tickets
-    { path: "/catalogo/tipo-ticket", component: CatalogTickets },
+    // { path: "/catalogo/tipo-ticket", component: CatalogTickets },
+
+    // Trackers
+    { path: "/catalogo/trackers", component: CatalogTrackers },
 ];
 
 const publicRoutes = [

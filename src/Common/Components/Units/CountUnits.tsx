@@ -3,7 +3,7 @@ import CountUp from 'react-countup';
 
 const CountUnits = () => {
   return (
-    <div className="card mt-5">
+    <div className="card">
         <div className="card-body">
             <div className="grid grid-cols-1 gap-5 md:grid-cols-1 xl:grid-cols-5">
                 <div className="px-3 py-6 text-center border rounded-md dark:border-zink-500 border-slate-200">

@@ -7,6 +7,8 @@ import { bikeMarker, hubMarker, initialPosition } from "Common/Components/Map";
 import { LatLngExpression } from "leaflet";
 import { generateTrayectory } from "helpers/generateTrayectory";
 
+const url = process.env.REACT_APP_SOCKET_TRACKER || '';
+
 interface Trayectory {
     start: [number, number], 
     end: [number, number], 
@@ -15,7 +17,7 @@ interface Trayectory {
 
 const DetailMap = () => {
     const { activeTravel } =  useSelector((state: any) => state.Travel)
-    const { initiateSocket, subscribeToChat } = useSocket('front/031054167945')
+    const { initiateSocket, subscribeToChat } = useSocket(url, 'front/031054167945')
     const [position, setPosition] = useState<LatLngExpression>(initialPosition)
 
     const [points, setPoints] = useState<Trayectory | null >(null)

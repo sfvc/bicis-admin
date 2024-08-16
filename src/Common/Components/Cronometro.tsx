@@ -25,15 +25,15 @@ const Cronometro: React.FC<CronometroProps> = ({ fechaInicio }) => {
   }, [fechaInicio]);
 
   // Calcula horas y minutos a partir del tiempo en minutos
-  const horas: number = Math.floor(tiempoTranscurrido / 60);
+  // const horas: number = Math.floor(tiempoTranscurrido / 60);
   const minutos: number = tiempoTranscurrido % 60;
 
   return (
     <div>
-      {/* <p>{horas}:{minutos}</p> */}
       <PigBadge 
         color="custom" 
-        label={`${horas}:${minutos}`} 
+        // label={`${horas}:${minutos}`} 
+        label={`${minutos} min.`} 
       />
     </div>
   );

@@ -67,7 +67,7 @@ const menuData: any = [
             },
         ]
     },
-    {
+    /* {
         id: "sanciones",
         label: 'Sanciones',
         link: "/#",
@@ -80,8 +80,8 @@ const menuData: any = [
                 parentId: "sanciones"
             },
         ]
-    },
-    {
+    }, */
+    /* {
         id: "tickets",
         label: 'Tickets',
         link: "/#",
@@ -94,7 +94,7 @@ const menuData: any = [
                 parentId: "tickets"
             },
         ]
-    },
+    }, */
     {
         id: "catalogos",
         label: 'Catálogos',
@@ -107,18 +107,18 @@ const menuData: any = [
                 link: '/catalogo/administradores',
                 parentId: "catalogos"
             },
-            {
+            /* {
                 id: 'tipodespot',
                 label: 'Tipo de Spot',
                 link: '/catalogo/tipo-spot',
                 parentId: "catalogos"
-            },
-            {
+            }, */
+            /* {
                 id: 'tiposdepenalidad',
                 label: 'Tipos de Penalidad',
                 link: '/catalogo/tipo-penalidad',
                 parentId: "catalogos"
-            },
+            }, */
             {
                 id: 'hubs',
                 label: 'Hubs',
@@ -126,9 +126,9 @@ const menuData: any = [
                 parentId: "catalogos"
             },
             {
-                id: 'locks',
-                label: 'Locks',
-                link: '/catalogo/locks',
+                id: 'trackers',
+                label: 'Trackers',
+                link: '/catalogo/trackers',
                 parentId: "catalogos"
             },
             {
@@ -137,13 +137,13 @@ const menuData: any = [
                 link: '/catalogo/unidades',
                 parentId: "catalogos"
             },
-            {
+            /* {
                 id: 'tiposdeticket',
                 label: 'Tipos de Ticket',
                 link: '/catalogo/tipo-ticket',
                 parentId: "catalogos"
-            },
-            {
+            }, */
+            /* {
                 id: 'razonesparataller',
                 label: 'Razones para Taller',
                 link: '/catalogo/razones',
@@ -160,7 +160,7 @@ const menuData: any = [
                 label: 'Preguntas Frecuentes',
                 link: '/catalogo/preguntas-frecuentes',
                 parentId: "catalogos"
-            }
+            } */
         ]
     },
 ];

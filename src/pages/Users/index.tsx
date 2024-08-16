@@ -7,8 +7,8 @@ const Users = () => {
 
   return (
     <React.Fragment>
-        <div className="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
-            <CountUsers />
+        <div className="pt-4 container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
+            {/* <CountUsers /> */}
             <UsersFilter />
             <UserTable />
         </div>

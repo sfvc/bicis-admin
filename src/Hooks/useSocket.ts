@@ -1,9 +1,9 @@
 import io, { Socket } from 'socket.io-client';
 let socket: Socket;
 
-const useSocket = (channel: String) => {
+const useSocket = (url: string, channel: String) => {
   const initiateSocket = (room: string) => {
-    socket = io('64.226.117.238:5643'); // http://localhost:1000
+    socket = io(url);
     console.log(`Connecting socket...`);
     if (socket && room) socket.emit('join', room);
   }
@@ -15,7 +15,6 @@ const useSocket = (channel: String) => {
   
   const subscribeToChat = (cb: (err: Error | null, msg: any) => void): boolean => {
       if (!socket) return true;
-      // socket.on('front/031054167945', (msg: any) => {
       socket.on(`${channel}`, (msg: any) => {
         console.log('Websocket event received!');
         cb(null, msg);
