@@ -47,9 +47,6 @@ const ticketCatalogSlice = createSlice({
         handleSearchTicket(state: TicketState, action: PayloadAction<any>) {
             state.tickets = action.payload
         },
-        addNewTicket(state: TicketState, action: PayloadAction<Ticket>) {
-            state.tickets = [...state.tickets, action.payload]
-        },
         setActiveTicket(state: TicketState, action: PayloadAction<number>) {
             state.activeTicket = state.tickets.find((ticket) => ticket.id === action.payload) || null
         }
@@ -59,7 +56,6 @@ const ticketCatalogSlice = createSlice({
 export const { 
     handleTickets, 
     handleSearchTicket,
-    addNewTicket,
     setActiveTicket 
 } = ticketCatalogSlice.actions;
 

@@ -42,9 +42,6 @@ const hubCatalogSlice = createSlice({
             state.paginate = { ...pagination }
             state.activeHub = null
         },
-        addNewHub(state: HubState, action: PayloadAction<Hub>) {
-            state.hubs = [...state.hubs, action.payload]
-        },
         setActiveHub(state: HubState, action: PayloadAction<number>) {
             state.activeHub = state.hubs.find((hub) => hub.id === action.payload) || null
         }
@@ -53,7 +50,6 @@ const hubCatalogSlice = createSlice({
 
 export const { 
     handleHubs, 
-    addNewHub,
     setActiveHub 
 } = hubCatalogSlice.actions;
 

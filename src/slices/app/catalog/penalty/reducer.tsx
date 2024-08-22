@@ -51,9 +51,6 @@ const penaltyCatalogSlice = createSlice({
         handleSearchPenalty(state: PenaltyState, action: PayloadAction<any>) {
             state.penalties = action.payload
         },
-        addNewPenalty(state: PenaltyState, action: PayloadAction<Penalty>) {
-            state.penalties = [...state.penalties, action.payload]
-        },
         setActivePenalty(state: PenaltyState, action: PayloadAction<number>) {
             state.activePenalty = state.penalties.find((penalty) => penalty.id === action.payload) || null
         }
@@ -63,7 +60,6 @@ const penaltyCatalogSlice = createSlice({
 export const { 
     handlePenalties, 
     handleSearchPenalty,
-    addNewPenalty,
     setActivePenalty 
 } = penaltyCatalogSlice.actions;
 

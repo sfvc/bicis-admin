@@ -27,7 +27,7 @@ const initialValues = {
     estado: "",
     condicion: "",
     imei: "",
-    // lock_id: ""
+    tracker_id: ""
 }
 
 const api = new APIClient();
@@ -35,6 +35,7 @@ const api = new APIClient();
 const UnitsTable = () => {
     const dispatch = useDispatch<any>();
     const { units, paginate, activeUnit } = useSelector( (state: any) => state.UnitCatalog );
+    const [trackers, setTrackers] = useState<any[]>([]); 
     const [errorMessage, setErrorMessage] = useState<string>('')
 
     const columns: column[] = React.useMemo(
@@ -120,7 +121,7 @@ const UnitsTable = () => {
             estado: Yup.string().required("El estado es requerido"),
             condicion: Yup.string().required("El estado es requerido"),
             imei: Yup.string().required("El estado es requerido"),
-            // lock_id: Yup.string().required("El lock es requerido"),
+            tracker_id: Yup.string().required("El tracker es requerido"),
         }),
 
         onSubmit: async (values: any) => {
@@ -137,12 +138,15 @@ const UnitsTable = () => {
         },
     });
 
-    const toggle = useCallback(() => {
+    const handleNumericChange = (fieldName: string, value: string) => formik.setFieldValue(fieldName, parseInt(value));
+
+    const toggle = useCallback(async () => {
         if (show) {
             setShow(false);
             activeUnit && dispatch( resetActiveUnit() );
             setErrorMessage('')
         } else {
+            await getTrackersSelect();
             setShow(true);
             formik.resetForm();
         }
@@ -174,12 +178,17 @@ const UnitsTable = () => {
 
     const onSearch = async ({target}: any) => {
         if(target.value === '') return dispatch( startLoadingUnits() );
-        const response: any = await api.get(`http://localhost:1000/api/v1/bicicleta/search/${target.value}`, null);
+        const response: any = await api.get(`/admin/bicicleta/search/${target.value}`, null);
         dispatch( handleSearchUnit(response) );
     }
 
+    const getTrackersSelect = async () => {
+        const response: any = await api.get(`/admin/tracker/select`, null);
+        setTrackers(response);
+    }
+
     useEffect(() => {
-        dispatch( startLoadingUnits() )
+        dispatch( startLoadingUnits() );
     }, [])
 
     return (
@@ -353,22 +362,27 @@ const UnitsTable = () => {
                                 ) : null }
                             </div>
 
-                            {/* <div className="xl:col-span-12">
-                                <label htmlFor="lock_id" className="inline-block mb-2 text-base font-medium">Lock</label>
-                                <input 
-                                    type="text" 
-                                    name="lock_id" 
-                                    id="lock_id" 
-                                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
-                                    placeholder="Lock" 
-                                    onChange={formik.handleChange}
-                                    value={formik.values.lock_id}
-                                />
+                            <div className="xl:col-span-12">
+                                <label htmlFor="condicion" className="inline-block mb-2 text-base font-medium">Tracker</label>
+                                <select
+                                    id="tracker_id"
+                                    name="tracker_id"
+                                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                    onChange={(e) => handleNumericChange("tracker_id", e.target.value)}
+                                    value={formik.values.tracker_id || ""}
+                                >
+                                    <option value="">Seleccionar un tracker</option>
+                                    {
+                                        trackers.map((tracker) => (
+                                            <option key={tracker.id} value={tracker.id}>{tracker.codigo}</option>
+                                        ))
+                                    }
+                                </select>
 
-                                { formik.touched.lock_id && formik.errors.lock_id ? (
-                                    <p className="text-red-400">{ formik.errors.lock_id }</p>
+                                { formik.touched.tracker_id && formik.errors.tracker_id ? (
+                                    <p className="text-red-400">{ formik.errors.tracker_id }</p>
                                 ) : null }
-                            </div> */}
+                            </div>
                         </div>
 
                         {

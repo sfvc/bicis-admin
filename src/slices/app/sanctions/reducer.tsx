@@ -51,9 +51,6 @@ const sanctionSlice = createSlice({
             state.paginate = { ...pagination }
             state.activeSanction = null
         },
-        addNewSanction(state: SantionState, action: PayloadAction<Sanction>) {
-            state.sanctions = [...state.sanctions, action.payload]
-        },
         setActiveSanction(state: SantionState, action: PayloadAction<number>) {
             state.activeSanction = state.sanctions.find((sanction) => sanction.id === action.payload) || null
         }
@@ -61,8 +58,7 @@ const sanctionSlice = createSlice({
 });
 
 export const { 
-    handleSanctions, 
-    addNewSanction,
+    handleSanctions,
     setActiveSanction 
 } = sanctionSlice.actions;
 

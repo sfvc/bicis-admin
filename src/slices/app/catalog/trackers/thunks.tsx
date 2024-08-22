@@ -10,7 +10,7 @@ const api = new APIClient();
 
 export const startLoadingTrackers = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/trackers', null)
+        const response: any = await api.get('/admin/tracker', null)
         console.log(response)
         dispatch( handleTrackers(response) ); 
     } catch (error) {
@@ -20,7 +20,7 @@ export const startLoadingTrackers = (): ThunkAction<void, RootState, unknown, Ac
 
 export const startPaginateTrackers = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/trackers', {page})
+        const response: any = await api.get('/admin/tracker', {page})
         dispatch( handleTrackers(response) ); 
     } catch (error) {
         console.log(error);
@@ -29,7 +29,7 @@ export const startPaginateTrackers = (page: number): ThunkAction<void, RootState
 
 export const startSavingTracker = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.create('/admin/trackers', data)
+        const response: any = await api.create('/admin/tracker', data)
         if(response.status === 400) return response.data.message;
         dispatch( startLoadingTrackers() );
         toast.success("Tracker creado con exito", { autoClose: 3000, theme: "colored", icon: true });
@@ -42,7 +42,7 @@ export const startSavingTracker = (data: any): ThunkAction<void, RootState, unkn
 
 export const startUpdateTracker = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.put(`/admin/trackers/${id}`, data);
+        const response: any = await api.put(`/admin/tracker/${id}`, data);
         if(response.status === 400) return response.data.message;
         dispatch( startLoadingTrackers() );
         toast.success("Tracker editado con exito", { autoClose: 3000, theme: "colored", icon: true });
@@ -55,7 +55,7 @@ export const startUpdateTracker = (data: any, id: number): ThunkAction<void, Roo
 
 export const startDeleteTracker = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.delete(`/admin/trackers/${id}`, null);
+        await api.delete(`/admin/tracker/${id}`, null);
         dispatch( startLoadingTrackers() );
         toast.success("Tracker eliminado con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {

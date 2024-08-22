@@ -47,9 +47,6 @@ const unitCatalogSlice = createSlice({
         handleSearchUnit(state: UnitState, action: PayloadAction<any>) {
             state.units = action.payload
         },
-        addNewUnit(state: UnitState, action: PayloadAction<Unit>) {
-            state.units = [...state.units, action.payload]
-        },
         setActiveUnit(state: UnitState, action: PayloadAction<number>) {
             state.activeUnit = state.units.find((unit) => unit.id === action.payload) || null
         },
@@ -62,7 +59,6 @@ const unitCatalogSlice = createSlice({
 export const { 
     handleUnits, 
     handleSearchUnit,
-    addNewUnit,
     setActiveUnit,
     resetActiveUnit,
 } = unitCatalogSlice.actions;

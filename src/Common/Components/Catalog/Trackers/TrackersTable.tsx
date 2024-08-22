@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from 'react-tooltip'
-import Select from 'react-select';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import TableContainer from "Common/TableContainer";
@@ -21,7 +20,6 @@ interface column { header: string; accessorKey: string; enableColumnFilter: bool
 
 const initialValues = {
     traccar_id: "",
-    bicicleta_id: "",
     imei: ""
 }
 
@@ -31,8 +29,6 @@ const TrackersTable = () => {
     const dispatch = useDispatch<any>();
     const { trackers, paginate, activeTracker } = useSelector( (state: any) => state.TrackerCatalog );
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const [units, setUnits] = useState<any>([]);
-    const [select, setSelect] = useState<any>(null)
 
     const columns: column[] = React.useMemo(
         () => [
@@ -43,14 +39,20 @@ const TrackersTable = () => {
                 enableSorting: true,
             },
             {
+                header: 'Codigo',
+                accessorKey: 'codigo',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
                 header: 'Patente',
-                accessorKey: 'patente',
+                accessorKey: 'bicicleta.patente',
                 enableColumnFilter: false,
                 enableSorting: true,
             },
             {
                 header: 'Tipo',
-                accessorKey: 'tipo_de_unidad',
+                accessorKey: 'bicicleta.tipo_de_unidad',
                 enableColumnFilter: false,
                 enableSorting: true,
             },
@@ -59,20 +61,6 @@ const TrackersTable = () => {
                 accessorKey: 'imei',
                 enableColumnFilter: false,
                 enableSorting: true,
-            },
-            {
-                header: 'Estado',
-                accessorKey: 'estado',
-                enableColumnFilter: false,
-                enableSorting: true,
-                cell: (props: any) => (<PigBadge color="slate" label={props.getValue()} />)
-            },
-            {
-                header: 'Condicion',
-                accessorKey: 'condicion',
-                enableColumnFilter: false,
-                enableSorting: true,
-                cell: (props: any) => (<PigBadge color="custom" label={props.getValue()} />)
             },
             {
                 header: 'Acciones',
@@ -85,11 +73,6 @@ const TrackersTable = () => {
                             <Tooltip id="default" place="top" content="Editar" />
                             <Pen className="inline-block size-5 text-slate-500 dark:text-zink-200"></Pen>
                         </button>
-
-                        {/* <button className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver">
-                            <Tooltip id="default" place="top" content="Ver" />
-                            <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
-                        </button> */}
 
                         <button onClick={() => onDeleteUnit( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Eliminar">
                             <Tooltip id="default" place="top" content="Eliminar" />
@@ -113,13 +96,12 @@ const TrackersTable = () => {
         initialValues: activeTracker || initialValues,
         validationSchema: Yup.object({
             traccar_id: Yup.string().required("El traccar es requerido"),
-            bicicleta_id: Yup.string().required("La bicicleta es requerida"),
             imei: Yup.string().required("El imei es requerido")
         }),
 
         onSubmit: async (values: any) => {
             console.log(values);
-            /* let response;
+            let response;
 
             if (activeTracker) {
                 response = await dispatch( startUpdateTracker(values, activeTracker.id) )
@@ -128,7 +110,7 @@ const TrackersTable = () => {
             }
 
             if(response === true) toggle();
-            else setErrorMessage(response); */
+            else setErrorMessage(response);
         },
     });
 
@@ -137,7 +119,6 @@ const TrackersTable = () => {
             setShow(false);
             activeTracker && dispatch( resetActiveTracker() );
             setErrorMessage('');
-            setSelect(null);
         } else {
             setShow(true);
             formik.resetForm();
@@ -168,18 +149,11 @@ const TrackersTable = () => {
         toggleDelete();
     }
 
-    const getUnitsToSelect = async (patente: any) => {
-        const data: any = await getSearchUnits(patente);
-        setUnits(data);
-    };
-
     const onSearch = async ({target}: any) => {
         if(target.value === '') return dispatch( startLoadingTrackers() );
         const response: any = await api.get(`/tracker/search/${target.value}`, null);
         dispatch( handleSearchTracker(response) );
     }
-
-    const handleInputChange = (inputValue: any) => { getUnitsToSelect(inputValue) }
 
     useEffect(() => {
         dispatch( startLoadingTrackers() )
@@ -189,33 +163,22 @@ const TrackersTable = () => {
         <React.Fragment>
             <div className="col-span-12 card 2xl:col-span-12">
                 <div className="card-body">
-                    <div className="grid items-center grid-cols-1 gap-3 mb-5 2xl:grid-cols-12">
+
+                <div className="flex justify-between items-center gap-3 mb-5">
                         <div className="2xl:col-span-3">
                             <h6 className="text-15">Listado de Trackers</h6>
                         </div>
-                        <div className="2xl:col-span-4 2xl:col-start-9">
-                            <div className="flex gap-3">
-                                <div className="relative grow">
-                                    <input 
-                                        type="text" 
-                                        className="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
-                                        placeholder="Buscar patente"
-                                        autoComplete="off" 
-                                        onChange={(e) => onSearch(e)} 
-                                    />
-                                    <Search className="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600"></Search>
-                                </div>
-
-                                <button 
-                                    onClick={toggle}
-                                    type="button" 
-                                    className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-                                >
-                                    Crear Tracker
-                                </button>
-                            </div>
+                        <div className="flex gap-3">
+                            <button 
+                                onClick={toggle}
+                                type="button" 
+                                className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+                            >
+                                Crear Tracker
+                            </button>
                         </div>
                     </div>
+
                     <TableContainer
                         isPagination={false}
                         columns={(columns || [])}
@@ -234,7 +197,7 @@ const TrackersTable = () => {
                     { paginate && (
                         <Pagination
                             data={paginate}
-                            onPageChange={(page) => dispatch( startPaginateTrackers(page) )}
+                            onPageChange={(page: number) => dispatch( startPaginateTrackers(page) )}
                         />
                     )}
 
@@ -280,7 +243,7 @@ const TrackersTable = () => {
                                     name="traccar_id" 
                                     id="traccar_id" 
                                     className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
-                                    placeholder="Traccar" 
+                                    placeholder="Traccar ID" 
                                     onChange={formik.handleChange}
                                     value={formik.values.traccar_id}
                                 />
@@ -288,30 +251,6 @@ const TrackersTable = () => {
                                 { formik.touched.traccar_id && formik.errors.traccar_id ? (
                                     <p className="text-red-400">{ formik.errors.traccar_id }</p>
                                 ) : null }
-                            </div>
-
-                            <div className="xl:col-span-12">
-                                <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>
-                                <Select
-                                    name="bicicleta_id"
-                                    className="border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
-                                    options={units}
-                                    value={select}
-                                    onInputChange={handleInputChange}
-                                    data-choices
-                                    onChange={(option: any) => {
-                                        formik.setFieldValue('bicicleta_id', option.value)
-                                        setSelect(option)
-                                    }}
-                                    onFocus={() => {
-                                        formik.setFieldValue('bicicleta_id', '')
-                                        setSelect(null)
-                                    }}
-                                />
-
-                                {formik.touched.bicicleta_id && formik.errors.bicicleta_id ? (
-                                    <p className="text-red-400">{formik.errors.bicicleta_id}</p>
-                                ) : null}
                             </div>
                         </div>
 

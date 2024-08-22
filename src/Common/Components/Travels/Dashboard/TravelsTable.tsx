@@ -9,12 +9,12 @@ import Modal from "Common/Components/Ui/Modal";
 import { getAllHubs } from "helpers/api_select";
 import * as Yup from "yup";
 import { setActiveTravel } from "slices/app/travel/reducer";
-import { startApproveTravel, startCloseTravel, startLoadingTravels } from "slices/app/travel/thunks";
+import { startApproveTravel, startCloseTravel, startLoadingTravels, startPaginateTravels, startRejectTravel } from "slices/app/travel/thunks";
 import NoResults from "Common/NoResults";
-import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
 import Cronometro from "Common/Components/Cronometro";
 import { startLoadingTravelsMap } from "slices/app/map/thunks";
+import Pagination from "Common/Components/Pagination";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -235,8 +235,10 @@ const TravelsTable = () => {
     const handleApproveTravel = async(action: string) => {
         if (action === 'APROBAR') {
             await dispatch( startApproveTravel({ admin_id: user.id }, activeTravel.id) );
-            await dispatch( startLoadingTravelsMap() );
+        } else if (action === 'RECHAZAR'){
+            await dispatch( startRejectTravel(activeTravel.id) );
         }
+        await dispatch( startLoadingTravelsMap() ); // Actualiza los viajes activos para renderizar en el mapa
         toggleApprove();
     }
 
@@ -273,11 +275,16 @@ const TravelsTable = () => {
 
                     <NoResults data={travels}/>
 
-                    {paginate && <Pagination data={paginate} />}
+                    { paginate && (
+                        <Pagination
+                            data={paginate}
+                            onPageChange={(page: number) => dispatch( startPaginateTravels(page) )}
+                        />
+                    )}
                 </div>
             </div>
 
-            {/* Modal para apobar un viaje*/}
+            {/* Modal para apobar o rechazar un viaje*/}
             <Modal show={showApprove} onHide={toggleApprove} modal-center="true"
                 className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
                 dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">

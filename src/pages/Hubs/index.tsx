@@ -1,8 +1,8 @@
 import React from 'react';
 import CountHubs from 'Common/Components/Hubs/CountHubs';
 import HubsFilter from 'Common/Components/Hubs/HubsFilter';
-import HubsTable from 'Common/Components/Hubs/HubsTable';
 import HubsMap from 'Common/Components/Hubs/HubsMap';
+import HubsTable from 'Common/Components/Catalog/Hubs/HubsTable';
 
 const Hubs = () => {
 

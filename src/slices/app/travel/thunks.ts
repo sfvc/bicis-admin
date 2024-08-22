@@ -41,18 +41,38 @@ export const startSavingTravel = (data: any): ThunkAction<void, RootState, unkno
 
 export const startApproveTravel = (data: any, id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        await api.create(`mobile/viaje/${id}/autorizar`, data)
+        await api.create(`mobile/viaje/${id}/autorizar`, data);
 
-        const storage = localStorage.getItem('notifications')
+        const storage = localStorage.getItem('notifications');
         if(storage) {
-            const notifications = JSON.parse(storage)
-            const update = notifications.filter((notification: any) => notification.id !== id)
-            localStorage.setItem('notifications', JSON.stringify(update))
-            dispatch( handleNotifications(update) )
+            const notifications = JSON.parse(storage);
+            const update = notifications.filter((notification: any) => notification.id !== id);
+            localStorage.setItem('notifications', JSON.stringify(update));
+            dispatch( handleNotifications(update) );
         }
 
-        dispatch( startLoadingTravels() ) 
+        dispatch( startLoadingTravels() ); 
         toast.success("Solicitud de viaje aprobada con exito", { autoClose: 3000, theme: "colored", icon: true });
+    } catch (error) {
+        toast.error("Error al aprobar solicitud de viaje", { autoClose: 3000, theme: "colored", icon: true });
+        console.log(error);
+    }
+};
+
+export const startRejectTravel = (id: number): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+    try {
+        await api.create(`admin/viaje/${id}/rechazar`, {});
+
+        const storage = localStorage.getItem('notifications');
+        if(storage) {
+            const notifications = JSON.parse(storage);
+            const update = notifications.filter((notification: any) => notification.id !== id);
+            localStorage.setItem('notifications', JSON.stringify(update));
+            dispatch( handleNotifications(update) );
+        }
+
+        dispatch( startLoadingTravels() );
+        toast.success("Solicitud de viaje rechazada con exito", { autoClose: 3000, theme: "colored", icon: true });
     } catch (error) {
         toast.error("Error al aprobar solicitud de viaje", { autoClose: 3000, theme: "colored", icon: true });
         console.log(error);
