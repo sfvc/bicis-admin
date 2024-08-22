@@ -1,16 +1,16 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { Dropdown } from 'Common/Components/SideBarDropdown';
-import { Link } from 'react-router-dom';
-
-import { menuData } from "../LayoutMenuData";
+import { menuDataAdmin, menuDataAgente } from "../LayoutMenuData";
 import withRouter from 'Common/withRouter';
 
 const VerticalLayout = () => {
-
+    const { user } = useSelector((state: any) => state.Login);
     return (
         <React.Fragment>
-            {(menuData || [])?.map((item: any, key: number) => {
+            {(user.rol === "ADMIN" ? menuDataAdmin : menuDataAgente || [])?.map((item: any, key: number) => {
                 return (
                     <React.Fragment key={key}>
                         {item['isTitle'] ?

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { authProtectedRoutes, publicRoutes } from './allRoutes';
+import { authProtectedRoutesAdmin, authProtectedRoutesAgente, publicRoutes } from './allRoutes';
 import Layout from 'Layout';
 import NonAuthLayout from "Layout/NonLayout"
 import AuthProtected from './AuthProtected';
@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkAuthToken } from 'slices/thunk';
 
 const RouteIndex = () => {
-  const { status } = useSelector((state: any) => state.Login)
+  const { user, status } = useSelector((state: any) => state.Login)
   const dispatch = useDispatch<any>()
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const RouteIndex = () => {
           (status === 'autenthicated')
             ? (<>
                 <Route path="/" element={<Navigate to="/viajes" />}/>
-                {authProtectedRoutes.map((route: any, idx: number) => (
+                {(user.rol === "ADMIN" ? authProtectedRoutesAdmin : authProtectedRoutesAgente).map((route: any, idx: number) => (
                   <Route
                     key={idx}
                     path={route.path}

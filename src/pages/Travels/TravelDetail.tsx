@@ -21,7 +21,7 @@ const TravelDetail = () => {
           <div className="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
               <TravelInfo />
               <DetailMap />
-              <TravelHistory />
+              {/* <TravelHistory /> */}
           </div>
         )
       }

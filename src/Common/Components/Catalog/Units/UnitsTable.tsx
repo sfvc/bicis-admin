@@ -34,11 +34,12 @@ const api = new APIClient();
 
 const UnitsTable = () => {
     const dispatch = useDispatch<any>();
+    const { user } = useSelector((state: any) => state.Login);
     const { units, paginate, activeUnit } = useSelector( (state: any) => state.UnitCatalog );
     const [trackers, setTrackers] = useState<any[]>([]); 
     const [errorMessage, setErrorMessage] = useState<string>('')
 
-    const columns: column[] = React.useMemo(
+    const columnsAdmin: column[] = React.useMemo(
         () => [
             {
                 header: 'Id',
@@ -102,6 +103,50 @@ const UnitsTable = () => {
                     </div>
                 ),
             },
+        ],
+        []
+    );
+
+    const columnsAgente: column[] = React.useMemo(
+        () => [
+            {
+                header: 'Id',
+                accessorKey: 'id',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Patente',
+                accessorKey: 'patente',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Tipo',
+                accessorKey: 'tipo_de_unidad',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'IMEI',
+                accessorKey: 'imei',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Estado',
+                accessorKey: 'estado',
+                enableColumnFilter: false,
+                enableSorting: true,
+                cell: (props: any) => (<PigBadge color="slate" label={props.getValue()} />)
+            },
+            {
+                header: 'Condicion',
+                accessorKey: 'condicion',
+                enableColumnFilter: false,
+                enableSorting: true,
+                cell: (props: any) => (<PigBadge color="custom" label={props.getValue()} />)
+            }
         ],
         []
     );
@@ -212,19 +257,22 @@ const UnitsTable = () => {
                                     <Search className="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600"></Search>
                                 </div>
 
-                                <button 
-                                    onClick={toggle}
-                                    type="button" 
-                                    className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-                                >
-                                    Crear Bicicleta
-                                </button>
+                                {
+                                    (user.rol === "ADMIN") && 
+                                    <button 
+                                        onClick={toggle}
+                                        type="button" 
+                                        className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+                                    >
+                                        Crear Bicicleta
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
                     <TableContainer
                         isPagination={false}
-                        columns={(columns || [])}
+                        columns={(user.rol === "ADMIN" ? columnsAdmin : columnsAgente || [])}
                         data={(units || [])}
                         customPageSize={7}
                         divclassName="overflow-x-auto"

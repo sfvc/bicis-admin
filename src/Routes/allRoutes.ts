@@ -26,7 +26,7 @@ interface RouteObject {
   exact?: boolean;
 }
 
-const authProtectedRoutes: Array<RouteObject> = [
+const authProtectedRoutesAdmin: Array<RouteObject> = [
   // Viajes
   { path: "/viajes", component: Travels },
   { path: "/nuevo-viaje", component: NewTravel },
@@ -68,6 +68,22 @@ const authProtectedRoutes: Array<RouteObject> = [
 
     // Trackers
     { path: "/catalogo/trackers", component: CatalogTrackers },
+
+    { path: "*", component: Travels },
+];
+
+const authProtectedRoutesAgente: Array<RouteObject> = [
+  // Viajes
+  { path: "/viajes", component: Travels },
+  { path: "/detalle-viaje/:id", component: TravelDetail },
+
+  // Hubs
+  { path: "/hubs", component: Hubs },
+
+  // Unidades
+  { path: "/unidades", component: Units },
+
+  { path: "*", component: Travels },
 ];
 
 const publicRoutes = [
@@ -78,4 +94,4 @@ const publicRoutes = [
 
 ]
 
-export { authProtectedRoutes, publicRoutes };
+export { authProtectedRoutesAdmin, authProtectedRoutesAgente, publicRoutes };

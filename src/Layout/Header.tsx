@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ChevronsLeft, ChevronsRight, LogOut, User2 } from 'lucide-react';
+import { ChevronsLeft, ChevronsRight, LogOut } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 
@@ -11,7 +11,6 @@ import LightDark from 'Common/LightDark';
 import NotificationDropdown from 'Common/NotificationDropdown';
 import { Dropdown } from 'Common/Components/Dropdown';
 import { changeLeftsidebarSizeType, logoutUser } from 'slices/thunk';
-import { Link } from 'react-router-dom';
 
 const Header = () => {
 
@@ -139,11 +138,11 @@ const Header = () => {
                                 <Dropdown className="relative flex items-center h-header">
                                     <Dropdown.Trigger type="button" className="inline-block p-0 transition-all duration-200 ease-linear bg-topbar rounded-full text-topbar-item dropdown-toggle btn hover:bg-topbar-item-bg-hover hover:text-topbar-item-hover group-data-[topbar=dark]:text-topbar-item-dark group-data-[topbar=dark]:bg-topbar-dark group-data-[topbar=dark]:hover:bg-topbar-item-bg-hover-dark group-data-[topbar=dark]:hover:text-topbar-item-hover-dark group-data-[topbar=brand]:bg-topbar-brand group-data-[topbar=brand]:hover:bg-topbar-item-bg-hover-brand group-data-[topbar=brand]:hover:text-topbar-item-hover-brand group-data-[topbar=dark]:dark:bg-zink-700 group-data-[topbar=dark]:dark:hover:bg-zink-600 group-data-[topbar=brand]:text-topbar-item-brand group-data-[topbar=dark]:dark:hover:text-zink-50 group-data-[topbar=dark]:dark:text-zink-200" id="dropdownMenuButton" data-bs-toggle="dropdown">
                                         <div className="bg-pink-100 rounded-full">
-                                            <img src={userProfile} alt="" className="size-[37.5px] rounded-full" />
+                                            <img src={userProfile} alt="avatar" className="size-[37.5px] rounded-full" />
                                         </div>
                                     </Dropdown.Trigger>
                                     <Dropdown.Content placement="right-end" className="absolute z-50 p-4 ltr:text-left rtl:text-right bg-white rounded-md shadow-md !top-4 dropdown-menu min-w-[14rem] dark:bg-zink-600" aria-labelledby="dropdownMenuButton">
-                                        <a href="#!" className="flex gap-3 mb-3">
+                                        <span className="flex gap-3 mb-3">
                                             <div className="relative inline-block shrink-0">
                                                 <div className="rounded bg-slate-100 dark:bg-zink-500">
                                                     <img src={userProfile} alt="" className="size-12 rounded" />
@@ -154,11 +153,8 @@ const Header = () => {
                                                 <h6 className="mb-1 text-15">{user.nombre} {user.apellido}</h6>
                                                 <p className="text-slate-500 dark:text-zink-300">Vamos En Bici</p>
                                             </div>
-                                        </a>
+                                        </span>
                                         <ul>
-                                            <li>
-                                                <Link className="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" to="#"><User2 className="inline-block size-4 ltr:mr-2 rtl:ml-2"></User2> Perfil</Link>
-                                            </li>
                                             <li className="pt-2 mt-2 border-t border-slate-200 dark:border-zink-500">
                                                 <button className="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" onClick={onLogout}><LogOut className="inline-block size-4 ltr:mr-2 rtl:ml-2"></LogOut> Cerrar Sesión</button>
                                             </li>

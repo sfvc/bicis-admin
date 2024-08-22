@@ -50,47 +50,21 @@ const DetailMap = () => {
                 />
 
                 {
-                    (activeTravel.estado === 'FINALIZADO')
-                    ? (
-                        <>
-                            {(points) && (
-                                <>
-                                    {/* Estacion incial */}
-                                    <Marker position={points.start} icon={hubMarker}>
-                                        <Popup>
-                                            A pretty CSS3 popup. <br /> Easily customizable.
-                                        </Popup>
-                                    </Marker>
-        
-                                    {/* Estacion final */}
-                                    <Marker position={points.end} icon={hubMarker}>
-                                        <Popup>
-                                            A pretty CSS3 popup. <br /> Easily customizable.
-                                        </Popup>
-                                    </Marker>
-        
-                                    {/* Trayectoria */}
-                                    <Polyline positions={points.trayectory} color="purple" />
-                                </>
-                            )}
-                        </>
-                    )
-                    : (
-                        <>
-                            {(position !== initialPosition) && (
-                                <Marker key={activeTravel.id} position={position} icon={bikeMarker}>
-                                    <Popup>
-                                        <div className="text-center">
-                                            <span className="font-semibold">Usuario: </span>{activeTravel.usuario.nombre} {activeTravel.usuario.apellido} <br /> 
-                                            <span className="font-semibold">Unidad: </span>{activeTravel.bicicleta.patente} <br /> 
-                                            <span className="font-semibold">Tipo: </span>{activeTravel.bicicleta.tipo_de_unidad} <br /> 
-                                            {/* <span className="font-semibold">Ultima posición <br /></span>{activeTravel.coords.date} <br />  */}
-                                        </div>
-                                    </Popup>
-                                </Marker>
-                            )}
-                        </>
-                    )
+                    (activeTravel.estado === 'EN_VIAJE') &&
+                    <>
+                        {(position !== initialPosition) && (
+                            <Marker key={activeTravel.id} position={position} icon={bikeMarker}>
+                                <Popup>
+                                    <div className="text-center">
+                                        <span className="font-semibold">Usuario: </span>{activeTravel.usuario.nombre} {activeTravel.usuario.apellido} <br /> 
+                                        <span className="font-semibold">Unidad: </span>{activeTravel.bicicleta.patente} <br /> 
+                                        <span className="font-semibold">Tipo: </span>{activeTravel.bicicleta.tipo_de_unidad} <br /> 
+                                        {/* <span className="font-semibold">Ultima posición <br /></span>{activeTravel.coords.date} <br />  */}
+                                    </div>
+                                </Popup>
+                            </Marker>
+                        )}
+                    </>
                 }
             </MapContainer>
         </MapComponent>

@@ -4,8 +4,8 @@ import { Calendar, Clock4, MessageCircle, Phone } from "lucide-react";
 import hub from 'assets/images/logo-muni.png'
 import bike from 'assets/images/bike.png'
 import { useSelector } from "react-redux";
-import CreateTicket from "../New Travel/CreateTicket";
-import Sanction from "../New Travel/Sanction";
+// import CreateTicket from "../New Travel/CreateTicket";
+// import Sanction from "../New Travel/Sanction";
 
 interface Date {
     fecha: string, 
@@ -35,7 +35,6 @@ const TravelInfo = () => {
         formatDateString()
     }, [])
     
-
     return (
         <React.Fragment>
             <div className="card mt-5">
@@ -140,7 +139,7 @@ const TravelInfo = () => {
                             </div>
 
                             {/* <CreateTicket /> */}
-                            <Sanction />
+                            {/* <Sanction /> */}
                         </div>
                     </div>
                 </div>

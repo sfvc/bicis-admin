@@ -14,14 +14,15 @@ import map from 'assets/images/map.png'
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
 const HubsTable = () => {
-    const navigate = useNavigate()
-    const dispatch = useDispatch<any>()
+    const navigate = useNavigate();
+    const dispatch = useDispatch<any>();
+    const { user } = useSelector((state: any) => state.Login);
     const { hubs, paginate, activeHub } = useSelector((state: any) => state.HubCatalog)
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
 
-    const columns: column[] = React.useMemo(
+    const columnsAdmin: column[] = React.useMemo(
         () => [
             {
                 header: 'Id',
@@ -88,6 +89,54 @@ const HubsTable = () => {
         []
     );
 
+    const columnsAgente: column[] = React.useMemo(
+        () => [
+            {
+                header: 'Id',
+                accessorKey: 'id',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Nombre',
+                accessorKey: 'nombre',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Dirección',
+                accessorKey: 'direccion',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Capacidad Mecanicas',
+                accessorKey: 'capacidad_mecanica',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Capacidad Electricas',
+                accessorKey: 'capacidad_electrica',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Cantidad Mecanicas',
+                accessorKey: 'cantidad_mecanica',
+                enableColumnFilter: false,
+                enableSorting: true,
+            },
+            {
+                header: 'Cantidad Electricas',
+                accessorKey: 'cantidad_electrica',
+                enableColumnFilter: false,
+                enableSorting: true,
+            }
+        ],
+        []
+    );
+
     const toggle = useCallback(() => {
         if (show) {
             setShow(false);
@@ -123,20 +172,23 @@ const HubsTable = () => {
                         <div className="2xl:col-span-3">
                             <h6 className="text-15">Listado de Estaciones</h6>
                         </div>
-                        <div className="flex gap-3">
-                            <button 
-                                onClick={() => navigate('/catalogo/nueva-estacion')}
-                                type="button" 
-                                className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-                            >
-                                Crear Estación
-                            </button>
-                        </div>
+                        {
+                            (user.rol === "ADMIN") && 
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={() => navigate('/catalogo/nueva-estacion')}
+                                    type="button" 
+                                    className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+                                >
+                                    Crear Estación
+                                </button>
+                            </div>
+                        }
                     </div>
 
                     <TableContainer
                         isPagination={false}
-                        columns={(columns || [])}
+                        columns={(user.rol === "ADMIN" ? columnsAdmin : columnsAgente || [])}
                         data={(hubs || [])}
                         customPageSize={7}
                         divclassName="overflow-x-auto"
