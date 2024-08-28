@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
 import { Pen, Trash } from "lucide-react";
@@ -10,6 +10,8 @@ import { setActiveHub } from "slices/app/catalog/hubs/reducer";
 import NoResults from "Common/NoResults";
 import Modal from "Common/Components/Ui/Modal";
 import map from 'assets/images/map.png'
+import { Skeleton } from "Common/Components/Ui/Loading/Skeleton";
+import useLoading from "Hooks/useLoading";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -17,7 +19,11 @@ const HubsTable = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<any>();
     const { user } = useSelector((state: any) => state.Login);
-    const { hubs, paginate, activeHub } = useSelector((state: any) => state.HubCatalog)
+    const { hubs, paginate, activeHub } = useSelector((state: any) => state.HubCatalog);
+
+    const loading = useLoading(async () => {
+        await initLoading();
+    });
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
@@ -160,9 +166,13 @@ const HubsTable = () => {
         toggle();
     }
 
-    useEffect(() => {
-        dispatch( startLoadingHubs() )
-    }, [])
+    const initLoading = async () => {
+        await dispatch( startLoadingHubs() );
+    }
+
+    if (loading) {
+        return <Skeleton title="Listado de Estaciones"/>;
+    }
 
     return (
         <React.Fragment>

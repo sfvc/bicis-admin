@@ -17,6 +17,12 @@ const menuDataAdmin: any = [
                 link: '/viajes',
                 parentId: "viajes"
             },
+            {
+                id: 'viajesfinalizados',
+                label: 'Viajes Finalizados',
+                link: '/viajes-finalizados',
+                parentId: "viajes"
+            }
             // {
             //     id: 'iniciar_viaje',
             //     label: 'Iniciar Viaje',
@@ -180,6 +186,12 @@ const menuDataAgente: any = [
                 id: 'viajesdashboard',
                 label: 'Dashboard',
                 link: '/viajes',
+                parentId: "viajes"
+            },
+            {
+                id: 'viajesfinalizados',
+                label: 'Viajes Finalizados',
+                link: '/viajes-finalizados',
                 parentId: "viajes"
             }
         ]

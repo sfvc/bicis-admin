@@ -19,6 +19,7 @@ import CatalogAdmins from "pages/Catalog/Admins";
 // import CatalogPenalties from "pages/Catalog/Penalties";
 // import CatalogTickets from "pages/Catalog/Tickets";
 import CatalogTrackers from "pages/Catalog/Tracker";
+import FinishTravels from "pages/Travels/FinishTravels";
 
 interface RouteObject {
   path: string;
@@ -29,6 +30,7 @@ interface RouteObject {
 const authProtectedRoutesAdmin: Array<RouteObject> = [
   // Viajes
   { path: "/viajes", component: Travels },
+  { path: "/viajes-finalizados", component: FinishTravels },
   { path: "/nuevo-viaje", component: NewTravel },
   { path: "/detalle-viaje/:id", component: TravelDetail },
 
@@ -75,6 +77,7 @@ const authProtectedRoutesAdmin: Array<RouteObject> = [
 const authProtectedRoutesAgente: Array<RouteObject> = [
   // Viajes
   { path: "/viajes", component: Travels },
+  { path: "/viajes-finalizados", component: FinishTravels },
   { path: "/detalle-viaje/:id", component: TravelDetail },
 
   // Hubs

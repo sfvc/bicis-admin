@@ -4,23 +4,23 @@ import { RootState } from "slices";
 import { APIClient } from "helpers/api_helper";
 import { toast } from "react-toastify";
 import { handleTravels } from "./reducer";
-import 'react-toastify/dist/ReactToastify.css';
 import { handleNotifications } from "../notification/reducer";
+import 'react-toastify/dist/ReactToastify.css';
 
 const api = new APIClient();
 
-export const startLoadingTravels = (): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startLoadingTravels = (query: string = 'activosandpendientes'): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/viaje', null)
+        const response: any = await api.get(`/admin/viaje/${query}`, null)
         dispatch( handleTravels(response) ); 
     } catch (error) {
         console.log(error);
     }
 };
 
-export const startPaginateTravels = (page: number): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
+export const startPaginateTravels = (query: string = 'activosandpendientes', page: number = 1): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
-        const response: any = await api.get('/admin/viaje', {page})
+        const response: any = await api.get(`/admin/viaje/${query}`, {page})
         dispatch( handleTravels(response) ); 
     } catch (error) {
         console.log(error);

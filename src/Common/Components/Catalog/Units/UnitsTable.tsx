@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
 import { Pen, Search, Trash } from "lucide-react";
@@ -14,6 +14,8 @@ import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
 import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
 import bike from 'assets/images/bike.png'
+import useLoading from "Hooks/useLoading";
+import { Skeleton } from "Common/Components/Ui/Loading/Skeleton";
 
 export const tiposBicicleta = ['ELECTRICA', 'ESTANDAR']
 export const estadosBicicleta = ['EN_BASE', 'EN_HUB', 'EN_TALLER', 'EN_CALLE', 'BALANCEO_POR_EL_OPERADOR']
@@ -37,7 +39,11 @@ const UnitsTable = () => {
     const { user } = useSelector((state: any) => state.Login);
     const { units, paginate, activeUnit } = useSelector( (state: any) => state.UnitCatalog );
     const [trackers, setTrackers] = useState<any[]>([]); 
-    const [errorMessage, setErrorMessage] = useState<string>('')
+    const [errorMessage, setErrorMessage] = useState<string>('');
+
+    const loading = useLoading(async () => {
+        await initLoading();
+    });
 
     const columnsAdmin: column[] = React.useMemo(
         () => [
@@ -232,9 +238,13 @@ const UnitsTable = () => {
         setTrackers(response);
     }
 
-    useEffect(() => {
-        dispatch( startLoadingUnits() );
-    }, [])
+    const initLoading = async () => {
+        await dispatch( startLoadingUnits() );
+    }
+
+    if (loading) {
+        return <Skeleton title="Listado de Unidades"/>;
+    }
 
     return (
         <React.Fragment>
@@ -245,8 +255,8 @@ const UnitsTable = () => {
                             <h6 className="text-15">Listado de Unidades</h6>
                         </div>
                         <div className="2xl:col-span-4 2xl:col-start-9">
-                            <div className="flex gap-3">
-                                <div className="relative grow">
+                            <div className="flex justify-end gap-3">
+                                {/* <div className="relative grow">
                                     <input 
                                         type="text" 
                                         className="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" 
@@ -255,7 +265,7 @@ const UnitsTable = () => {
                                         onChange={(e) => onSearch(e)} 
                                     />
                                     <Search className="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600"></Search>
-                                </div>
+                                </div> */}
 
                                 {
                                     (user.rol === "ADMIN") && 

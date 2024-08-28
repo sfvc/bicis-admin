@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import PigBadge from "../Ui/Label/PigBadge";
 import { Tooltip } from 'react-tooltip'
@@ -17,6 +17,8 @@ import { startLoadingUsers, startPaginateUsers } from "slices/app/user/thunks";
 import NoResults from "Common/NoResults";
 import Pagination from "../Pagination";
 import ErrorAlert from "../Ui/Alert/ErrorAlert";
+import useLoading from "Hooks/useLoading";
+import { Skeleton } from "../Ui/Loading/Skeleton";
 
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
@@ -103,6 +105,10 @@ const UserTable = () => {
     const [select, setSelect] = useState<any>(null)
     const [errorMessage, setErrorMessage] = useState<string>('')
 
+    const loading = useLoading(async () => {
+        await initLoading();
+    });
+
     // Formik
     const formik: any = useFormik({
         enableReinitialize: true,
@@ -169,10 +175,14 @@ const UserTable = () => {
 
     const handleNumericChange = (fieldName: string, value: string) => formik.setFieldValue(fieldName, parseInt(value));
         
-    useEffect(() => {
-        dispatch( startLoadingUsers() );
-        getHubsToSelect();
-    }, []);
+    const initLoading = async () => {
+        await dispatch( startLoadingUsers() );
+        await getHubsToSelect();
+    }
+
+    if (loading) {
+        return <Skeleton title="Listado de Usuarios"/>;
+    }
 
     return (
         <React.Fragment>

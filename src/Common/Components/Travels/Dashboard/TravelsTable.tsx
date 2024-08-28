@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from 'react-tooltip'
 import { useFormik } from "formik";
@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import Cronometro from "Common/Components/Cronometro";
 import { startLoadingTravelsMap } from "slices/app/map/thunks";
 import Pagination from "Common/Components/Pagination";
+import useLoading from "Hooks/useLoading";
+import { Skeleton } from "Common/Components/Ui/Loading/Skeleton";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -27,6 +29,10 @@ const TravelsTable = () => {
     const { user } = useSelector( (state: any) => state.Login );
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
+
+    const loading = useLoading(async () => {
+        await initLoading();
+    });
 
     const columns: column[] = React.useMemo(
         () => [
@@ -243,13 +249,13 @@ const TravelsTable = () => {
     }
 
     const initLoading = async () => {
-        dispatch( startLoadingTravels() );
+        await dispatch( startLoadingTravels() );
         await getHubsToSelect();
     }
-        
-    useEffect(() => {
-        initLoading();
-    }, []);
+
+    if (loading) {
+        return <Skeleton title="Listado de Viajes"/>;
+    }
 
     return (
         <React.Fragment>
@@ -278,7 +284,7 @@ const TravelsTable = () => {
                     { paginate && (
                         <Pagination
                             data={paginate}
-                            onPageChange={(page: number) => dispatch( startPaginateTravels(page) )}
+                            onPageChange={(page: number) => dispatch( startPaginateTravels('activosandpendientes', page) )}
                         />
                     )}
                 </div>

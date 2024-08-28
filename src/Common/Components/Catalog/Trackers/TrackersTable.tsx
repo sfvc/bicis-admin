@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from 'react-tooltip'
 import { useFormik } from "formik";
@@ -15,6 +15,8 @@ import { handleSearchTracker, resetActiveTracker, setActiveTracker } from "slice
 import Pagination from "Common/Components/Pagination";
 import NoResults from "Common/NoResults";
 import { getSearchUnits } from "helpers/api_select";
+import useLoading from "Hooks/useLoading";
+import { Skeleton } from "Common/Components/Ui/Loading/Skeleton";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -29,6 +31,10 @@ const TrackersTable = () => {
     const dispatch = useDispatch<any>();
     const { trackers, paginate, activeTracker } = useSelector( (state: any) => state.TrackerCatalog );
     const [errorMessage, setErrorMessage] = useState<string>('');
+
+    const loading = useLoading(async () => {
+        await initLoading();
+    });
 
     const columns: column[] = React.useMemo(
         () => [
@@ -155,9 +161,13 @@ const TrackersTable = () => {
         dispatch( handleSearchTracker(response) );
     }
 
-    useEffect(() => {
-        dispatch( startLoadingTrackers() )
-    }, [])
+    const initLoading = async () => {
+        await dispatch( startLoadingTrackers() );
+    }
+
+    if (loading) {
+        return <Skeleton title="Listado de Trackers"/>;
+    }
 
     return (
         <React.Fragment>
