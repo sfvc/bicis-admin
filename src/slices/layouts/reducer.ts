@@ -24,6 +24,7 @@ export interface LayoutState {
   layoutNavigationType: LEFT_NAVIGATION_TYPES.STICKY | LEFT_NAVIGATION_TYPES.SCROLL | LEFT_NAVIGATION_TYPES.BORDERED | LEFT_NAVIGATION_TYPES.HIDDEN;
   layoutSidebarColorType: LEFT_SIDEBAR_COLOR_TYPES.LIGHT | LEFT_SIDEBAR_COLOR_TYPES.DARK | LEFT_SIDEBAR_COLOR_TYPES.BRAND | LEFT_SIDEBAR_COLOR_TYPES.MODERN;
   layoutTopbarColorType: LAYOUT_TOPBAR_THEME_TYPES.LIGHT | LAYOUT_TOPBAR_THEME_TYPES.DARK | LAYOUT_TOPBAR_THEME_TYPES.BRAND;
+  layoutLoadingOverlay: boolean
 }
 
 export const initialState: LayoutState = {
@@ -37,6 +38,7 @@ export const initialState: LayoutState = {
   layoutNavigationType: LEFT_NAVIGATION_TYPES.STICKY,
   layoutSidebarColorType: LEFT_SIDEBAR_COLOR_TYPES.LIGHT,
   layoutTopbarColorType: LAYOUT_TOPBAR_THEME_TYPES.LIGHT,
+  layoutLoadingOverlay: false
 };
 
 const LayoutSlice = createSlice({
@@ -72,6 +74,9 @@ const LayoutSlice = createSlice({
     },
     changeLayoutTopbarColorAction(state: any, action: any) {
       state.layoutTopbarColorType = action.payload;
+    },
+    isLoadingOverlay(state: any) {
+      state.layoutLoadingOverlay = !state.layoutLoadingOverlay;
     }
   }
 });
@@ -86,7 +91,8 @@ export const {
   changeLayoutSidebarSizeAction,
   changeNavigationAction,
   changeLeftSidebarColorTypeAction,
-  changeLayoutTopbarColorAction
+  changeLayoutTopbarColorAction, 
+  isLoadingOverlay
 } = LayoutSlice.actions;
 
 export default LayoutSlice.reducer;

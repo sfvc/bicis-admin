@@ -155,17 +155,24 @@ const TravelsTable = () => {
 
                         {
                             (props.row.original.estado === 'EN_VIAJE') && (
-                                <button onClick={() => onCloseTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Finalizar">
-                                    <Tooltip id="default" place="top" content="Finalizar" />
-                                    <CheckCircle className="inline-block size-5 text-green-500 dark:text-green-200"></CheckCircle>
-                                </button>
+                                <>
+                                    <button onClick={() => onCloseTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Finalizar">
+                                        <Tooltip id="default" place="top" content="Finalizar" />
+                                        <CheckCircle className="inline-block size-5 text-green-500 dark:text-green-200"></CheckCircle>
+                                    </button>
+
+                                    <button onClick={() => onShowTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
+                                    <Tooltip id="default" place="top" content="Ver Viaje" />
+                                    <Eye className="inline-block text-blue-500 dark:text-blue-200"></Eye>
+                                    </button>
+                                </>
                             )
                         }
 
-                        <button onClick={() => onShowTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
+                        {/* <button onClick={() => onShowTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
                             <Tooltip id="default" place="top" content="Ver Viaje" />
                             <Eye className="inline-block text-blue-500 dark:text-blue-200"></Eye>
-                        </button>
+                        </button> */}
                     </div>
                 ),
             },

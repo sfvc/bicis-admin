@@ -11,9 +11,9 @@ const AccountInfo = () => {
     const { activeUser } = useSelector( (state: any) => state.User)
     const dispatch = useDispatch<any>()
 
-    function enableUser () {
+    async function enableUser () {
         const data = { is_active: !activeUser.is_active }
-        dispatch( startActiveUser(activeUser.id, data) )
+        await dispatch( startActiveUser(activeUser.id, data) )
     }
 
     return (
@@ -46,7 +46,7 @@ const AccountInfo = () => {
                                     : <button onClick={enableUser} type="button" className="px-8 text-white transition-all duration-200 ease-linear btn bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600 focus:text-white focus:bg-red-600 focus:border-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:border-red-600 active:ring active:ring-red-100 dark:ring-red-400/20">Inhabilitar</button>
                             }
 
-                            <InitTravel />
+                            {/* <InitTravel /> */}
                         </div>
                     </div>
                 </div>

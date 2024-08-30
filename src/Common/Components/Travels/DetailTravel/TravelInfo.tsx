@@ -16,6 +16,7 @@ const initialValue = {
     fecha: '', 
     hora: ''
 }
+
 const TravelInfo = () => {
     const { activeTravel } = useSelector((state: any) => state.Travel)
     const [initTravel, setInitTravel] = useState<Date>(initialValue)
@@ -66,8 +67,8 @@ const TravelInfo = () => {
                                             <img src={hub} alt="logo-estacion" className="h-10 rounded-full" />
                                         </div>
                                         <div className="grow">
-                                            <h6 className="mb-1 truncate ">{activeTravel.estacion_inicio.nombre}</h6>
-                                            <p className="text-slate-500 dark:text-zink-200">{activeTravel.estacion_inicio.direccion}</p>
+                                            <h6 className="mb-1 truncate ">{activeTravel?.estacion_inicio?.nombre}</h6>
+                                            <p className="text-slate-500 dark:text-zink-200">{activeTravel?.estacion_inicio?.direccion}</p>
                                         </div>
                                     </div>
 
@@ -87,15 +88,15 @@ const TravelInfo = () => {
                                                     <img src={hub} alt="logo-estacion" className="h-10 rounded-full" />
                                                 </div>
                                                 <div className="grow">
-                                                    <h6 className="mb-1">{activeTravel.estacion_final.nombre}</h6>
-                                                    <p className="text-slate-500 dark:text-zink-200">{activeTravel.estacion_final.direccion}</p>
+                                                    <h6 className="mb-1">{activeTravel?.estacion_final?.nombre}</h6>
+                                                    <p className="text-slate-500 dark:text-zink-200">{activeTravel?.estacion_final?.direccion}</p>
                                                 </div>
                                             </div>
 
                                             <div className="p-2 border-t border-slate-200 dark:border-zink-500">
                                                 <div className="flex flex-col gap-3 md:items-center xl:flex-row">
-                                                    <p className="text-slate-500 dark:text-zink-200 shrink-0"><Calendar className="inline-block size-4 ltr:mr-1 rtl::ml-1" /> <span className="align-middle">{finishTravel.fecha}</span></p>
-                                                    <p className="text-slate-500 dark:text-zink-200 grow"><Clock4 className="inline-block size-4 ltr:mr-1 rtl::ml-1" /> <span className="align-middle">{finishTravel.hora}</span></p>
+                                                    <p className="text-slate-500 dark:text-zink-200 shrink-0"><Calendar className="inline-block size-4 ltr:mr-1 rtl::ml-1" /> <span className="align-middle">{finishTravel?.fecha}</span></p>
+                                                    <p className="text-slate-500 dark:text-zink-200 grow"><Clock4 className="inline-block size-4 ltr:mr-1 rtl::ml-1" /> <span className="align-middle">{finishTravel?.hora}</span></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -143,8 +144,7 @@ const TravelInfo = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div> 
         </React.Fragment>
     )
 }

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { authProtectedRoutesAdmin, authProtectedRoutesAgente, publicRoutes } from './allRoutes';
 import Layout from 'Layout';
 import NonAuthLayout from "Layout/NonLayout"
+import LoadingOverlay from 'Layout/LoadingOverlay';
 import AuthProtected from './AuthProtected';
-import { useDispatch, useSelector } from 'react-redux';
 import { checkAuthToken } from 'slices/thunk';
 
 const RouteIndex = () => {
@@ -57,6 +58,8 @@ const RouteIndex = () => {
               </>)
         }
       </Routes>
+
+      <LoadingOverlay />
     </React.Fragment>
   );
 };

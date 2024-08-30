@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
 import TravelInfo from "Common/Components/Travels/DetailTravel/TravelInfo";
 import DetailMap from "Common/Components/Travels/DetailTravel/DetailMap";
-import TravelHistory from "Common/Components/Travels/DetailTravel/TravelHistory";
+// import TravelHistory from "Common/Components/Travels/DetailTravel/TravelHistory";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const TravelDetail = () => {
-  const { activeTravel } = useSelector((state: any) => state.Travel)
-  const navigate = useNavigate()
+  const { activeTravel } = useSelector((state: any) => state.Travel);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if(!activeTravel) return navigate("/viajes")
+    if(!activeTravel) return navigate("/viajes");
   }, [])
   
   

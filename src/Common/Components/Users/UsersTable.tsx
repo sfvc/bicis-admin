@@ -87,10 +87,10 @@ const UserTable = () => {
                             <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
                         </button>
 
-                        <button onClick={() => startTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Iniciar Viaje">
+                        {/* <button onClick={() => startTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Iniciar Viaje">
                             <Tooltip id="default" place="top" content="Iniciar Viaje" />
                             <Bike className="inline-block size-5 text-slate-500 dark:text-zink-200"></Bike>
-                        </button>
+                        </button> */}
                     </div>
                 ),
             },
