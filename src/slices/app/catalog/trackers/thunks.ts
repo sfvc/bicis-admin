@@ -27,19 +27,6 @@ export const startPaginateTrackers = (page: number): ThunkAction<void, RootState
     }
 };
 
-// export const startSavingTracker = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
-//     try {
-//         const response: any = await api.create('/admin/tracker', data)
-//         if(response.status === 400) return response.data.message;
-//         dispatch( startLoadingTrackers() );
-//         toast.success("Tracker creado con exito", { autoClose: 3000, theme: "colored", icon: true });
-//         return true;
-//     } catch (error) {
-//         toast.error("Error al crear la tracker", { autoClose: 3000, theme: "colored", icon: true });
-//         console.log(error);
-//     }
-// };
-
 export const startSavingTracker = (data: any): ThunkAction<void, RootState, unknown, Action<string>> => {
     return withLoadingOverlay ( async ( dispatch: ThunkDispatch<RootState, unknown, Action<string>> ) => {
         try {

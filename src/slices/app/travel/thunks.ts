@@ -13,7 +13,6 @@ const api = new APIClient();
 export const startLoadingTravels = (query: string = 'activosandpendientes'): ThunkAction<void, RootState, unknown, Action<string>> =>  async (dispatch: ThunkDispatch<RootState, unknown, Action<string>>) => {
     try {
         const response: any = await api.get(`/admin/viaje/${query}`, null)
-        console.log(response)
         dispatch( handleTravels(response) ); 
     } catch (error) {
         console.log(error);
