@@ -1,0 +1,32 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5591aa3e.css",
+    "main.js": "/static/js/main.6c16fe82.js",
+    "static/js/488.df4415a1.chunk.js": "/static/js/488.df4415a1.chunk.js",
+    "static/media/remixicon.svg?t=1718271040674": "/static/media/remixicon.f38690bdde29bddbc211.svg",
+    "static/media/remixicon.eot?t=1718271040674": "/static/media/remixicon.d87042cf9a3f67d1cab2.eot",
+    "static/media/remixicon.ttf?t=1718271040674": "/static/media/remixicon.88da6179288d7835c2f0.ttf",
+    "static/media/remixicon.woff?t=1718271040674": "/static/media/remixicon.1bdc36c90398c9d667d1.woff",
+    "static/media/remixicon.woff2?t=1718271040674": "/static/media/remixicon.8aece9ab0de67b79cfda.woff2",
+    "static/media/bike.png": "/static/media/bike.d2d444f51949a640f7c1.png",
+    "static/media/map.png": "/static/media/map.3628c9cba42cd5b9f7c8.png",
+    "static/media/hub-marker.png": "/static/media/hub-marker.27be9ef6e0321ca8214b.png",
+    "static/media/bike-marker.png": "/static/media/bike-marker.278156f3b035e4c84b6a.png",
+    "static/media/custom-marker.png": "/static/media/custom-marker.28f6fc50e59d1a9a75cb.png",
+    "static/media/vamosbici-logo.png": "/static/media/vamosbici-logo.5aae9107c29005946215.png",
+    "static/media/banner-map.png": "/static/media/banner-map.d67192fca078e971fc9e.png",
+    "static/media/avatar-1.png": "/static/media/avatar-1.b0eee9662b58d323c6f0.png",
+    "static/media/admin.webp": "/static/media/admin.68551c332b0758065341.webp",
+    "static/media/spritesheet.svg": "/static/media/spritesheet.a4e0eb7ad904a4858361.svg",
+    "index.html": "/index.html",
+    "static/media/check-arrow.svg": "/static/media/check-arrow.9204c1c7771de8c914ab.svg",
+    "static/media/radio-arrow.svg": "/static/media/radio-arrow.69aa1495d8439f869898.svg",
+    "main.5591aa3e.css.map": "/static/css/main.5591aa3e.css.map",
+    "main.6c16fe82.js.map": "/static/js/main.6c16fe82.js.map",
+    "488.df4415a1.chunk.js.map": "/static/js/488.df4415a1.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5591aa3e.css",
+    "static/js/main.6c16fe82.js"
+  ]
+}

@@ -80,6 +80,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "produc": "react-scripts build && shx mv build dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -103,6 +104,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@types/cleave.js": "^1.4.12"
+    "@types/cleave.js": "^1.4.12",
+    "shx": "^0.3.4"
   }
 }
