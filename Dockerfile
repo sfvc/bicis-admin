@@ -14,3 +14,9 @@ EXPOSE ${PORT}
 
 # Copiar la carpeta 'dist' al directorio de Nginx
 COPY ./dist /usr/share/nginx/html
+
+# Copiar un archivo de configuración de Nginx personalizado si es necesario
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Comando por defecto para iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]
