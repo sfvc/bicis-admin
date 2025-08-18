@@ -66,6 +66,6 @@ jobs:
               docker rm front_bicis_admin || true
               docker rmi municipalidad/front_bicis_admin:latest || true
               docker build -t municipalidad/front_bicis_admin:latest .
-              docker run -d --restart=always -p 0.0.0.0:4001:3000 --name front_bicis_admin municipalidad/front_bicis_admin:latest
+              docker run -d --restart=always -p 0.0.0.0:4001:80 --name front_bicis_admin municipalidad/front_bicis_admin:latest
               docker logs front_bicis_admin
               exit
