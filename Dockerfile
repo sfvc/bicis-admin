@@ -29,7 +29,6 @@ ENV REACT_APP_APPID=$REACT_APP_APPID
 ENV REACT_APP_MEASUREMENTID=$REACT_APP_MEASUREMENTID
 
 COPY package.json ./
-COPY package-lock.json ./
 RUN npm install
 COPY . ./
 RUN npm run build
