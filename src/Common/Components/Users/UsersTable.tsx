@@ -25,7 +25,7 @@ interface column { header: string; accessorKey: string; enableColumnFilter: bool
 
 interface FormData {
     estacion_inicio_id: string,
-    estacion_final_id: string,
+    // estacion_final_id: string,
     bicicleta_id: string
 }
 
@@ -87,10 +87,10 @@ const UserTable = () => {
                             <Eye className="inline-block size-5 text-slate-500 dark:text-zink-200"></Eye>
                         </button>
 
-                        {/* <button onClick={() => startTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Iniciar Viaje">
+                        <button onClick={() => startTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Iniciar Viaje">
                             <Tooltip id="default" place="top" content="Iniciar Viaje" />
                             <Bike className="inline-block size-5 text-slate-500 dark:text-zink-200"></Bike>
-                        </button> */}
+                        </button>
                     </div>
                 ),
             },
@@ -115,13 +115,13 @@ const UserTable = () => {
 
         initialValues: {
             estacion_inicio_id: "",
-            estacion_final_id: "",
+            // estacion_final_id: "",
             bicicleta_id: ""
         } as FormData,
 
         validationSchema: Yup.object({
             estacion_inicio_id: Yup.string().required("La estación de inicio es requerida"),
-            estacion_final_id: Yup.string().required("La estación de fin es requerida"),
+            // estacion_final_id: Yup.string().required("La estación de fin es requerida"),
             bicicleta_id: Yup.string().required("La bicicleta es requerida"),
         }),
 
@@ -276,7 +276,7 @@ const UserTable = () => {
                                             ) : null }
                                         </div>
 
-                                        <div className="xl:col-span-12">
+                                       {/*  <div className="xl:col-span-12">
                                             <label htmlFor="estacion_final_id" className="inline-block mb-2 text-base font-medium">Estacion de Destino</label>
                                             <select
                                                 id="estacion_final_id"
@@ -296,7 +296,7 @@ const UserTable = () => {
                                             { formik.touched.estacion_final_id && formik.errors.estacion_final_id ? (
                                                 <p className="text-red-400">{ formik.errors.estacion_final_id }</p>
                                             ) : null }
-                                        </div>
+                                        </div> */}
 
                                         <div className="xl:col-span-12">
                                             <label htmlFor="bicicleta_id" className="inline-block mb-2 text-base font-medium">Bicicleta</label>

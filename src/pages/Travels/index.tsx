@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 // import CountTravels from 'Common/Components/Travels/Dashboard/CountTravels';
-import TravelsMap from 'Common/Components/Travels/Dashboard/TravelsMap';
 // import TravelsFilter from 'Common/Components/Travels/Dashboard/TravelsFilter';
+import TravelsMap from 'Common/Components/Travels/Dashboard/TravelsMap';
 import TravelsTable from 'Common/Components/Travels/Dashboard/TravelsTable';
 import useSocket from 'Hooks/useSocket';
 import { useDispatch } from 'react-redux';
@@ -11,16 +11,16 @@ import { startLoadingTravelsMap } from 'slices/app/map/thunks';
 const url = process.env.REACT_APP_SOCKET_BACK || '';
 
 const Travels = () => {
-  const { initiateSocket, subscribeToChat } = useSocket(url, 'adminViaje');
+  // const { initiateSocket, subscribeToChat } = useSocket(url, 'adminViaje');
   const dispatch = useDispatch<any>();
 
-  useEffect(()=>{
+  /* useEffect(()=>{
     initiateSocket('messageToServer')
     subscribeToChat( async(error, msg) => {
         await dispatch( startLoadingTravels() );
         await dispatch( startLoadingTravelsMap() );
     })
-  },[])
+  },[]) */
 
   return (
     <React.Fragment>

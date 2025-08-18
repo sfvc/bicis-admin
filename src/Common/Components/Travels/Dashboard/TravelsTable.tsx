@@ -1,22 +1,19 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from 'react-tooltip'
 import { useFormik } from "formik";
-import { CheckCircle, Eye, UserPlus, } from "lucide-react";
+import { CheckCircle, Eye, } from "lucide-react";
 import TableContainer from "Common/TableContainer";
 import PigBadge from "../../Ui/Label/PigBadge";
 import Modal from "Common/Components/Ui/Modal";
 import { getAllHubs } from "helpers/api_select";
 import * as Yup from "yup";
 import { setActiveTravel } from "slices/app/travel/reducer";
-import { startApproveTravel, startCloseTravel, startLoadingTravels, startPaginateTravels, startRejectTravel } from "slices/app/travel/thunks";
+import { startCloseTravel, startLoadingTravels } from "slices/app/travel/thunks";
 import NoResults from "Common/NoResults";
+import Pagination from "./Pagination";
 import { useNavigate } from "react-router-dom";
 import Cronometro from "Common/Components/Cronometro";
-import { startLoadingTravelsMap } from "slices/app/map/thunks";
-import Pagination from "Common/Components/Pagination";
-import useLoading from "Hooks/useLoading";
-import { Skeleton } from "Common/Components/Ui/Loading/Skeleton";
 
 interface column { header: string; accessorKey: string; enableColumnFilter: boolean; enableSorting: boolean };
 
@@ -26,13 +23,8 @@ interface FormData {
 
 const TravelsTable = () => {
     const { travels, paginate, activeTravel } = useSelector( (state: any) => state.Travel );
-    const { user } = useSelector( (state: any) => state.Login );
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
-
-    const loading = useLoading(async () => {
-        await initLoading();
-    });
 
     const columns: column[] = React.useMemo(
         () => [
@@ -57,7 +49,7 @@ const TravelsTable = () => {
                 enableColumnFilter: false,
                 enableSorting: true,
                 cell: (props: any) => (
-                    <PigBadge color={ props.getValue() === 'ELECTRICA' ? 'yellow' : 'purple' } label={props.getValue() || 'FALTA_TIPO'} />
+                    <PigBadge color={ props.getValue() === 'ELECTRICA' ? 'yellow' : 'purple' } label={props.getValue()} />
                 ),
             },
             {
@@ -119,11 +111,9 @@ const TravelsTable = () => {
                 cell: (props: any) => (
                     <>
                         {
-                            props.row.original.estado === 'EN_VIAJE'
-                                ? <Cronometro fechaInicio={props.row.original.fecha_inicio} />
-                                : props.row.original.estado === 'FINALIZADO'
-                                    ?   <span>{ props.getValue() } min.</span>
-                                    :   <span> - </span>
+                            props.getValue()
+                                ? <span>{ props.getValue() }</span>
+                                : <Cronometro fechaInicio={props.row.original.fecha_inicio} />
                         }
                     </>
                 ),
@@ -145,34 +135,18 @@ const TravelsTable = () => {
                 cell: (props: any) => (
                     <div className="flex flex-wrap justify-start gap-1">
                         {
-                            (props.row.original.estado === 'PENDIENTE') && (
-                                <button onClick={() => onApproveTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Aprobar">
+                            (props.row.original.estado === 'EN_VIAJE') && (
+                                <button onClick={() => onCloseTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Finalizar">
                                     <Tooltip id="default" place="top" content="Finalizar" />
-                                    <UserPlus className="inline-block size-5 text-orange-500 dark:text-orange-200"></UserPlus>
+                                    <CheckCircle className="inline-block size-5 text-green-500 dark:text-green-200"></CheckCircle>
                                 </button>
                             )
                         }
 
-                        {
-                            (props.row.original.estado === 'EN_VIAJE') && (
-                                <>
-                                    <button onClick={() => onCloseTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Finalizar">
-                                        <Tooltip id="default" place="top" content="Finalizar" />
-                                        <CheckCircle className="inline-block size-5 text-green-500 dark:text-green-200"></CheckCircle>
-                                    </button>
-
-                                    <button onClick={() => onShowTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
-                                    <Tooltip id="default" place="top" content="Ver Viaje" />
-                                    <Eye className="inline-block text-blue-500 dark:text-blue-200"></Eye>
-                                    </button>
-                                </>
-                            )
-                        }
-
-                        {/* <button onClick={() => onShowTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
+                        <button onClick={() => onShowTravel( props.row.original.id )} className="flex items-center justify-center size-8 hover:border rounded-md border-slate-200 dark:border-zink-500" data-tooltip-id="default" data-tooltip-content="Ver Viaje">
                             <Tooltip id="default" place="top" content="Ver Viaje" />
                             <Eye className="inline-block text-blue-500 dark:text-blue-200"></Eye>
-                        </button> */}
+                        </button>
                     </div>
                 ),
             },
@@ -182,7 +156,6 @@ const TravelsTable = () => {
 
     // Modal states
     const [show, setShow] = useState<boolean>(false);
-    const [showApprove, setShowApprove] = useState<boolean>(false);
     const [hubs, setHubs] = useState<any>([]);
 
     // Formik
@@ -197,9 +170,8 @@ const TravelsTable = () => {
             estacion_final_id: Yup.string().required("La estación es requerida"),
         }),
 
-        onSubmit: async (values: any) => {
-            await dispatch( startCloseTravel(values, activeTravel.id) );
-            await dispatch( startLoadingTravelsMap() );
+        onSubmit: (values: any) => {
+            dispatch( startCloseTravel(values, activeTravel.id) )
             toggle();
         },
     });
@@ -217,52 +189,25 @@ const TravelsTable = () => {
         }
     }, [show, formik]);
 
-    const toggleApprove = useCallback(() => {
-        if (showApprove) {
-            setShowApprove(false);
-        } else {
-            setShowApprove(true);
-        }
-    }, [showApprove]);
-
-    const onApproveTravel = async(id: number) => {
-        dispatch( setActiveTravel(id) );
-        toggleApprove();
-    }
+    const getHubsToSelect = async () => {
+        const data = await getAllHubs();
+        setHubs(data);
+    };
 
     const onCloseTravel = (id: number) => {
         dispatch( setActiveTravel(id) );
-        toggle();
+        toggle()
     };
 
     const onShowTravel = (id: number) => {
         dispatch( setActiveTravel(id) );
         navigate(`/detalle-viaje/${id}`);
     };
-
-    const getHubsToSelect = async () => {
-        const data = await getAllHubs();
-        setHubs(data);
-    };
-
-    const handleApproveTravel = async(action: string) => {
-        if (action === 'APROBAR') {
-            await dispatch( startApproveTravel({ admin_id: user.id }, activeTravel.id) );
-        } else if (action === 'RECHAZAR'){
-            await dispatch( startRejectTravel(activeTravel.id) );
-        }
-        await dispatch( startLoadingTravelsMap() ); // Actualiza los viajes activos para renderizar en el mapa
-        toggleApprove();
-    }
-
-    const initLoading = async () => {
-        await dispatch( startLoadingTravels() );
-        await getHubsToSelect();
-    }
-
-    if (loading) {
-        return <Skeleton title="Listado de Viajes"/>;
-    }
+        
+    useEffect(() => {
+        dispatch( startLoadingTravels() )
+        getHubsToSelect();
+    }, []);
 
     return (
         <React.Fragment>
@@ -288,37 +233,11 @@ const TravelsTable = () => {
 
                     <NoResults data={travels}/>
 
-                    { paginate && (
-                        <Pagination
-                            data={paginate}
-                            onPageChange={(page: number) => dispatch( startPaginateTravels('activosandpendientes', page) )}
-                        />
-                    )}
+                    {paginate && <Pagination data={paginate} />}
                 </div>
             </div>
 
-            {/* Modal para apobar o rechazar un viaje*/}
-            <Modal show={showApprove} onHide={toggleApprove} modal-center="true"
-                className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
-                dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
-                <Modal.Header className="flex items-center justify-between p-4 border-b dark:border-zink-500"
-                    closeButtonClass="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500">
-                    <Modal.Title className="text-16">Aprobar Viaje</Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-                    <p className="font-semibold text-center text-14">¿Desea aprobar la solicitud de inicio de viaje?</p>
-                    <div className="flex justify-end gap-2 mt-4">
-                        <button type="reset" onClick={() => handleApproveTravel('RECHAZAR')} className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">
-                            Rechazar
-                        </button>
-                        <button type="submit" onClick={() => handleApproveTravel('APROBAR')} className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
-                            Aprobar
-                        </button>
-                    </div>
-                </Modal.Body>
-            </Modal>
-
-            {/* Modal para finalizar un viaje*/}
+            {/* Modal */}
             <Modal show={show} onHide={toggle} modal-center="true"
                 className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
                 dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">

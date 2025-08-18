@@ -12,9 +12,13 @@ const SearchUser = () => {
     const dispatch = useDispatch<any>()
 
     async function searchUsers () {
-        if(search === '') return dispatch( startLoadingUsers() );
-        const response: any = await api.get(`http://localhost:1000/api/v1/persona/search/${search}`, null)
-        dispatch(handleSearchUser(response))
+        try {
+            if(search === '') return dispatch( startLoadingUsers() );
+            const data: any = await api.get(`/admin/usuario/search?dni=${search}`, null)
+            dispatch(handleSearchUser(data))
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     function clearSearch() {

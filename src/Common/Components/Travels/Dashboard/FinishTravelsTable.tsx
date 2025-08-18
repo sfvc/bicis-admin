@@ -20,9 +20,9 @@ const FinishTravelsTable = () => {
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
 
-    const loading = useLoading(async () => {
+    /* const loading = useLoading(async () => {
         await initLoading();
-    });
+    }); */
 
     const columns: column[] = React.useMemo(
         () => [
@@ -150,13 +150,13 @@ const FinishTravelsTable = () => {
         navigate(`/detalle-viaje/${id}`);
     };
 
-    const initLoading = async () => {
+    /* const initLoading = async () => {
         await dispatch( startLoadingTravels('rechazadosandfinalizados') );
-    }
+    } */
 
-    if (loading) {
+    /* if (loading) {
         return <Skeleton title="Listado de Viajes Finalizados"/>;
-    }
+    } */
 
     return (
         <React.Fragment>
@@ -182,12 +182,12 @@ const FinishTravelsTable = () => {
 
                     <NoResults data={travels}/>
 
-                    { paginate && (
+                    {/* { paginate && (
                         <Pagination
                             data={paginate}
                             onPageChange={(page: number) => dispatch( startPaginateTravels('rechazadosandfinalizados', page) )}
                         />
-                    )}
+                    )} */}
                 </div>
             </div>
         </React.Fragment>

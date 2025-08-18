@@ -15,10 +15,31 @@ export const getAllHubs = async () => {
     return data;
 }
 
-export const getSearchUnits = async (patente: any) => {
+/* export const getSearchUnits = async (patente: any) => {
     if(patente.length < 3) return []
     const response: any = await api.get(`/admin/bicicleta/select?patente=${patente}`, null);
     const list = formatSelect(response)
     return list;
+} */
+
+export const getSearchUnits = async (patente: any) => {
+    try {
+        if(patente.length < 3) return []
+        const data: any = await api.get(`admin/bicicleta/search?patente=${patente}`, null);
+        // const list = formatSelect(response)
+        // return list;
+
+        if(data.statusCode === 404) return []
+
+        return [
+            {
+                label: data.patente,
+                value: data.id
+            }
+        ]
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 

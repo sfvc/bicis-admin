@@ -70,6 +70,7 @@ const UnitsTable = () => {
                 accessorKey: 'imei',
                 enableColumnFilter: false,
                 enableSorting: true,
+                cell: (props: any) =>  (<PigBadge color="slate" label='SIN INFORMACIÓN' />)
             },
             {
                 header: 'Estado',
@@ -138,6 +139,7 @@ const UnitsTable = () => {
                 accessorKey: 'imei',
                 enableColumnFilter: false,
                 enableSorting: true,
+                cell: (props: any) =>  (<PigBadge color="slate" label='SIN INFORMACIÓN' />)
             },
             {
                 header: 'Estado',

@@ -49,7 +49,8 @@ const userSlice = createSlice({
             state.activeUser = null
         },
         handleSearchUser(state: UserState, action: PayloadAction<any>) {
-            state.users = action.payload
+            console.log(action.payload)
+            state.users = [action.payload]
         },
         setActiveUser(state: UserState, action: PayloadAction<number>) {
             state.activeUser = state.users.find((user) => user.id === action.payload) || null

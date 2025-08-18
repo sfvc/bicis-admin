@@ -93,12 +93,12 @@ const TravelsMap = () => {
         dispatch( startLoadingTravelsMap() );
     }, [])
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (travels.length > 0) {
             initiateSocket('messageToServer');
             subscribeToChat((error, msg) => receivedData(msg));
         }
-    }, [travels]);
+    }, [travels]); */
 
     return (
         <MapComponent >
