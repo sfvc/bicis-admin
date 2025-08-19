@@ -11,23 +11,23 @@ import { startLoadingTravelsMap } from 'slices/app/map/thunks';
 const url = process.env.REACT_APP_SOCKET_BACK || '';
 
 const Travels = () => {
-  // const { initiateSocket, subscribeToChat } = useSocket(url, 'adminViaje');
+  const { initiateSocket, subscribeToChat } = useSocket(url, 'adminViaje');
   const dispatch = useDispatch<any>();
 
-  /* useEffect(()=>{
+  useEffect(()=>{
     initiateSocket('messageToServer')
     subscribeToChat( async(error, msg) => {
         await dispatch( startLoadingTravels() );
         await dispatch( startLoadingTravelsMap() );
     })
-  },[]) */
+  },[])
 
   return (
     <React.Fragment>
         <div className="pt-4 container-fluid group-data-[content=boxed]:max-w-boxed mx-auto">
             {/* <CountTravels /> */}
-            <TravelsMap />
             {/* <TravelsFilter /> */}
+            <TravelsMap />
             <TravelsTable />
         </div>
     </React.Fragment>
