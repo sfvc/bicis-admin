@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { MapContainer, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import useSocket from "Hooks/useSocket";
 import MapComponent from "../../Map/MapComponent";
-import { bikeMarker, hubMarker, initialPosition } from "Common/Components/Map";
+import { bikeMarker, initialPosition } from "Common/Components/Map";
 import { LatLngExpression } from "leaflet";
 import { generateTrayectory } from "helpers/generateTrayectory";
 
@@ -20,6 +21,7 @@ const DetailMap = () => {
     const { initiateSocket, subscribeToChat } = useSocket(url, 'front/031054167945')
     const [position, setPosition] = useState<LatLngExpression>(initialPosition)
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [points, setPoints] = useState<Trayectory | null >(null)
 
     const formatPoint = (data: any) => {

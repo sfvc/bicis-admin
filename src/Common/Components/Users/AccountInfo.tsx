@@ -4,7 +4,6 @@ import { BadgeCheck, MapPin, MessageCircle, Phone } from "lucide-react";
 // Image
 import avatar1 from "assets/images/users/avatar-1.png";
 import { useDispatch, useSelector } from "react-redux";
-import InitTravel from "../Travels/New Travel/InitTravel";
 import { startActiveUser } from "slices/app/user/thunks";
 
 const AccountInfo = () => {

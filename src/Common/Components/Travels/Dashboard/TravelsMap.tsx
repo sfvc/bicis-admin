@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { bikeMarker, initialPosition } from "Common/Components/Map";
 import MapComponent from "../../Map/MapComponent";
@@ -14,7 +15,7 @@ interface Point {
     longitude: number
 }
 
-const test: Point[] = [
+/* const test: Point[] = [
     {
         longitude: -65.7796562,
         latitude: -28.4688493,
@@ -35,7 +36,7 @@ const test: Point[] = [
         latitude: -28.468790817419354,
         id: "031054203526"
     },
-]
+] */
 
 const TravelsMap = () => {
     const { initiateSocket, subscribeToChat } = useSocket(url, 'front/global');

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
 import { initialPosition, hubMarker } from "Common/Components/Map";
 import MapComponent from '../Map/MapComponent';

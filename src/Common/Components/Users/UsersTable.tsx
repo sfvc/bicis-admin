@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import PigBadge from "../Ui/Label/PigBadge";

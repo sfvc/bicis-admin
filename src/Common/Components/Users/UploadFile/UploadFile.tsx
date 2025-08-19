@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Ban, Check, File, FileX2 } from "lucide-react";
+import { Ban, Check, FileX2 } from "lucide-react";
 import Spinner from "Common/Components/Spinner";
 
 interface PropFile {
@@ -11,6 +11,7 @@ interface PropFile {
 }
 
 const UploadFile = ({ input, src, alt, handleInputChange }: PropFile) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [file, setFile] = useState<any>(null);
     const [message, setMessage] = useState<string>('');
     const [status, setStatus] = useState<string | null>(null);

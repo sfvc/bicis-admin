@@ -1,15 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
-import { Pen, Search, Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Modal from "Common/Components/Ui/Modal";
 import { startDeleteAdmin, startLoadingAdmins, startPaginateAdmins, startSavingAdmin, startUpdateAdmin } from "slices/app/catalog/admins/thunks";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
-import { handleAdmins, resetActiveAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
-import { APIClient } from "helpers/api_helper";
+import { resetActiveAdmin, setActiveAdmin } from "slices/app/catalog/admins/reducer";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
 import admin from "assets/images/admin.webp";
@@ -36,7 +36,7 @@ const validationSchema = Yup.object({
     rol: Yup.string().required("El rol es requerido"),
 })
 
-const api = new APIClient();
+// const api = new APIClient();
 
 const AdminsTable = () => {
     const { admins, paginate, activeAdmin } = useSelector((state: any) => state.AdminCatalog)
@@ -171,12 +171,12 @@ const AdminsTable = () => {
         toggleDelete();
     }
 
-    const onSearch = async ({target}: any) => {
+    /* const onSearch = async ({target}: any) => {
         if(target.value === '') return dispatch( startLoadingAdmins() );
         const response = await api.get(`admin/administrador?nombre=${target.value}`, null);
         console.log(response)
         dispatch( handleAdmins(response) );
-    }
+    } */
 
     const initLoading = async () => {
         await dispatch( startLoadingAdmins() );

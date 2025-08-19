@@ -1,7 +1,7 @@
 import React from 'react';
 import UserTable from 'Common/Components/Users/UsersTable';
-import UsersFilter from 'Common/Components/Users/UsersFilter';
-import CountUsers from 'Common/Components/Users/CountUsers';
+// import UsersFilter from 'Common/Components/Users/UsersFilter';
+// import CountUsers from 'Common/Components/Users/CountUsers';
 
 const Users = () => {
 

@@ -1,14 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useState } from "react";
 import TableContainer from "Common/TableContainer";
 import { Tooltip } from 'react-tooltip'
-import { Pen, Search, Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import PigBadge from "Common/Components/Ui/Label/PigBadge";
 import { useDispatch, useSelector } from "react-redux";
 import { startDeleteUnit, startLoadingUnits, startPaginateUnits, startSavingUnit, startUpdateUnit } from "slices/app/catalog/units/thunks";
 import Modal from "Common/Components/Ui/Modal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { setActiveUnit, resetActiveUnit, handleSearchUnit } from "slices/app/catalog/units/reducer";
+import { setActiveUnit, resetActiveUnit } from "slices/app/catalog/units/reducer";
 import { APIClient } from "helpers/api_helper";
 import NoResults from "Common/NoResults";
 import Pagination from "Common/Components/Pagination";
@@ -229,11 +230,11 @@ const UnitsTable = () => {
         toggleDelete();
     }
 
-    const onSearch = async ({target}: any) => {
+    /* const onSearch = async ({target}: any) => {
         if(target.value === '') return dispatch( startLoadingUnits() );
         const response: any = await api.get(`/admin/bicicleta/search/${target.value}`, null);
         dispatch( handleSearchUnit(response) );
-    }
+    } */
 
     const getTrackersSelect = async () => {
         const response: any = await api.get(`/admin/tracker/select`, null);

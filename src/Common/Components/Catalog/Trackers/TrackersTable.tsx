@@ -1,20 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from 'react-tooltip'
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import TableContainer from "Common/TableContainer";
-import { Pen, Search, Trash } from "lucide-react";
-import PigBadge from "Common/Components/Ui/Label/PigBadge";
+import { Pen, Trash } from "lucide-react";
 import Modal from "Common/Components/Ui/Modal";
-import { APIClient } from "helpers/api_helper";
 import ErrorAlert from "Common/Components/Ui/Alert/ErrorAlert";
 import bike from 'assets/images/bike.png'
 import { startDeleteTracker, startLoadingTrackers, startPaginateTrackers, startSavingTracker, startUpdateTracker } from "slices/app/catalog/trackers/thunks";
-import { handleSearchTracker, resetActiveTracker, setActiveTracker } from "slices/app/catalog/trackers/reducer";
+import { resetActiveTracker, setActiveTracker } from "slices/app/catalog/trackers/reducer";
 import Pagination from "Common/Components/Pagination";
 import NoResults from "Common/NoResults";
-import { getSearchUnits } from "helpers/api_select";
 import useLoading from "Hooks/useLoading";
 import { Skeleton } from "Common/Components/Ui/Loading/Skeleton";
 
@@ -24,8 +22,6 @@ const initialValues = {
     traccar_id: "",
     imei: ""
 }
-
-const api = new APIClient();
 
 const TrackersTable = () => {
     const dispatch = useDispatch<any>();
@@ -155,11 +151,11 @@ const TrackersTable = () => {
         toggleDelete();
     }
 
-    const onSearch = async ({target}: any) => {
+    /* const onSearch = async ({target}: any) => {
         if(target.value === '') return dispatch( startLoadingTrackers() );
         const response: any = await api.get(`/tracker/search/${target.value}`, null);
         dispatch( handleSearchTracker(response) );
-    }
+    } */
 
     const initLoading = async () => {
         await dispatch( startLoadingTrackers() );
