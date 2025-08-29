@@ -50,7 +50,7 @@ const TravelsMap = () => {
     
         setBikes((prevBikes) => {
             const updatedBikes = prevBikes.map((bike) => {
-                if (bike.bicicleta.tracker.traccar_id === point.id) {
+                if (bike.bicicleta.tracker.traccar_id === String(point.id)) {
                     return {
                         ...bike,
                         bicicleta: {
@@ -64,12 +64,12 @@ const TravelsMap = () => {
             });
     
             const isExistingBike = updatedBikes.some(
-                (bike) => bike.bicicleta.tracker.traccar_id === point.id
+                (bike) => bike.bicicleta.tracker.traccar_id === String(point.id)
             );
     
             if (!isExistingBike) {
                 const matchingTravel = travels.find(
-                    (travel: any) => travel.bicicleta.tracker.traccar_id === point.id
+                    (travel: any) => travel.bicicleta.tracker.traccar_id === String(point.id)
                 );
                 if (matchingTravel) {
                     return [
